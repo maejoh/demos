@@ -1,169 +1,190 @@
 {
   "9781805125068": {
-    "id": "6a31aecb-cf4b-48ad-9ace-93681f0d86c4",
+    "id": "561b512c-5e55-4227-b17f-d4b1abba44b5",
     "title": "Azure OpenAI Essentials",
     "author": "Amit Mukherjee and Adithya Saladi",
     "isbn": "9781805125068",
+    "year": 2025,
     "tags": [],
     "description": ""
   },
   "9781835884003": {
-    "id": "37225fb0-3fe9-45a7-ad04-ee0955bb56da",
+    "id": "877589de-969d-4638-9733-9ebfed77e674",
     "title": "Building AI Applications with OpenAI APIs",
     "author": "Martin Yanev",
     "isbn": "9781835884003",
+    "year": 2024,
     "tags": [],
     "description": ""
   },
   "9781835089507": {
-    "id": "cfa5655a-7e84-4379-84dd-6c73a84d16de",
+    "id": "72929c4f-fd96-44f0-8216-73dcf51e6ff1",
     "title": "Building Data-Driven Applications with LlamaIndex",
     "author": "Andrei Gheorghiu",
     "isbn": "9781835089507",
+    "year": 2024,
     "tags": [],
     "description": ""
   },
   "9781835462317": {
-    "id": "304ef5dd-1e5c-4a91-aee5-21cadcae49d5",
+    "id": "a607edb8-aa01-421a-b672-c7d2e295d05a",
     "title": "Building LLM Powered Applications",
     "author": "Valentina Alto",
     "isbn": "9781835462317",
+    "year": 2024,
     "tags": [],
     "description": ""
   },
   "9781835887509": {
-    "id": "12a31a2f-520c-4be7-abe1-085013f59404",
+    "id": "6caeff3e-35d1-4df5-8127-2bc408c31aaf",
     "title": "Essential Guide to LLMOps",
     "author": "Ryan Doan",
     "isbn": "9781835887509",
+    "year": 2024,
     "tags": [],
     "description": ""
   },
   "9781835460825": {
-    "id": "f9343cea-11ef-4465-99e7-9c94bfdbc01e",
+    "id": "6fd8e6be-c08f-4ad3-8ae3-7a781e16b013",
     "title": "Generative AI Foundations in Python",
     "author": "Carlos Rodriguez",
     "isbn": "9781835460825",
+    "year": 2024,
     "tags": [],
     "description": ""
   },
   "9781836207030": {
-    "id": "e34afaf5-9ae3-40ca-b777-b0999167ca5c",
+    "id": "c287958b-0684-429a-848b-5e8d87fcf33d",
     "title": "LLM Design Patterns",
     "author": "Ken Huang",
     "isbn": "9781836207030",
+    "year": 2025,
     "tags": [],
     "description": ""
   },
   "9781804619186": {
-    "id": "4119423d-ae12-44b7-b77d-280077fcbb36",
+    "id": "e8165085-b234-4889-8cfe-6d09a1bcc03d",
     "title": "Mastering NLP from Foundations to LLMs",
     "author": "Lior Gazit and Meysam Ghaffari",
     "isbn": "9781804619186",
+    "year": 2024,
     "tags": [],
     "description": ""
   },
   "9781836200918": {
-    "id": "082e246c-89fb-4140-bd7c-87be4141a67b",
+    "id": "1e51633f-849a-4c67-aeec-190690472e49",
     "title": "RAG-Driven Generative AI",
     "author": "Denis Rothman",
     "isbn": "9781836200918",
+    "year": 2025,
     "tags": [],
     "description": ""
   },
   "9781835887905": {
-    "id": "b82b33fd-f2fe-4e6f-8ead-60f743f4b936",
+    "id": "2dd504a6-76d9-4386-a3b6-6204f31a4140",
     "title": "Unlocking Data with Generative AI and RAG",
     "author": "Keith Bourne",
     "isbn": "9781835887905",
+    "year": 2024,
     "tags": [],
     "description": ""
   },
   "9781806103232": {
-    "id": "579c4765-1c3d-4493-9671-425add70d935",
+    "id": "5b97c858-74e5-4f86-a74c-3667d440d050",
     "title": "Learn Model Context Protocol with Python",
     "author": "Christoffer Noring",
     "isbn": "9781806103232",
+    "year": 2025,
     "tags": [],
     "description": ""
   },
   "9781788991650": {
-    "id": "2c6ecd34-69c0-4e5c-a3b2-9ed687052a18",
+    "id": "b5e2a764-322a-4797-a503-09dc532374d5",
     "title": "Learn Python Programming",
     "author": "Fabrizio Romano, Heinrich Kruger",
     "isbn": "9781788991650",
-    "tags": [],
-    "description": ""
-  },
-  "9781836203070": {
-    "id": "dba47296-b082-40f9-9f47-1bfb16bde281",
-    "title": "LLMs in Enterprise",
-    "author": "Ahmed Menshawy, Mahmoud Fahmy",
-    "isbn": "9781836203070",
+    "year": 2018,
     "tags": [],
     "description": ""
   },
   "9781835083468": {
-    "id": "813aa9e5-e54a-4f41-9c95-a6cb19635fec",
+    "id": "02696d4a-f739-488a-9710-a5fbba0be115",
     "title": "Generative AI with LangChain",
     "author": "Ben Auffarth & Leonid Kuligin",
     "isbn": "9781835083468",
-    "tags": [],
-    "description": ""
-  },
-  "9781835884447": {
-    "id": "7de2e7dd-1b2f-45ba-b8c4-a576ca317f7e",
-    "title": "Generative AI with Python and PyTorch",
-    "author": "Joseph Babcock, Raghav Bali",
-    "isbn": "9781835884447",
+    "year": 2023,
     "tags": [],
     "description": ""
   },
   "9781836200079": {
-    "id": "1b61589a-8559-46d2-9e9f-9dc1c3395a06",
+    "id": "4848405b-3a6b-4732-acdd-17bf9edc7054",
     "title": "LLM Engineer’s Handbook",
     "author": "Paul Iusztin\n | Maxime Labonne",
     "isbn": "9781836200079",
+    "year": 2024,
+    "tags": [],
+    "description": ""
+  },
+  "9781836203070": {
+    "id": "3b1e3a3b-7a43-4af6-951a-a661dab8b6c8",
+    "title": "LLMs in Enterprise",
+    "author": "Ahmed Menshawy, Mahmoud Fahmy",
+    "isbn": "9781836203070",
+    "year": 2024,
+    "tags": [],
+    "description": ""
+  },
+  "9781835884447": {
+    "id": "9e65b238-6349-4ec6-aeb0-9afbd6cefc4d",
+    "title": "Generative AI with Python and PyTorch",
+    "author": "Joseph Babcock, Raghav Bali",
+    "isbn": "9781835884447",
+    "year": 2024,
     "tags": [],
     "description": ""
   },
   "9781801819312": {
-    "id": "44eaa696-029a-40cd-96b5-04a01c8b9099",
+    "id": "7beaebcb-989e-4530-9b75-c87a451626f3",
     "title": "Machine Learning with PyTorch and Scikit-Learn",
     "author": "Sebastian Raschka, Yuxi (Hayden) Liu, Dr. Vahid Mirjalili",
     "isbn": "9781801819312",
-    "tags": [],
-    "description": ""
-  },
-  "9781801817806": {
-    "id": "370a35e9-0a65-4cf5-9537-459c9e0bf7e9",
-    "title": "SQL for Data Analytics",
-    "author": "Saurabh Shrivastava, Neelanjali Srivastav",
-    "isbn": "9781801817806",
-    "tags": [],
-    "description": ""
-  },
-  "9781803231334": {
-    "id": "ed425630-1057-4418-8d37-a80e96333338",
-    "title": "Modern Computer Vision with PyTorch",
-    "author": "V Kishore Ayyadevara, Yeshwanth Reddy",
-    "isbn": "9781803231334",
-    "tags": [],
-    "description": ""
-  },
-  "9781805123743": {
-    "id": "7138bb9a-6d0f-45dd-a142-f90ae0928501",
-    "title": "Transformers for Natural Language Processing and Computer Vision",
-    "author": "Denis Rothman",
-    "isbn": "9781805123743",
+    "year": 2022,
     "tags": [],
     "description": ""
   },
   "9781836647843": {
-    "id": "ddd2d31c-7295-4335-b0cd-711d8fc01ff4",
+    "id": "e543d688-cabd-471c-8c84-97c65b802120",
     "title": "Practical Generative AI with ChatGPT",
     "author": "Valentina Alto",
     "isbn": "9781836647843",
+    "year": 2025,
+    "tags": [],
+    "description": ""
+  },
+  "9781801817806": {
+    "id": "9a9f6c5d-df15-4be2-a1c0-171c84b2de6e",
+    "title": "SQL for Data Analytics",
+    "author": "Saurabh Shrivastava, Neelanjali Srivastav",
+    "isbn": "9781801817806",
+    "year": 2019,
+    "tags": [],
+    "description": ""
+  },
+  "9781803231334": {
+    "id": "ace9dbfe-82f6-4fff-9e71-0a8a942daf64",
+    "title": "Modern Computer Vision with PyTorch",
+    "author": "V Kishore Ayyadevara, Yeshwanth Reddy",
+    "isbn": "9781803231334",
+    "year": 2020,
+    "tags": [],
+    "description": ""
+  },
+  "9781805123743": {
+    "id": "520ae5fe-3785-435f-a553-77fd9e837061",
+    "title": "Transformers for Natural Language Processing and Computer Vision",
+    "author": "Denis Rothman",
+    "isbn": "9781805123743",
+    "year": 2024,
     "tags": [],
     "description": ""
   }

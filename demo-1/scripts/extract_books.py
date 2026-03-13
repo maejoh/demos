@@ -60,6 +60,10 @@ def extract_epub_metadata(epub_path: Path) -> dict | None:
                     isbn = text.replace("-", "").strip()
                     break
 
+            date_text = getattr(metadata.find("dc:date", NS), "text", None) or ""
+            year_match = re.search(r'\d{4}', date_text)
+            year = int(year_match.group()) if year_match else None
+
             if not title:
                 print(f"  [skip] No title found in {epub_path.name}")
                 return None
@@ -68,6 +72,7 @@ def extract_epub_metadata(epub_path: Path) -> dict | None:
                 "title": title.strip(),
                 "author": author.strip() if author else "Unknown",
                 "isbn": isbn,
+                "year": year,
             }
 
     except Exception as e:
@@ -97,7 +102,10 @@ def fetch_by_isbns(isbns: list[str]) -> dict[str, dict]:
         desc = details.get("description", "")
         if isinstance(desc, dict):
             desc = desc.get("value", "")
-        results[isbn] = {"description": desc}
+        publish_date = details.get("publish_date", "")
+        year_match = re.search(r'\d{4}', publish_date)
+        year = int(year_match.group()) if year_match else None
+        results[isbn] = {"description": desc, "year": year}
 
     return results
 
@@ -118,7 +126,7 @@ def search_open_library(title: str, author: str) -> dict:
         r.raise_for_status()
         return r.json().get("docs", [])
 
-    base = {"limit": 1, "fields": "isbn,first_sentence"}
+    base = {"limit": 1, "fields": "isbn,first_sentence,first_publish_year"}
     first_author = author.split(",")[0].strip()
     clean_title = sanitize_title(title)
 
@@ -143,7 +151,8 @@ def search_open_library(title: str, author: str) -> dict:
                 isbn = next((i for i in isbn_list if len(i) == 13), isbn_list[0] if isbn_list else None)
                 first_sentence = doc.get("first_sentence", {})
                 description = first_sentence.get("value", "") if isinstance(first_sentence, dict) else ""
-                return {"isbn": isbn, "description": description}
+                year = doc.get("first_publish_year") or None
+                return {"isbn": isbn, "description": description, "year": year}
         except Exception:
             continue
 
@@ -225,6 +234,7 @@ def main():
                 "title": sanitize_title(meta["title"]),
                 "author": meta["author"],
                 "isbn": isbn,
+                "year": enriched.get("year") or meta.get("year") or book_details.get(isbn, {}).get("year"),
                 "tags": book_details.get(isbn, {}).get("tags") or [],
                 "description": enriched.get("description") or book_details.get(isbn, {}).get("description") or "",
             }
@@ -244,6 +254,7 @@ def main():
                     "title": sanitize_title(meta["title"]),
                     "author": meta["author"],
                     "isbn": isbn,
+                    "year": result.get("year") or meta.get("year") or existing.get("year"),
                     "tags": existing.get("tags") or [],
                     "description": result.get("description") or existing.get("description") or "",
                 }
