@@ -20,7 +20,8 @@ import type { Book } from "../lib/books"
 // Load .env.local when running locally (Vercel sets env vars automatically)
 const envPath = resolve(process.cwd(), ".env.local")
 if (existsSync(envPath)) {
-  for (const line of readFileSync(envPath, "utf-8").split("\n")) {
+  for (const rawLine of readFileSync(envPath, "utf-8").split("\n")) {
+    const line = rawLine.trim()
     const match = line.match(/^([^#\s][^=]*)=(.*)$/)
     if (match) {
       process.env[match[1].trim()] = match[2].trim().replace(/^["']|["']$/g, "")
@@ -39,7 +40,7 @@ if (!["development", "preview", "production"].includes(env)) {
 
 const key = (k: string) => `${env}:${k}`
 
-const detailsPath = resolve(import.meta.dirname, "book_details.json")
+const detailsPath = resolve(__dirname, "book_details.json")
 if (!existsSync(detailsPath)) {
   console.error("book_details.json not found. Run extract_books.py --enrich first.")
   process.exit(1)
@@ -49,36 +50,39 @@ const bookDetails: Record<string, Omit<Book, "votes">> = JSON.parse(
   readFileSync(detailsPath, "utf-8")
 )
 
-const books = Object.values(bookDetails)
-console.log(`Seeding ${books.length} books into Redis namespace "${env}"...\n`)
+async function main() {
+  const books = Object.values(bookDetails)
+  console.log(`Seeding ${books.length} books into Redis namespace "${env}"...\n`)
 
-const redis = Redis.fromEnv()
+  const redis = Redis.fromEnv()
+  let seeded = 0
+  let skipped = 0
 
-let seeded = 0
-let skipped = 0
+  for (const book of books) {
+    if (!book.isbn) {
+      console.log(`  [skip] "${book.title}" — no ISBN`)
+      skipped++
+      continue
+    }
 
-for (const book of books) {
-  if (!book.isbn) {
-    console.log(`  [skip] "${book.title}" — no ISBN`)
-    skipped++
-    continue
+    // Write book data
+    await redis.set(key(`book:${book.isbn}`), JSON.stringify(book))
+
+    // Track ISBN in the index set
+    await redis.sadd(key("books:all"), book.isbn)
+
+    // Initialise votes only if not already set (preserves existing vote counts)
+    const hasVotes = await redis.exists(key(`votes:${book.isbn}`))
+    if (!hasVotes) {
+      await redis.set(key(`votes:${book.isbn}`), 0)
+    }
+
+    console.log(`  ✓ ${book.title} (${book.isbn})`)
+    seeded++
   }
 
-  // Write book data
-  await redis.set(key(`book:${book.isbn}`), JSON.stringify(book))
-
-  // Track ISBN in the index set
-  await redis.sadd(key("books:all"), book.isbn)
-
-  // Initialise votes only if not already set (preserves existing vote counts)
-  const hasVotes = await redis.exists(key(`votes:${book.isbn}`))
-  if (!hasVotes) {
-    await redis.set(key(`votes:${book.isbn}`), 0)
-  }
-
-  console.log(`  ✓ ${book.title} (${book.isbn})`)
-  seeded++
+  console.log(`\nDone. ${seeded} seeded, ${skipped} skipped (no ISBN).`)
+  console.log(`Keys are prefixed with "${env}:".`)
 }
 
-console.log(`\nDone. ${seeded} seeded, ${skipped} skipped (no ISBN).`)
-console.log(`Keys are prefixed with "${env}:".`)
+main()
