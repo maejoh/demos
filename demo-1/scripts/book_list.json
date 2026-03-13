@@ -1,0 +1,117 @@
+[
+  {
+    "isbn": "9781805125068",
+    "title": "Azure OpenAI Essentials",
+    "title_raw": "Azure OpenAI Essentials"
+  },
+  {
+    "isbn": "",
+    "title": "Building Agentic AI Systems",
+    "title_raw": "Building Agentic AI Systems"
+  },
+  {
+    "isbn": "9781835884003",
+    "title": "Building AI Applications with OpenAI APIs",
+    "title_raw": "Building AI Applications with OpenAI APIs"
+  },
+  {
+    "isbn": "9781835089507",
+    "title": "Building Data-Driven Applications with LlamaIndex",
+    "title_raw": "Building Data-Driven Applications with LlamaIndex"
+  },
+  {
+    "isbn": "9781835462317",
+    "title": "Building LLM Powered Applications",
+    "title_raw": "Building LLM Powered Applications"
+  },
+  {
+    "isbn": "9781835887509",
+    "title": "Essential Guide to LLMOps",
+    "title_raw": "Essential Guide to LLMOps"
+  },
+  {
+    "isbn": "9781835460825",
+    "title": "Generative AI Foundations in Python",
+    "title_raw": "Generative AI Foundations in Python"
+  },
+  {
+    "isbn": "9781835083468",
+    "title": "Generative AI with LangChain",
+    "title_raw": "Generative AI with LangChain\n_Second Edition"
+  },
+  {
+    "isbn": "9781835884447",
+    "title": "Generative AI with Python and PyTorch",
+    "title_raw": "Generative AI with Python and PyTorch, Second Edition"
+  },
+  {
+    "isbn": "9781806103232",
+    "title": "Learn Model Context Protocol with Python",
+    "title_raw": "Learn Model Context Protocol with Python"
+  },
+  {
+    "isbn": "",
+    "title": "Learn Model Context Protocol with TypeScript",
+    "title_raw": "Learn Model Context Protocol with TypeScript"
+  },
+  {
+    "isbn": "9781788991650",
+    "title": "Learn Python Programming",
+    "title_raw": "Learn Python Programming"
+  },
+  {
+    "isbn": "9781836207030",
+    "title": "LLM Design Patterns",
+    "title_raw": "LLM Design Patterns"
+  },
+  {
+    "isbn": "9781836200079",
+    "title": "LLM Engineer’s Handbook",
+    "title_raw": "LLM Engineer’s Handbook"
+  },
+  {
+    "isbn": "9781836203070",
+    "title": "LLMs in Enterprise",
+    "title_raw": "LLMs in Enterprise"
+  },
+  {
+    "isbn": "9781801819312",
+    "title": "Machine Learning with PyTorch and Scikit-Learn",
+    "title_raw": "Machine Learning with PyTorch and Scikit-Learn"
+  },
+  {
+    "isbn": "9781804619186",
+    "title": "Mastering NLP from Foundations to LLMs",
+    "title_raw": "Mastering NLP from Foundations to LLMs"
+  },
+  {
+    "isbn": "9781801817806",
+    "title": "SQL for Data Analytics",
+    "title_raw": "SQL for Data Analytics"
+  },
+  {
+    "isbn": "9781803231334",
+    "title": "Modern Computer Vision with PyTorch",
+    "title_raw": "Modern Computer Vision with PyTorch_Second Edition"
+  },
+  {
+    "isbn": "9781836647843",
+    "title": "Practical Generative AI with ChatGPT",
+    "title_raw": "Practical Generative AI with ChatGPT\n_Second Edition"
+  },
+  {
+    "isbn": "9781836200918",
+    "title": "RAG-Driven Generative AI",
+    "title_raw": "RAG-Driven Generative AI"
+  },
+  {
+    "isbn": "9781805123743",
+    "title": "Transformers for Natural Language Processing and Computer Vision",
+    "title_raw": "Transformers for Natural Language Processing and Computer Vision_Third Edition"
+  },
+  {
+    "isbn": "9781835887905",
+    "title": "Unlocking Data with Generative AI and RAG",
+    "title_raw": "Unlocking Data with Generative AI and RAG"
+  }
+]
