@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
 """
-Extract book metadata from epub files, enrich via Open Library, and fetch cover URLs from Google Books.
+Extract book metadata from epub files and enrich via Google Books API.
+Cover images are extracted directly from the epub files and saved to public/covers/.
 
 Usage:
-    python scripts/extract_books.py /path/to/epub/folder
-    python scripts/extract_books.py --bundle "Bundle Name"   # uses BOOKS_DIR from .env.local
-    python scripts/extract_books.py --bundle "Bundle Name" --overwrite
-    python scripts/extract_books.py --bundle "Bundle Name" --force   # re-fetch all, even known books
+    python scripts/extract_books_v2.py /path/to/epub/folder
+    python scripts/extract_books_v2.py --bundle "Bundle Name"   # uses BOOKS_DIR from .env.local
+    python scripts/extract_books_v2.py --bundle "Bundle Name" --overwrite
+    python scripts/extract_books_v2.py --bundle "Bundle Name" --force
 
 Outputs:
-    scripts/book_list.json    — array of {isbn, title} from epub metadata. isbn may be empty.
+    scripts/book_list.json    — array of {isbn, title, title_raw} from epub metadata.
                                 Appended by default; use --overwrite to replace.
     scripts/book_details.json — dict keyed by ISBN with full book data incl. coverUrl.
                                 Merged by default; use --overwrite to replace.
+    public/covers/            — cover images extracted from epub files.
 
 Requirements:
     pip install requests
+    GOOGLE_BOOKS_API_KEY set in .env.local
 """
 
 import argparse
@@ -26,7 +29,7 @@ import uuid
 import zipfile
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import requests
 
@@ -38,6 +41,10 @@ NS = {
 SCRIPTS_DIR = Path(__file__).parent
 BOOK_LIST_PATH = SCRIPTS_DIR / "book_list.json"
 BOOK_DETAILS_PATH = SCRIPTS_DIR / "book_details.json"
+COVERS_DIR = SCRIPTS_DIR.parent / "public" / "covers"
+
+GOOGLE_BOOKS_URL = "https://www.googleapis.com/books/v1/volumes"
+GOOGLE_FIELDS = "items(volumeInfo(title,authors,publishedDate,description,industryIdentifiers))"
 
 
 def load_env_local() -> dict[str, str]:
@@ -59,7 +66,7 @@ def load_env_local() -> dict[str, str]:
 
 
 def extract_epub_metadata(epub_path: Path) -> dict | None:
-    """Extract title, author, and ISBN from an epub file."""
+    """Extract title, author, ISBN, and year from an epub file."""
     try:
         with zipfile.ZipFile(epub_path, "r") as zf:
             container = ET.fromstring(zf.read("META-INF/container.xml"))
@@ -92,6 +99,7 @@ def extract_epub_metadata(epub_path: Path) -> dict | None:
                 "author": author.strip() if author else "Unknown",
                 "isbn": isbn,
                 "year": year,
+                "epub_path": epub_path,
             }
 
     except Exception as e:
@@ -99,70 +107,63 @@ def extract_epub_metadata(epub_path: Path) -> dict | None:
         return None
 
 
-def fetch_by_isbns(isbns: list[str]) -> dict[str, dict]:
-    """Batch fetch book details from Open Library by ISBN."""
-    bibkeys = ",".join(f"ISBN:{isbn}" for isbn in isbns)
+def extract_epub_cover(epub_path: Path, key: str) -> str | None:
+    """
+    Extract the cover image from an epub and save it to public/covers/.
+    Returns the relative URL (e.g. '/covers/9781234567890.jpg') or None.
+
+    Tries two methods:
+      1. EPUB3: manifest item with properties="cover-image"
+      2. EPUB2: <meta name="cover"> pointing to a manifest item id
+    """
     try:
-        response = requests.get(
-            "https://openlibrary.org/api/books",
-            params={"bibkeys": bibkeys, "format": "json", "jscmd": "details"},
-            timeout=15,
-        )
-        response.raise_for_status()
-        raw = response.json()
+        with zipfile.ZipFile(epub_path, "r") as zf:
+            container = ET.fromstring(zf.read("META-INF/container.xml"))
+            opf_path = container.find(".//{urn:oasis:names:tc:opendocument:xmlns:container}rootfile").get("full-path")
+            opf_dir = PurePosixPath(opf_path).parent
+
+            opf = ET.fromstring(zf.read(opf_path))
+            manifest = opf.find("opf:manifest", NS)
+
+            cover_href = None
+
+            # Method 1: EPUB3 — manifest item with properties="cover-image"
+            if manifest is not None:
+                for item in manifest.findall("opf:item", NS):
+                    if "cover-image" in item.get("properties", ""):
+                        cover_href = item.get("href")
+                        break
+
+            # Method 2: EPUB2 — <meta name="cover" content="item-id">
+            if not cover_href:
+                metadata_el = opf.find("opf:metadata", NS)
+                if metadata_el is not None:
+                    for meta in metadata_el.findall("opf:meta", NS):
+                        if meta.get("name") == "cover":
+                            cover_id = meta.get("content")
+                            if cover_id and manifest is not None:
+                                for item in manifest.findall("opf:item", NS):
+                                    if item.get("id") == cover_id:
+                                        cover_href = item.get("href")
+                                        break
+                            break
+
+            if not cover_href:
+                return None
+
+            # Resolve path relative to OPF location (zip paths always use forward slashes)
+            cover_zip_path = str(opf_dir / cover_href) if str(opf_dir) != "." else cover_href
+
+            ext = PurePosixPath(cover_href).suffix.lower() or ".jpg"
+            COVERS_DIR.mkdir(parents=True, exist_ok=True)
+            out_path = COVERS_DIR / f"{key}{ext}"
+            out_path.write_bytes(zf.read(cover_zip_path))
+
+            return f"/covers/{key}{ext}"
+
     except Exception as e:
-        print(f"  [warn] Batch ISBN lookup failed: {e}")
-        return {}
-
-    results = {}
-    for key, entry in raw.items():
-        isbn = key.replace("ISBN:", "")
-        details = entry.get("details", {})
-        desc = details.get("description", "")
-        if isinstance(desc, dict):
-            desc = desc.get("value", "")
-        publish_date = details.get("publish_date", "")
-        year_match = re.search(r'\d{4}', publish_date)
-        year = int(year_match.group()) if year_match else None
-        results[isbn] = {"description": desc, "year": year}
-
-    return results
-
-
-def fetch_cover_url(isbn: str, api_key: str | None = None) -> tuple[str | None, str]:
-    """Fetch book cover thumbnail URL from Google Books API. Returns (url, reason)."""
-    params: dict = {"q": f"isbn:{isbn}", "fields": "items/volumeInfo/imageLinks"}
-    if api_key:
-        params["key"] = api_key
-
-    for attempt in range(3):
-        try:
-            response = requests.get(
-                "https://www.googleapis.com/books/v1/volumes",
-                params=params,
-                timeout=10,
-            )
-            if response.status_code == 429:
-                wait = 2 ** attempt
-                print(f"  [429] rate limited, retrying in {wait}s...")
-                time.sleep(wait)
-                continue
-            response.raise_for_status()
-            data = response.json()
-            items = data.get("items", [])
-            if not items:
-                return None, f"no items in response (keys: {list(data.keys())})"
-            links = items[0].get("volumeInfo", {}).get("imageLinks", {})
-            if not links:
-                return None, "items found but no imageLinks"
-            url = links.get("thumbnail") or links.get("smallThumbnail")
-            if not url:
-                return None, f"imageLinks present but no thumbnail/smallThumbnail (keys: {list(links.keys())})"
-            return url.replace("http://", "https://"), "ok"
-        except Exception as e:
-            return None, f"exception: {e}"
-
-    return None, "failed after 3 retries (429)"
+        print(f"  [warn] cover extraction failed for {epub_path.name}: {e}")
+        return None
 
 
 def sanitize_title(title: str) -> str:
@@ -170,49 +171,91 @@ def sanitize_title(title: str) -> str:
     return re.sub(r'[,\s–_-]+\s*(second|third|fourth|fifth|sixth|\d+(st|nd|rd|th))\s+edition.*', '', title, flags=re.IGNORECASE).strip()
 
 
-def search_open_library(title: str, author: str) -> dict:
-    """
-    Search Open Library by title/author. Used for books with no ISBN in epub metadata.
-    Falls back to first author only (handles 'Author A, Author B' strings), then title-only,
-    then title with edition suffix stripped.
-    """
-    def _query(params):
-        r = requests.get("https://openlibrary.org/search.json", params=params, timeout=10)
-        r.raise_for_status()
-        return r.json().get("docs", [])
+def _author_looks_mangled(author: str) -> bool:
+    """Return True if Google Books returned an ALL-CAPS or otherwise garbled author string."""
+    alpha_words = [w for w in author.split() if w.isalpha()]
+    return len(alpha_words) > 0 and sum(1 for w in alpha_words if w.isupper()) > len(alpha_words) / 2
 
-    base = {"limit": 1, "fields": "isbn,first_sentence,first_publish_year"}
+
+def _google_request(params: dict) -> dict | None:
+    """Make a Google Books API request with retry on 429."""
+    for attempt in range(3):
+        try:
+            response = requests.get(GOOGLE_BOOKS_URL, params=params, timeout=10)
+            if response.status_code == 429:
+                wait = 2 ** attempt
+                print(f"  [429] rate limited, retrying in {wait}s...")
+                time.sleep(wait)
+                continue
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            print(f"  [warn] request failed: {e}")
+            return None
+    return None
+
+
+def _parse_volume(volume_info: dict, epub_year: int | None = None) -> dict:
+    """Extract normalized fields from a Google Books volumeInfo dict."""
+    identifiers = volume_info.get("industryIdentifiers", [])
+    isbn = next(
+        (i["identifier"] for i in identifiers if i.get("type") == "ISBN_13"),
+        next((i["identifier"] for i in identifiers if i.get("type") == "ISBN_10"), None),
+    )
+
+    authors = volume_info.get("authors", [])
+    author = " & ".join(authors) if authors else None
+
+    date_str = volume_info.get("publishedDate", "")
+    year_match = re.search(r'\d{4}', date_str)
+    year = int(year_match.group()) if year_match else epub_year
+
+    return {
+        "isbn": isbn,
+        "title": volume_info.get("title"),
+        "author": author,
+        "year": year,
+        "description": volume_info.get("description", ""),
+    }
+
+
+def fetch_google_book(
+    isbn: str | None,
+    title: str,
+    author: str,
+    epub_year: int | None,
+    api_key: str | None,
+) -> dict | None:
+    """
+    Fetch book metadata from Google Books API.
+    Queries by ISBN first if available, then falls through title/author variants.
+    Returns a normalized dict or None if nothing found.
+    """
+    base: dict = {"fields": GOOGLE_FIELDS, "maxResults": 1}
+    if api_key:
+        base["key"] = api_key
+
+    queries: list[str] = []
+    if isbn:
+        queries.append(f"isbn:{isbn}")
+
     first_author = author.split(",")[0].strip()
     clean_title = sanitize_title(title)
+    queries.append(f'intitle:"{title}" inauthor:"{author}"')
+    if first_author != author:
+        queries.append(f'intitle:"{title}" inauthor:"{first_author}"')
+    queries.append(f'intitle:"{title}"')
+    if clean_title != title:
+        queries.append(f'intitle:"{clean_title}"')
 
-    attempts = [
-        {"title": title, "author": author, **base},
-        {"title": title, "author": first_author, **base},
-        {"title": title, **base},
-        {"title": clean_title, **base},
-    ]
-    # Deduplicate (e.g. if title had no edition suffix, or author had no comma)
-    seen = []
-    for a in attempts:
-        if a not in seen:
-            seen.append(a)
+    for q in queries:
+        data = _google_request({**base, "q": q})
+        if data:
+            items = data.get("items", [])
+            if items:
+                return _parse_volume(items[0].get("volumeInfo", {}), epub_year)
 
-    for params in seen:
-        try:
-            docs = _query(params)
-            if docs:
-                doc = docs[0]
-                isbn_list = doc.get("isbn", [])
-                isbn = next((i for i in isbn_list if len(i) == 13), isbn_list[0] if isbn_list else None)
-                first_sentence = doc.get("first_sentence", {})
-                description = first_sentence.get("value", "") if isinstance(first_sentence, dict) else ""
-                year = doc.get("first_publish_year") or None
-                return {"isbn": isbn, "description": description, "year": year}
-        except Exception:
-            continue
-
-    print(f"  [warn] All search attempts failed for '{title}'")
-    return {}
+    return None
 
 
 def load_json(path: Path, default):
@@ -228,7 +271,7 @@ def save_json(path: Path, data):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract book metadata from epub files.")
+    parser = argparse.ArgumentParser(description="Extract and enrich book metadata, with covers from epub files.")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("folder", nargs="?", help="Path to folder containing epub files")
     group.add_argument("--bundle", metavar="NAME", help="Bundle subfolder name — combined with BOOKS_DIR from .env.local")
@@ -237,7 +280,9 @@ def main():
     args = parser.parse_args()
 
     env = load_env_local()
-    google_api_key = env.get("GOOGLE_BOOKS_API_KEY") or None
+    api_key = env.get("GOOGLE_BOOKS_API_KEY") or None
+    if not api_key:
+        print("Warning: GOOGLE_BOOKS_API_KEY not set in .env.local — requests will be unauthenticated and heavily rate-limited\n")
 
     if args.bundle:
         books_dir = env.get("BOOKS_DIR") or ""
@@ -266,13 +311,13 @@ def main():
         status = f"isbn: {meta['isbn']}" if meta.get("isbn") else "no isbn in epub"
         print(f"  -> {meta['title']} ({status})")
 
-    # Determine which books need API enrichment (skip already-known ones unless --force)
+    # Determine which books need enrichment
     if args.force or args.overwrite:
         to_enrich = extracted
     else:
         existing_list = load_json(BOOK_LIST_PATH, [])
         known_isbns = {e["isbn"] for e in existing_list if e.get("isbn")}
-        known_title_raws = {e.get("title_raw", e["title"]) for e in existing_list}
+        known_title_raws = {e.get("title_raw", e["title"]) for e in existing_list if e.get("isbn")}
         to_enrich = [
             m for m in extracted
             if (m.get("isbn") and m["isbn"] not in known_isbns)
@@ -280,93 +325,87 @@ def main():
         ]
         skipped = len(extracted) - len(to_enrich)
         if skipped:
-            print(f"Skipping {skipped} already-known book(s) — use --force to re-fetch.\n")
+            print(f"\nSkipping {skipped} already-known book(s) — use --force to re-fetch.")
 
-    # Step 2: write book_list.json — {isbn, title (sanitized), title_raw} per book
-    new_entries = [{"isbn": m.get("isbn") or "", "title": sanitize_title(m["title"]), "title_raw": m["title"]} for m in extracted]
-
+    # Step 2: write book_list.json
+    new_entries = [
+        {"isbn": m.get("isbn") or "", "title": sanitize_title(m["title"]), "title_raw": m["title"]}
+        for m in extracted
+    ]
     if args.overwrite:
         book_list = new_entries
     else:
         existing_list = load_json(BOOK_LIST_PATH, [])
         existing_titles = {e["title"] for e in existing_list}
         book_list = existing_list + [e for e in new_entries if e["title"] not in existing_titles]
-
     save_json(BOOK_LIST_PATH, book_list)
     print(f"\n{len(book_list)} total entries in {BOOK_LIST_PATH.name}")
 
-    # Step 3: enrich and write book_details.json — keyed by ISBN
+    if not to_enrich:
+        print("Nothing new to enrich.")
+        return
+
+    # Step 3: enrich — Google Books for metadata, epub file for cover image
     book_details = {} if args.overwrite else load_json(BOOK_DETAILS_PATH, {})
+    print(f"\nEnriching {len(to_enrich)} book(s)...")
 
-    has_isbn = [m for m in to_enrich if m.get("isbn")]
-    needs_search = [m for m in to_enrich if not m.get("isbn")]
+    def enrich_one(meta: dict):
+        epub_title = sanitize_title(meta["title"])
+        epub_isbn = meta.get("isbn")
+        epub_path = meta["epub_path"]
 
-    print(f"\n{len(has_isbn)} books have ISBNs — fetching in one batch call...")
-    if has_isbn:
-        batch_results = fetch_by_isbns([m["isbn"] for m in has_isbn])
-        for meta in has_isbn:
-            isbn = meta["isbn"]
-            enriched = batch_results.get(isbn, {})
-            book_details[isbn] = {
-                "id": book_details.get(isbn, {}).get("id") or str(uuid.uuid4()),
-                "title": sanitize_title(meta["title"]),
-                "author": meta["author"],
-                "isbn": isbn,
-                "year": enriched.get("year") or meta.get("year") or book_details.get(isbn, {}).get("year"),
-                "tags": book_details.get(isbn, {}).get("tags") or [],
-                "description": enriched.get("description") or book_details.get(isbn, {}).get("description") or "",
-            }
-        print(f"  -> got descriptions for {sum(1 for m in has_isbn if book_details[m['isbn']]['description'])} of {len(has_isbn)}")
+        result = fetch_google_book(
+            isbn=epub_isbn,
+            title=meta["title"],
+            author=meta.get("author", ""),
+            epub_year=meta.get("year"),
+            api_key=api_key,
+        )
 
-    print(f"\n{len(needs_search)} books need a search (no ISBN in epub)...")
-    if needs_search:
-        def search_and_update(meta):
-            result = search_open_library(meta["title"], meta["author"])
-            isbn = result.get("isbn")
-            found = "isbn + description" if isbn and result.get("description") else "isbn" if isbn else "nothing"
-            print(f"  -> {meta['title']}: found {found}")
+        isbn = (result.get("isbn") if result else None) or epub_isbn
+        # Use ISBN as cover filename if available, otherwise a sanitized title slug
+        cover_key = isbn or re.sub(r'[^\w]', '_', epub_title)[:60]
+        cover_url = extract_epub_cover(epub_path, cover_key)
+
+        flags = ", ".join(f for f, v in [("cover", cover_url), ("desc", result and result.get("description"))] if v)
+
+        if result is None:
+            print(f"  [miss] {epub_title}: no result from Google Books{': ' + flags if flags else ''}")
             if isbn:
                 existing = book_details.get(isbn, {})
                 book_details[isbn] = {
                     "id": existing.get("id") or str(uuid.uuid4()),
-                    "title": sanitize_title(meta["title"]),
-                    "author": meta["author"],
+                    "title": epub_title,
+                    "author": meta.get("author", "Unknown"),
                     "isbn": isbn,
-                    "year": result.get("year") or meta.get("year") or existing.get("year"),
+                    "year": meta.get("year") or existing.get("year"),
                     "tags": existing.get("tags") or [],
-                    "description": result.get("description") or existing.get("description") or "",
+                    "description": existing.get("description") or "",
+                    "coverUrl": cover_url or existing.get("coverUrl"),
                 }
+            return
 
-        # Network requests are I/O-bound, so we parallelize with a small pool
-        # rather than waiting on each one sequentially.
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            futures = {executor.submit(search_and_update, meta): meta for meta in needs_search}
-            for f in as_completed(futures):
-                f.result()
+        if not isbn:
+            print(f"  [miss] {epub_title}: Google Books returned no ISBN")
+            return
 
-    # Step 4: fetch cover URLs from Google Books
-    isbns_needing_covers = [isbn for isbn in book_details if not book_details[isbn].get("coverUrl")]
-    if isbns_needing_covers:
-        print(f"\nFetching cover URLs from Google Books for {len(isbns_needing_covers)} books...")
-        cover_urls: dict[str, str] = {}
+        print(f"  [ok]   {epub_title} ({isbn}){': ' + flags if flags else ''}")
+        existing = book_details.get(isbn, {})
+        book_details[isbn] = {
+            "id": existing.get("id") or str(uuid.uuid4()),
+            "title": result.get("title") or epub_title,
+            "author": (result["author"] if result.get("author") and not _author_looks_mangled(result["author"]) else None) or meta.get("author", "Unknown"),
+            "isbn": isbn,
+            "year": result.get("year") or existing.get("year"),
+            "tags": existing.get("tags") or [],
+            "description": result.get("description") or existing.get("description") or "",
+            "coverUrl": cover_url or existing.get("coverUrl"),
+        }
 
-        def fetch_one_cover(isbn):
-            url, reason = fetch_cover_url(isbn, google_api_key)
-            title = book_details.get(isbn, {}).get("title", isbn)
-            if url:
-                cover_urls[isbn] = url
-                print(f"  [ok]   {title} ({isbn})")
-            else:
-                print(f"  [miss] {title} ({isbn}): {reason}")
-
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            futures = [executor.submit(fetch_one_cover, isbn) for isbn in isbns_needing_covers]
-            for f in as_completed(futures):
-                f.result()
-
-        for isbn, url in cover_urls.items():
-            book_details[isbn]["coverUrl"] = url
-        print(f"  -> found covers for {len(cover_urls)} of {len(isbns_needing_covers)}")
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [executor.submit(enrich_one, meta) for meta in to_enrich]
+        for f in as_completed(futures):
+            f.result()
 
     save_json(BOOK_DETAILS_PATH, book_details)
 
@@ -381,14 +420,15 @@ def main():
         save_json(BOOK_LIST_PATH, book_list)
         print(f"\nUpdated {updated} ISBN(s) in {BOOK_LIST_PATH.name}")
 
+    covered = sum(1 for v in book_details.values() if v.get("coverUrl"))
     no_isbn = [e["title"] for e in book_list if not e["isbn"]]
     print(f"\nDone. {len(book_details)} entries in {BOOK_DETAILS_PATH.name}")
+    print(f"  {covered}/{len(book_details)} have cover images")
     if no_isbn:
-        print(f"  {len(no_isbn)} book(s) with no ISBN after enrichment:")
+        print(f"  {len(no_isbn)} book(s) with no ISBN:")
         for title in no_isbn:
             print(f"    - {title}")
     print("Next step: open book_details.json, fill in the 'tags' arrays, then run the seed script.")
-
 
 
 if __name__ == "__main__":

@@ -49,17 +49,17 @@ export default function BookShelf({ books }: { books: Book[] }) {
             className="flex items-start justify-between gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-800"
           >
             {book.coverUrl ? (
-              <div className="shrink-0 w-12 h-16 relative rounded overflow-hidden bg-gray-100 dark:bg-gray-800">
+              <div className="shrink-0 w-24 h-30 relative rounded overflow-hidden bg-gray-100 dark:bg-gray-800">
                 <Image
                   src={book.coverUrl}
                   alt={`Cover of ${book.title}`}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   unoptimized
                 />
               </div>
             ) : (
-              <div className="shrink-0 w-12 h-16 rounded bg-gray-100 dark:bg-gray-800" />
+              <div className="shrink-0 w-24 h-30 rounded bg-gray-100 dark:bg-gray-800" />
             )}
             <div className="min-w-0 flex-1">
               <p className="font-semibold leading-snug">{book.title}</p>

@@ -32,6 +32,7 @@ if (existsSync(envPath)) {
 const args = process.argv.slice(2)
 const envFlagIndex = args.indexOf("--env")
 const env = envFlagIndex !== -1 ? args[envFlagIndex + 1] : "development"
+const wipe = args.includes("--wipe")
 
 if (!["development", "preview", "production"].includes(env)) {
   console.error(`Invalid --env value: "${env}". Must be development, preview, or production.`)
@@ -55,6 +56,18 @@ async function main() {
   console.log(`Seeding ${books.length} books into Redis namespace "${env}"...\n`)
 
   const redis = Redis.fromEnv()
+
+  if (wipe) {
+    console.log(`Wiping all keys in namespace "${env}"...`)
+    const keys = await redis.keys(`${env}:*`)
+    if (keys.length > 0) {
+      await redis.del(...keys)
+      console.log(`  Deleted ${keys.length} key(s).\n`)
+    } else {
+      console.log(`  Nothing to delete.\n`)
+    }
+  }
+
   let seeded = 0
   let skipped = 0
 

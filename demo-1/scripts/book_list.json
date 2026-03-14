@@ -113,5 +113,200 @@
     "isbn": "9781835887905",
     "title": "Unlocking Data with Generative AI and RAG",
     "title_raw": "Unlocking Data with Generative AI and RAG"
+  },
+  {
+    "isbn": "9781718503236",
+    "title": "Algorithmic Thinking",
+    "title_raw": "Algorithmic Thinking, 2nd Edition"
+  },
+  {
+    "isbn": "9781718502116",
+    "title": "The Art of Machine Learning: A Hands-On Guide to Machine Learning with R",
+    "title_raw": "The Art of Machine Learning: A Hands-On Guide to Machine Learning with R"
+  },
+  {
+    "isbn": "9781718503250",
+    "title": "The Art of Randomness: Randomized Algorithms in the Real World",
+    "title_raw": "The Art of Randomness: Randomized Algorithms in the Real World"
+  },
+  {
+    "isbn": "",
+    "title": "Art of R Programming",
+    "title_raw": "Art of R Programming"
+  },
+  {
+    "isbn": "9781593279578",
+    "title": "Bayesian Statistics the Fun Way: Understanding Statistics and Probability with Star Wars®, LEGO®, and Rubber Ducks",
+    "title_raw": "Bayesian Statistics the Fun Way: Understanding Statistics and Probability with Star Wars®, LEGO®, and Rubber Ducks"
+  },
+  {
+    "isbn": "9781718500730",
+    "title": "Deep Learning",
+    "title_raw": "Deep Learning"
+  },
+  {
+    "isbn": "9781718500693",
+    "title": "Dive into Algorithms",
+    "title_raw": "Dive into Algorithms"
+  },
+  {
+    "isbn": "9781718502895",
+    "title": "Dive Into Data Science",
+    "title_raw": "Dive Into Data Science"
+  },
+  {
+    "isbn": "9781718503731",
+    "title": "How AI Works: From Sorcery to Science",
+    "title_raw": "How AI Works: From Sorcery to Science"
+  },
+  {
+    "isbn": "9781593278915",
+    "title": "Impractical Python Projects: Playful Programming Activities to Make You Smarter",
+    "title_raw": "Impractical Python Projects: Playful Programming Activities to Make You Smarter"
+  },
+  {
+    "isbn": "9781593273491",
+    "title": "Land of Lisp",
+    "title_raw": "Land of Lisp"
+  },
+  {
+    "isbn": "9781593272951",
+    "title": "Learn You a Haskell for Great Good!",
+    "title_raw": "Learn You a Haskell for Great Good!"
+  },
+  {
+    "isbn": "9781718503779",
+    "title": "Machine Learning Q and AI: 30 Essential Questions and Answers on Machine Learning and AI",
+    "title_raw": "Machine Learning Q and AI: 30 Essential Questions and Answers on Machine Learning and AI"
+  },
+  {
+    "isbn": "9781718501911",
+    "title": "Math for Deep Learning: What You Need to Know to Understand Neural Networks",
+    "title_raw": "Math for Deep Learning: What You Need to Know to Understand Neural Networks"
+  },
+  {
+    "isbn": "9781718500754",
+    "title": "Practical Deep Learning: A Python-Based Introduction",
+    "title_raw": "Practical Deep Learning: A Python-Based Introduction"
+  },
+  {
+    "isbn": "9781718502765",
+    "title": "Practical Julia: A Hands-On Introduction for Scientific Minds",
+    "title_raw": "Practical Julia: A Hands-On Introduction for Scientific Minds"
+  },
+  {
+    "isbn": "9781718500631",
+    "title": "Real-World Python: A Hacker’s Guide to Solving Problems with Code",
+    "title_raw": "Real-World Python: A Hacker’s Guide to Solving Problems with Code"
+  },
+  {
+    "isbn": "9781718503090",
+    "title": "The Shape of Data",
+    "title_raw": "The Shape of Data"
+  },
+  {
+    "isbn": "9781593276515",
+    "title": "The Book of R",
+    "title_raw": "The Book of R"
+  },
+  {
+    "isbn": "",
+    "title": "The Art of Unit Testing 3e",
+    "title_raw": "The Art of Unit Testing 3e"
+  },
+  {
+    "isbn": "9781633438064",
+    "title": "Build a Frontend Web Framework (From Scratch)",
+    "title_raw": "Build a Frontend Web Framework (From Scratch)"
+  },
+  {
+    "isbn": "9781633436961",
+    "title": "Build a Website with ChatGPT",
+    "title_raw": "Build a Website with ChatGPT"
+  },
+  {
+    "isbn": "9781638351351",
+    "title": "D3.js in Action",
+    "title_raw": "D3.js in Action"
+  },
+  {
+    "isbn": "9781617296284",
+    "title": "Designing APIs with Swagger and OpenAPI",
+    "title_raw": "Designing APIs with Swagger and OpenAPI"
+  },
+  {
+    "isbn": "",
+    "title": "The Design of Web APIs Version 1",
+    "title_raw": "The Design of Web APIs Version 1"
+  },
+  {
+    "isbn": "",
+    "title": "Essential TypeScript 5",
+    "title_raw": "Essential TypeScript 5, Third Edition"
+  },
+  {
+    "isbn": "9781617297038",
+    "title": "Full Stack GraphQL Applications",
+    "title_raw": "Full Stack GraphQL Applications"
+  },
+  {
+    "isbn": "9781638353591",
+    "title": "Functional Programming in JavaScript",
+    "title_raw": "Functional Programming in JavaScript"
+  },
+  {
+    "isbn": "9781638353423",
+    "title": "Get Programming with JavaScript",
+    "title_raw": "Get Programming with JavaScript"
+  },
+  {
+    "isbn": "9781633438262",
+    "title": "Grokking Web Application Security",
+    "title_raw": "Grokking Web Application Security"
+  },
+  {
+    "isbn": "9781617298882",
+    "title": "The Jamstack Book",
+    "title_raw": "The Jamstack Book"
+  },
+  {
+    "isbn": "",
+    "title": "JavaScript on Things: Hacking hardware for web developers",
+    "title_raw": "JavaScript on Things: Hacking hardware for web developers"
+  },
+  {
+    "isbn": "9781633437340",
+    "title": "React in Depth",
+    "title_raw": "React in Depth"
+  },
+  {
+    "isbn": "",
+    "title": "React Quickly",
+    "title_raw": "React Quickly, Second Edition"
+  },
+  {
+    "isbn": "9781638351825",
+    "title": "Rust Web Development",
+    "title_raw": "Rust Web Development"
+  },
+  {
+    "isbn": "",
+    "title": "Secrets of the JavaScript Ninja",
+    "title_raw": "Secrets of the JavaScript Ninja, Second Edition"
+  },
+  {
+    "isbn": "",
+    "title": "Single Page Web Applications: JavaScript end-to-end",
+    "title_raw": "Single Page Web Applications: JavaScript end-to-end"
+  },
+  {
+    "isbn": "9781638356653",
+    "title": "Building User-Friendly DSLs",
+    "title_raw": "Building User-Friendly DSLs"
+  },
+  {
+    "isbn": "",
+    "title": "Web Design Playground epub",
+    "title_raw": "Web Design Playground epub"
   }
 ]
