@@ -8,6 +8,7 @@ export type Book = {
   year: number | null
   tags: string[]
   description: string
+  coverUrl?: string
   votes: number
 }
 

@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """
-Extract book metadata from epub files and enrich via Open Library.
+Extract book metadata from epub files, enrich via Open Library, and fetch cover URLs from Google Books.
 
 Usage:
     python scripts/extract_books.py /path/to/epub/folder
-    python scripts/extract_books.py /path/to/epub/folder --enrich
-    python scripts/extract_books.py /path/to/epub/folder --enrich --overwrite
+    python scripts/extract_books.py --bundle "Bundle Name"   # uses BOOKS_DIR from .env.local
+    python scripts/extract_books.py --bundle "Bundle Name" --overwrite
+    python scripts/extract_books.py --bundle "Bundle Name" --force   # re-fetch all, even known books
 
 Outputs:
-    scripts/book_list.json   — array of {isbn, title} from epub metadata. isbn may be empty.
-                               Appended by default; use --overwrite to replace.
-    scripts/book_details.json — dict keyed by ISBN with full book data.
-                               Only written when --enrich is passed.
-                               Merged by default; use --overwrite to replace.
+    scripts/book_list.json    — array of {isbn, title} from epub metadata. isbn may be empty.
+                                Appended by default; use --overwrite to replace.
+    scripts/book_details.json — dict keyed by ISBN with full book data incl. coverUrl.
+                                Merged by default; use --overwrite to replace.
 
 Requirements:
     pip install requests
@@ -21,6 +21,7 @@ Requirements:
 import argparse
 import json
 import re
+import time
 import uuid
 import zipfile
 import xml.etree.ElementTree as ET
@@ -37,6 +38,24 @@ NS = {
 SCRIPTS_DIR = Path(__file__).parent
 BOOK_LIST_PATH = SCRIPTS_DIR / "book_list.json"
 BOOK_DETAILS_PATH = SCRIPTS_DIR / "book_details.json"
+
+
+def load_env_local() -> dict[str, str]:
+    """Load key=value pairs from .env.local in the project root."""
+    env_path = SCRIPTS_DIR.parent / ".env.local"
+    result = {}
+    if not env_path.exists():
+        return result
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        match = re.match(r'^([^=]+)=(.*)$', line)
+        if match:
+            key = match.group(1).strip()
+            value = match.group(2).strip().strip('"').strip("'")
+            result[key] = value
+    return result
 
 
 def extract_epub_metadata(epub_path: Path) -> dict | None:
@@ -110,6 +129,42 @@ def fetch_by_isbns(isbns: list[str]) -> dict[str, dict]:
     return results
 
 
+def fetch_cover_url(isbn: str, api_key: str | None = None) -> tuple[str | None, str]:
+    """Fetch book cover thumbnail URL from Google Books API. Returns (url, reason)."""
+    params: dict = {"q": f"isbn:{isbn}", "fields": "items/volumeInfo/imageLinks"}
+    if api_key:
+        params["key"] = api_key
+
+    for attempt in range(3):
+        try:
+            response = requests.get(
+                "https://www.googleapis.com/books/v1/volumes",
+                params=params,
+                timeout=10,
+            )
+            if response.status_code == 429:
+                wait = 2 ** attempt
+                print(f"  [429] rate limited, retrying in {wait}s...")
+                time.sleep(wait)
+                continue
+            response.raise_for_status()
+            data = response.json()
+            items = data.get("items", [])
+            if not items:
+                return None, f"no items in response (keys: {list(data.keys())})"
+            links = items[0].get("volumeInfo", {}).get("imageLinks", {})
+            if not links:
+                return None, "items found but no imageLinks"
+            url = links.get("thumbnail") or links.get("smallThumbnail")
+            if not url:
+                return None, f"imageLinks present but no thumbnail/smallThumbnail (keys: {list(links.keys())})"
+            return url.replace("http://", "https://"), "ok"
+        except Exception as e:
+            return None, f"exception: {e}"
+
+    return None, "failed after 3 retries (429)"
+
+
 def sanitize_title(title: str) -> str:
     """Strip edition suffixes and separators from a title."""
     return re.sub(r'[,\s–_-]+\s*(second|third|fourth|fifth|sixth|\d+(st|nd|rd|th))\s+edition.*', '', title, flags=re.IGNORECASE).strip()
@@ -174,12 +229,25 @@ def save_json(path: Path, data):
 
 def main():
     parser = argparse.ArgumentParser(description="Extract book metadata from epub files.")
-    parser.add_argument("folder", help="Path to folder containing epub files")
-    parser.add_argument("--enrich", action="store_true", help="Enrich metadata via Open Library API")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("folder", nargs="?", help="Path to folder containing epub files")
+    group.add_argument("--bundle", metavar="NAME", help="Bundle subfolder name — combined with BOOKS_DIR from .env.local")
     parser.add_argument("--overwrite", action="store_true", help="Overwrite output files instead of appending/merging")
+    parser.add_argument("--force", action="store_true", help="Re-fetch API data for all books, even ones already in book_list.json")
     args = parser.parse_args()
 
-    folder = Path(args.folder)
+    env = load_env_local()
+    google_api_key = env.get("GOOGLE_BOOKS_API_KEY") or None
+
+    if args.bundle:
+        books_dir = env.get("BOOKS_DIR") or ""
+        if not books_dir:
+            print("Error: BOOKS_DIR not set in .env.local")
+            return
+        folder = Path(books_dir) / args.bundle
+    else:
+        folder = Path(args.folder)
+
     if not folder.is_dir():
         print(f"Error: {folder} is not a directory")
         return
@@ -198,6 +266,22 @@ def main():
         status = f"isbn: {meta['isbn']}" if meta.get("isbn") else "no isbn in epub"
         print(f"  -> {meta['title']} ({status})")
 
+    # Determine which books need API enrichment (skip already-known ones unless --force)
+    if args.force or args.overwrite:
+        to_enrich = extracted
+    else:
+        existing_list = load_json(BOOK_LIST_PATH, [])
+        known_isbns = {e["isbn"] for e in existing_list if e.get("isbn")}
+        known_title_raws = {e.get("title_raw", e["title"]) for e in existing_list}
+        to_enrich = [
+            m for m in extracted
+            if (m.get("isbn") and m["isbn"] not in known_isbns)
+            or (not m.get("isbn") and m["title"] not in known_title_raws)
+        ]
+        skipped = len(extracted) - len(to_enrich)
+        if skipped:
+            print(f"Skipping {skipped} already-known book(s) — use --force to re-fetch.\n")
+
     # Step 2: write book_list.json — {isbn, title (sanitized), title_raw} per book
     new_entries = [{"isbn": m.get("isbn") or "", "title": sanitize_title(m["title"]), "title_raw": m["title"]} for m in extracted]
 
@@ -211,17 +295,11 @@ def main():
     save_json(BOOK_LIST_PATH, book_list)
     print(f"\n{len(book_list)} total entries in {BOOK_LIST_PATH.name}")
 
-    if not args.enrich:
-        isbn_count = sum(1 for e in new_entries if e["isbn"])
-        print(f"{isbn_count}/{len(new_entries)} new books had an ISBN in their epub metadata.")
-        print("Run with --enrich to populate book_details.json.")
-        return
-
     # Step 3: enrich and write book_details.json — keyed by ISBN
     book_details = {} if args.overwrite else load_json(BOOK_DETAILS_PATH, {})
 
-    has_isbn = [m for m in extracted if m.get("isbn")]
-    needs_search = [m for m in extracted if not m.get("isbn")]
+    has_isbn = [m for m in to_enrich if m.get("isbn")]
+    needs_search = [m for m in to_enrich if not m.get("isbn")]
 
     print(f"\n{len(has_isbn)} books have ISBNs — fetching in one batch call...")
     if has_isbn:
@@ -266,6 +344,30 @@ def main():
             for f in as_completed(futures):
                 f.result()
 
+    # Step 4: fetch cover URLs from Google Books
+    isbns_needing_covers = [isbn for isbn in book_details if not book_details[isbn].get("coverUrl")]
+    if isbns_needing_covers:
+        print(f"\nFetching cover URLs from Google Books for {len(isbns_needing_covers)} books...")
+        cover_urls: dict[str, str] = {}
+
+        def fetch_one_cover(isbn):
+            url, reason = fetch_cover_url(isbn, google_api_key)
+            title = book_details.get(isbn, {}).get("title", isbn)
+            if url:
+                cover_urls[isbn] = url
+                print(f"  [ok]   {title} ({isbn})")
+            else:
+                print(f"  [miss] {title} ({isbn}): {reason}")
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            futures = [executor.submit(fetch_one_cover, isbn) for isbn in isbns_needing_covers]
+            for f in as_completed(futures):
+                f.result()
+
+        for isbn, url in cover_urls.items():
+            book_details[isbn]["coverUrl"] = url
+        print(f"  -> found covers for {len(cover_urls)} of {len(isbns_needing_covers)}")
+
     save_json(BOOK_DETAILS_PATH, book_details)
 
     # Update book_list.json with any ISBNs found during enrichment
@@ -286,6 +388,7 @@ def main():
         for title in no_isbn:
             print(f"    - {title}")
     print("Next step: open book_details.json, fill in the 'tags' arrays, then run the seed script.")
+
 
 
 if __name__ == "__main__":

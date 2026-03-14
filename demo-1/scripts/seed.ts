@@ -42,7 +42,7 @@ const key = (k: string) => `${env}:${k}`
 
 const detailsPath = resolve(__dirname, "book_details.json")
 if (!existsSync(detailsPath)) {
-  console.error("book_details.json not found. Run extract_books.py --enrich first.")
+  console.error("book_details.json not found. Run extract_books.py first.")
   process.exit(1)
 }
 
