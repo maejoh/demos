@@ -1,6 +1,7 @@
 import BookShelf from "@/app/components/BookShelf"
-import { mockBooks } from "@/lib/books"
+import { fetchBooks } from "@/lib/books"
 
-export default function Page() {
-  return <BookShelf books={mockBooks} />
+export default async function Page() {
+  const books = await fetchBooks()
+  return <BookShelf books={books} />
 }

@@ -1,36 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BookShelf — [live demo](https://redis-roadmap-seven-inky.vercel.app/)
 
-## Getting Started
+A personal technical reading list, built from a collection of epub files. Browse books by category, see cover art and descriptions, and upvote anything worth recommending.
 
-First, run the development server:
+![BookShelf screenshot](public/demo-1-screenshot-1.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## What it does
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Displays a browsable list of books with covers, titles, authors, and descriptions
+- Books are grouped by subject (AI, web dev, computer science, math, etc.)
+- Anyone can upvote a book — votes persist in Redis and survive page refreshes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How it's built
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Frontend:** Next.js (App Router) + TypeScript + Tailwind CSS, deployed on Vercel.
 
-## Learn More
+**Data:** Book metadata and vote counts are stored in [Upstash Redis](https://upstash.com/). The database is namespaced by environment so development, preview, and production stay separate.
 
-To learn more about Next.js, take a look at the following resources:
+**Book pipeline:** A Python script walks a folder of epub files, pulls metadata (title, author, description, year) from each file's embedded OPF manifest, enriches it via the Google Books API, and extracts the cover image directly from the epub zip. The results get seeded into Redis via a TypeScript seed script. Cover images are committed to the repo and served as static assets — no external image CDN needed at runtime.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 16 / React 19
+- TypeScript
+- Tailwind CSS v4
+- Upstash Redis
+- Python (data pipeline, not deployed)

@@ -7,7 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint:fix": "eslint --fix",
+    "seed": "tsx scripts/seed.ts",
+    "seed:preview": "tsx scripts/seed.ts --env preview",
+    "seed:prod": "tsx scripts/seed.ts --env production",
+    "extract": "python scripts/extract_books.py",
+    "extract:llm": "python scripts/extract_books.py --bundle \"LLM and Agentic AI Career Accelerator Bundle\"",
+    "extract:sql": "python scripts/extract_books.py --bundle \"SQL and databases by o'reilly\"",
+    "extract:web": "python scripts/extract_books.py --bundle \"Serious Web Development\"",
+    "extract:math": "python scripts/extract_books.py --bundle \"Math for programming\"",
+    "extract:react": "python scripts/extract_books.py --bundle \"The ultimate guide to react.js\"",
+    "extract:arch": "python scripts/extract_books.py --bundle \"Software architecture 2024\"",
+    "extract:ml": "python scripts/extract_books.py --bundle \"Machine learning and AI\"",
+    "extract:mit": "python scripts/extract_books.py --bundle \"Essential Knowledge, Learn Something New by MIT\""
   },
   "dependencies": {
     "@upstash/redis": "^1.37.0",
@@ -23,6 +35,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
+    "tsx": "^4",
     "typescript": "^5"
   }
 }
