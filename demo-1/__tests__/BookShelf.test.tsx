@@ -1,0 +1,101 @@
+import { describe, it, expect, vi } from "vitest"
+import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
+import BookShelf from "@/app/components/BookShelf"
+import type { Book } from "@/lib/books"
+
+// next/image does server-side optimisation that doesn't work in jsdom
+vi.mock("next/image", () => ({
+  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+}))
+
+const makeBook = (overrides: Partial<Book> = {}): Book => ({
+  id: "1",
+  title: "Test Book",
+  author: "Some Author",
+  isbn: "9781234567890",
+  year: 2020,
+  tags: ["JavaScript"],
+  description: "A test book",
+  votes: 0,
+  ...overrides,
+})
+
+// three books across three tags — used by most tests
+const books: Book[] = [
+  makeBook({ id: "1", title: "Alpha", tags: ["JavaScript"] }),
+  makeBook({ id: "2", title: "Beta", tags: ["TypeScript"] }),
+  makeBook({ id: "3", title: "Gamma", tags: ["JavaScript", "React"] }),
+]
+
+describe("BookShelf", () => {
+  it("renders all books on initial load", () => {
+    render(<BookShelf books={books} />)
+    expect(screen.getByText("Alpha")).toBeInTheDocument()
+    expect(screen.getByText("Beta")).toBeInTheDocument()
+    expect(screen.getByText("Gamma")).toBeInTheDocument()
+  })
+
+  it("renders one tag button per unique tag, plus All", () => {
+    render(<BookShelf books={books} />)
+    expect(screen.getByRole("button", { name: "All" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "JavaScript" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "TypeScript" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "React" })).toBeInTheDocument()
+  })
+
+  it("filters to matching books when a tag is clicked", async () => {
+    const user = userEvent.setup()
+    render(<BookShelf books={books} />)
+
+    await user.click(screen.getByRole("button", { name: "TypeScript" }))
+
+    expect(screen.queryByText("Alpha")).not.toBeInTheDocument()
+    expect(screen.getByText("Beta")).toBeInTheDocument()
+    expect(screen.queryByText("Gamma")).not.toBeInTheDocument()
+  })
+
+  it("shows all books again when clicking the active tag a second time", async () => {
+    const user = userEvent.setup()
+    render(<BookShelf books={books} />)
+
+    await user.click(screen.getByRole("button", { name: "JavaScript" }))
+    await user.click(screen.getByRole("button", { name: "JavaScript" }))
+
+    expect(screen.getByText("Alpha")).toBeInTheDocument()
+    expect(screen.getByText("Beta")).toBeInTheDocument()
+    expect(screen.getByText("Gamma")).toBeInTheDocument()
+  })
+
+  it("shows all books when the All button is clicked", async () => {
+    const user = userEvent.setup()
+    render(<BookShelf books={books} />)
+
+    await user.click(screen.getByRole("button", { name: "TypeScript" }))
+    await user.click(screen.getByRole("button", { name: "All" }))
+
+    expect(screen.getByText("Alpha")).toBeInTheDocument()
+    expect(screen.getByText("Beta")).toBeInTheDocument()
+    expect(screen.getByText("Gamma")).toBeInTheDocument()
+  })
+
+  it("increments the vote count when +1 is clicked", async () => {
+    const user = userEvent.setup()
+    // use a non-default vote count that doesn't appear elsewhere in the test fixture
+    render(<BookShelf books={[makeBook({ votes: 42 })]} />)
+
+    expect(screen.getByText("42")).toBeInTheDocument()
+    await user.click(screen.getByRole("button", { name: /\+1/ }))
+    expect(screen.getByText("43")).toBeInTheDocument()
+  })
+
+  it("renders a cover image when coverUrl is present", () => {
+    render(<BookShelf books={[makeBook({ title: "Covered", coverUrl: "/covers/test.jpg" })]} />)
+    expect(screen.getByAltText("Cover of Covered")).toBeInTheDocument()
+  })
+
+  it("renders a placeholder instead of an image when coverUrl is absent", () => {
+    render(<BookShelf books={[makeBook({ coverUrl: undefined })]} />)
+    expect(screen.queryByRole("img")).not.toBeInTheDocument()
+  })
+})

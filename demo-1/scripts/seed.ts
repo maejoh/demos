@@ -14,48 +14,18 @@
 
 import { readFileSync, existsSync } from "fs"
 import { resolve } from "path"
+import { fileURLToPath } from "url"
 import { Redis } from "@upstash/redis"
 import type { Book } from "../lib/books"
 
-// Load .env.local when running locally (Vercel sets env vars automatically)
-const envPath = resolve(process.cwd(), ".env.local")
-if (existsSync(envPath)) {
-  for (const rawLine of readFileSync(envPath, "utf-8").split("\n")) {
-    const line = rawLine.trim()
-    const match = line.match(/^([^#\s][^=]*)=(.*)$/)
-    if (match) {
-      process.env[match[1].trim()] = match[2].trim().replace(/^["']|["']$/g, "")
-    }
-  }
-}
-
-const args = process.argv.slice(2)
-const envFlagIndex = args.indexOf("--env")
-const env = envFlagIndex !== -1 ? args[envFlagIndex + 1] : "development"
-const wipe = args.includes("--wipe")
-
-if (!["development", "preview", "production"].includes(env)) {
-  console.error(`Invalid --env value: "${env}". Must be development, preview, or production.`)
-  process.exit(1)
-}
-
-const key = (k: string) => `${env}:${k}`
-
-const detailsPath = resolve(__dirname, "book_details.json")
-if (!existsSync(detailsPath)) {
-  console.error("book_details.json not found. Run extract_books.py first.")
-  process.exit(1)
-}
-
-const bookDetails: Record<string, Omit<Book, "votes">> = JSON.parse(
-  readFileSync(detailsPath, "utf-8")
-)
-
-async function main() {
+export async function seedBooks(
+  redis: Redis,
+  bookDetails: Record<string, Omit<Book, "votes">>,
+  env: string,
+  wipe: boolean
+): Promise<{ seeded: number; skipped: number }> {
+  const key = (k: string) => `${env}:${k}`
   const books = Object.values(bookDetails)
-  console.log(`Seeding ${books.length} books into Redis namespace "${env}"...\n`)
-
-  const redis = Redis.fromEnv()
 
   if (wipe) {
     console.log(`Wiping all keys in namespace "${env}"...`)
@@ -94,8 +64,53 @@ async function main() {
     seeded++
   }
 
+  return { seeded, skipped }
+}
+
+async function main() {
+  // Load .env.local when running locally (Vercel sets env vars automatically)
+  const envPath = resolve(process.cwd(), ".env.local")
+  if (existsSync(envPath)) {
+    for (const rawLine of readFileSync(envPath, "utf-8").split("\n")) {
+      const line = rawLine.trim()
+      const match = line.match(/^([^#\s][^=]*)=(.*)$/)
+      if (match) {
+        process.env[match[1].trim()] = match[2].trim().replace(/^["']|["']$/g, "")
+      }
+    }
+  }
+
+  const args = process.argv.slice(2)
+  const envFlagIndex = args.indexOf("--env")
+  const env = envFlagIndex !== -1 ? args[envFlagIndex + 1] : "development"
+  const wipe = args.includes("--wipe")
+
+  if (!["development", "preview", "production"].includes(env)) {
+    console.error(`Invalid --env value: "${env}". Must be development, preview, or production.`)
+    process.exit(1)
+  }
+
+  const detailsPath = resolve(__dirname, "book_details.json")
+  if (!existsSync(detailsPath)) {
+    console.error("book_details.json not found. Run extract_books.py first.")
+    process.exit(1)
+  }
+
+  const bookDetails: Record<string, Omit<Book, "votes">> = JSON.parse(
+    readFileSync(detailsPath, "utf-8")
+  )
+
+  const books = Object.values(bookDetails)
+  console.log(`Seeding ${books.length} books into Redis namespace "${env}"...\n`)
+
+  const redis = Redis.fromEnv()
+  const { seeded, skipped } = await seedBooks(redis, bookDetails, env, wipe)
+
   console.log(`\nDone. ${seeded} seeded, ${skipped} skipped (no ISBN).`)
   console.log(`Keys are prefixed with "${env}:".`)
 }
 
-main()
+// only run when executed directly, not when imported by tests
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main()
+}
