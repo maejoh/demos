@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "vitest",
+    "test": "vitest --run && pytest tests/scripts/test_extract_books.py -v",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "seed": "tsx scripts/seed.ts",

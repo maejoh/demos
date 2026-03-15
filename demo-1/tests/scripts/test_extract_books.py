@@ -176,6 +176,7 @@ class TestExtractEpubMetadata:
 
         result = extract_epub_metadata(epub_path)
 
+        assert result is not None
         assert result["title"] == "Test Book"
         assert result["author"] == "Test Author"
         assert result["isbn"] == "9781234567890"
