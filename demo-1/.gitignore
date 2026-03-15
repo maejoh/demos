@@ -42,3 +42,7 @@ next-env.d.ts
 
 # vscode
 .vscode
+
+# python and pytest
+__pycache__/
+.pytest_cache/
