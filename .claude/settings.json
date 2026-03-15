@@ -1,1 +1,12 @@
-{}
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/gstack/plan-ceo-review\" \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/\")",
+      "Bash(mv \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/gstack/plan-eng-review\" \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/\")",
+      "Bash(mv \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/gstack/qa\" \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/\")",
+      "Bash(mv \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/gstack/review\" \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/\")",
+      "Bash(mv \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/gstack/ship\" \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/\")",
+      "Bash(rmdir \"e:/Users/maejoh/Documents/personal_code/demos/.claude/skills/gstack\")"
+    ]
+  }
+}
