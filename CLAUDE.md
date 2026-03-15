@@ -17,15 +17,15 @@ demos/
 
 ## Workflow (gstack skills)
 
-Install gstack once: `bash scripts/setup-claude.sh`
+Skills live in `.claude/skills/gstack/` (forked from [garrytan/gstack](https://github.com/garrytan/gstack)). Claude Code auto-discovers them — no install step needed.
 
 | Phase | Skill | When to use |
 |---|---|---|
-| Plan | `/plan-eng-review` | Before starting a new demo — architecture, data flow, stack choices |
-| Review | `/review` | Before any push — catches production bugs, enforces self-explanatory UX |
-| Test | `/qa` | After building — systematic test pass from git diff |
-| Ship | `/ship` | When ready — syncs main, runs tests, pushes, opens PR → Vercel deploys |
-| Verify | `/browse` | After deploy — smoke test the live Vercel URL |
+| Concept | `/plan-ceo-review` | Before committing to a new demo — challenge scope, find the 10-star version |
+| Plan | `/plan-eng-review` | Before building — lock architecture, data flow, edge cases |
+| Review | `/review` | Before any push — checks diff against portfolio checklist |
+| Test | `/qa` | After building — systematic test pass scoped to git diff |
+| Ship | `/ship` | When ready — merges main, runs build+lint, reviews, pushes, opens PR |
 
 ## Preferences
 I usually use Claude in 'edit automatically' mode, but I prefer that edits only happen when I explicitly ask for them, and not just when Claude thinks there's a clear answer to my question and assumes that implementing it is what I want it to do next. If I ask a question, answer the question, don't modify the code base yet.
