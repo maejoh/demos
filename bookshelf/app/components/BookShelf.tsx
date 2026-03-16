@@ -23,7 +23,19 @@ export default function BookShelf({ books }: { books: Book[] }) {
       <header className="mb-10">
         <h1 className="text-3xl font-bold tracking-tight mb-2">My Technical Library</h1>
         <p className="text-gray-500 dark:text-gray-400">
-          Books I own, am reading, or have read. +1 anything relevant to you.
+          A browsable collection of publications related to programming — AI, LLMs, web dev, systems engineering and architecture, math, and more. Upvote anything that looks interesting to you too! Vote counts are persisted and public, so they reflect the collective interest of everyone who has visited so far.
+        </p>
+        <p className="text-sm text-gray-400 dark:text-gray-500 mt-3">
+          There&apos;s a gremlin inside me that buys tech books whenever Humble Bundle drops a software book bundle. These are all real books I&apos;ve purchased over the last 2 years.{" "}
+          </p><p className="text-sm text-gray-500 dark:text-gray-500 mt-3">
+          <a
+            href="https://github.com/maejoh/demos"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          >
+            View on GitHub →
+          </a>
         </p>
       </header>
 
