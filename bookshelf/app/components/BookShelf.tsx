@@ -5,13 +5,22 @@ import Image from "next/image"
 import type { Book } from "@/lib/books"
 
 export default function BookShelf({ books }: { books: Book[] }) {
-  const [activeTag, setActiveTag] = useState<string | null>(null)
+  const [activeFilter, setActiveFilter] = useState<{ tag: string; field: "tags" | "ai_tags" } | null>(null)
   const [votes, setVotes] = useState<Record<string, number>>(
     Object.fromEntries(books.map((b) => [b.id, b.votes]))
   )
 
   const allTags = Array.from(new Set(books.flatMap((b) => b.tags))).sort()
-  const visible = activeTag ? books.filter((b) => b.tags.includes(activeTag)) : books
+  const allAiTags = Array.from(new Set(books.flatMap((b) => b.ai_tags ?? []))).sort()
+  const visible = activeFilter
+    ? books.filter((b) => (b[activeFilter.field] ?? []).includes(activeFilter.tag))
+    : books
+
+  function handleTagClick(tag: string, field: "tags" | "ai_tags") {
+    setActiveFilter((prev) =>
+      prev?.tag === tag && prev?.field === field ? null : { tag, field }
+    )
+  }
 
   function handleVote(id: string) {
     // TODO: replace with server action that persists to Redis
@@ -39,19 +48,36 @@ export default function BookShelf({ books }: { books: Book[] }) {
         </p>
       </header>
 
-      <div className="flex flex-wrap gap-2 mb-8">
-        <TagButton active={activeTag === null} onClick={() => setActiveTag(null)}>
-          All
-        </TagButton>
-        {allTags.map((tag) => (
-          <TagButton
-            key={tag}
-            active={activeTag === tag}
-            onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-          >
-            {tag}
+      <div className="space-y-3 mb-8">
+        <div className="flex flex-wrap gap-2 items-center">
+          <span className="text-xs text-gray-400 dark:text-gray-500 w-12 shrink-0">Topics</span>
+          <TagButton active={activeFilter === null} onClick={() => setActiveFilter(null)}>
+            All
           </TagButton>
-        ))}
+          {allTags.map((tag) => (
+            <TagButton
+              key={tag}
+              active={activeFilter?.tag === tag && activeFilter?.field === "tags"}
+              onClick={() => handleTagClick(tag, "tags")}
+            >
+              {tag}
+            </TagButton>
+          ))}
+        </div>
+        {allAiTags.length > 0 && (
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-xs text-gray-400 dark:text-gray-500 w-12 shrink-0">AI tags</span>
+            {allAiTags.map((tag) => (
+              <TagButton
+                key={tag}
+                active={activeFilter?.tag === tag && activeFilter?.field === "ai_tags"}
+                onClick={() => handleTagClick(tag, "ai_tags")}
+              >
+                {tag}
+              </TagButton>
+            ))}
+          </div>
+        )}
       </div>
 
       <ul className="space-y-4">
@@ -81,6 +107,14 @@ export default function BookShelf({ books }: { books: Book[] }) {
                   <span
                     key={tag}
                     className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"
+                  >
+                    {tag}
+                  </span>
+                ))}
+                {book.ai_tags?.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-xs px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300"
                   >
                     {tag}
                   </span>
