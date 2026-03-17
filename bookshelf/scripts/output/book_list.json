@@ -5,6 +5,11 @@
     "title_raw": "Azure OpenAI Essentials"
   },
   {
+    "isbn": "9781803238753",
+    "title": "Building Agentic AI Systems",
+    "title_raw": "Building Agentic AI Systems"
+  },
+  {
     "isbn": "9781835884003",
     "title": "Building AI Applications with OpenAI APIs",
     "title_raw": "Building AI Applications with OpenAI APIs"
@@ -30,9 +35,49 @@
     "title_raw": "Generative AI Foundations in Python"
   },
   {
+    "isbn": "9781837022014",
+    "title": "Generative AI with LangChain",
+    "title_raw": "Generative AI with LangChain\n_Second Edition"
+  },
+  {
+    "isbn": "9781835884447",
+    "title": "Generative AI with Python and PyTorch",
+    "title_raw": "Generative AI with Python and PyTorch, Second Edition"
+  },
+  {
+    "isbn": "9781806103225",
+    "title": "Learn Model Context Protocol with Python",
+    "title_raw": "Learn Model Context Protocol with Python"
+  },
+  {
+    "isbn": "9781806661381",
+    "title": "Learn Model Context Protocol with TypeScript",
+    "title_raw": "Learn Model Context Protocol with TypeScript"
+  },
+  {
+    "isbn": "9781835882948",
+    "title": "Learn Python Programming",
+    "title_raw": "Learn Python Programming"
+  },
+  {
     "isbn": "9781836207030",
     "title": "LLM Design Patterns",
     "title_raw": "LLM Design Patterns"
+  },
+  {
+    "isbn": "9781836200062",
+    "title": "LLM Engineer’s Handbook",
+    "title_raw": "LLM Engineer’s Handbook"
+  },
+  {
+    "isbn": "9781836203063",
+    "title": "LLMs in Enterprise",
+    "title_raw": "LLMs in Enterprise"
+  },
+  {
+    "isbn": "9781801816380",
+    "title": "Machine Learning with PyTorch and Scikit-Learn",
+    "title_raw": "Machine Learning with PyTorch and Scikit-Learn"
   },
   {
     "isbn": "9781804619186",
@@ -40,9 +85,29 @@
     "title_raw": "Mastering NLP from Foundations to LLMs"
   },
   {
+    "isbn": "9781836646242",
+    "title": "SQL for Data Analytics",
+    "title_raw": "SQL for Data Analytics"
+  },
+  {
+    "isbn": "9781803240930",
+    "title": "Modern Computer Vision with PyTorch",
+    "title_raw": "Modern Computer Vision with PyTorch_Second Edition"
+  },
+  {
+    "isbn": "9781836647843",
+    "title": "Practical Generative AI with ChatGPT",
+    "title_raw": "Practical Generative AI with ChatGPT\n_Second Edition"
+  },
+  {
     "isbn": "9781836200918",
     "title": "RAG-Driven Generative AI",
     "title_raw": "RAG-Driven Generative AI"
+  },
+  {
+    "isbn": "9781805123743",
+    "title": "Transformers for Natural Language Processing and Computer Vision",
+    "title_raw": "Transformers for Natural Language Processing and Computer Vision_Third Edition"
   },
   {
     "isbn": "9781835887905",

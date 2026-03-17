@@ -116,13 +116,78 @@ def main():
     print(f"\n{len(book_list)} total entries in {BOOK_LIST_PATH.name}")
     if book_list_missing:
         save_json(BOOK_LIST_MANUAL_ISBN_PATH, book_list_missing)
-        print(f"{len(book_list_missing)} entries in {BOOK_LIST_MANUAL_ISBN_PATH.name} (no ISBN — fill in and copy to {BOOK_LIST_PATH.name})")
+        print(f"{len(book_list_missing)} entries in {BOOK_LIST_MANUAL_ISBN_PATH.name} (no ISBN)")
 
     if args.list_only:
         return
 
     # Step 3: enrich — Google Books for metadata, epub file for cover image
     book_details = load_json(BOOK_DETAILS_PATH, {})
+
+    # Step 3a: enrich entries from book_list_manual_isbn.json that aren't yet in book_list.json
+    if book_list_missing:
+        book_list_isbns = {e["isbn"] for e in book_list if e.get("isbn")}
+        manual_added = 0
+        manual_isbn_updated = 0
+        print(f"\nChecking {len(book_list_missing)} manual ISBN entry(s)...")
+
+        for entry in book_list_missing:
+            title = entry.get("title", "")
+            raw_isbn = entry.get("isbn", "").replace("-", "").strip()
+
+            if raw_isbn and raw_isbn in book_list_isbns:
+                continue  # already tracked in book_list.json
+
+            result = fetch_google_book(
+                isbn=raw_isbn or None,
+                title=entry.get("title_raw", title),
+                author="",
+                epub_year=None,
+                api_key=api_key,
+            )
+
+            if result is None:
+                print(f"  [miss] {title}: no result from Google Books")
+                continue
+
+            found_isbn = result.get("isbn") or raw_isbn or None
+            if not found_isbn:
+                print(f"  [miss] {title}: no ISBN returned")
+                continue
+
+            print(f"  [ok]   {title} ({found_isbn})")
+            existing = book_details.get(found_isbn, {})
+            book_details[found_isbn] = {
+                "id": existing.get("id") or str(uuid.uuid4()),
+                "title": result.get("title") or title,
+                "author": (result["author"] if result.get("author") and not _author_looks_mangled(result["author"]) else None) or "Unknown",
+                "isbn": found_isbn,
+                "year": result.get("year") or existing.get("year"),
+                "tags": existing.get("tags") or [],
+                "description": result.get("description") or existing.get("description") or "",
+                "coverUrl": existing.get("coverUrl"),
+            }
+
+            # Update isbn in the manual list entry if it was empty or different
+            if entry.get("isbn", "").replace("-", "").strip() != found_isbn:
+                entry["isbn"] = found_isbn
+                manual_isbn_updated += 1
+
+            # Add to book_list if not already tracked
+            if found_isbn not in book_list_isbns:
+                book_list.append({"isbn": found_isbn, "title": title, "title_raw": entry.get("title_raw", title)})
+                book_list_isbns.add(found_isbn)
+                manual_added += 1
+
+        if manual_added or manual_isbn_updated:
+            save_json(BOOK_LIST_PATH, book_list)
+            save_json(BOOK_LIST_MANUAL_ISBN_PATH, book_list_missing)
+            parts = []
+            if manual_added:
+                parts.append(f"{manual_added} added to {BOOK_LIST_PATH.name}")
+            if manual_isbn_updated:
+                parts.append(f"{manual_isbn_updated} ISBN(s) updated in {BOOK_LIST_MANUAL_ISBN_PATH.name}")
+            print(f"  {', '.join(parts)}")
 
     # Determine which books need enrichment
     if args.mode != "fast":
@@ -142,10 +207,17 @@ def main():
             if effective_isbn and effective_isbn in enriched_isbns:
                 skipped += 1
                 continue
+            epub_title = sanitize_title(m["title"])
+            if effective_isbn:
+                print(f"  [debug] {epub_title}: isbn={effective_isbn}, in enriched_isbns={effective_isbn in enriched_isbns}")
+            else:
+                in_list = m["title"] in list_isbn_by_title_raw
+                print(f"  [debug] {epub_title}: no isbn in epub, title_raw lookup={'found' if in_list else 'miss'}")
             to_enrich.append({**m, "isbn": effective_isbn} if effective_isbn else m)
         if skipped:
             print(f"Skipping {skipped} already-enriched book(s) — use --mode overwrite to re-fetch.")
     book_details_no_isbn: list = []
+    isbn_discovered: dict[str, str] = {}  # epub_title → isbn for books with no epub isbn
     print(f"\nEnriching {len(to_enrich)} book(s)...")
 
     def enrich_one(meta: dict):
@@ -161,7 +233,7 @@ def main():
             api_key=api_key,
         )
 
-        isbn = (result.get("isbn") if result else None) or epub_isbn
+        isbn = epub_isbn or (result.get("isbn") if result else None)
         # Use ISBN as cover filename if available, otherwise a sanitized title slug
         cover_key = isbn or re.sub(r'[^\w]', '_', epub_title)[:60]
         cover_url = extract_epub_cover(epub_path, cover_key)
@@ -203,6 +275,8 @@ def main():
             "description": result.get("description") or existing.get("description") or "",
             "coverUrl": cover_url or existing.get("coverUrl"),
         }
+        if not epub_isbn:
+            isbn_discovered[epub_title] = isbn
 
     with ThreadPoolExecutor(max_workers=5) as executor:
         futures = [executor.submit(enrich_one, meta) for meta in to_enrich]
@@ -213,16 +287,21 @@ def main():
     if book_details_no_isbn:
         save_json(BOOK_DETAILS_NO_ISBN_PATH, book_details_no_isbn)
 
-    # Update book_list.json with any ISBNs found during enrichment
-    title_to_isbn = {details["title"]: isbn for isbn, details in book_details.items()}
-    updated = 0
-    for entry in book_list:
-        if not entry["isbn"] and entry["title"] in title_to_isbn:
-            entry["isbn"] = title_to_isbn[entry["title"]]
-            updated += 1
-    if updated:
-        save_json(BOOK_LIST_PATH, book_list)
-        print(f"\nUpdated {updated} ISBN(s) in {BOOK_LIST_PATH.name}")
+    # Persist ISBNs discovered for no-epub-isbn books back to book_list and book_list_missing
+    if isbn_discovered:
+        updated = 0
+        for entry in book_list:
+            if not entry.get("isbn") and entry.get("title") in isbn_discovered:
+                entry["isbn"] = isbn_discovered[entry["title"]]
+                updated += 1
+        for entry in book_list_missing:
+            if not entry.get("isbn") and entry.get("title") in isbn_discovered:
+                entry["isbn"] = isbn_discovered[entry["title"]]
+                updated += 1
+        if updated:
+            save_json(BOOK_LIST_PATH, book_list)
+            save_json(BOOK_LIST_MANUAL_ISBN_PATH, book_list_missing)
+            print(f"\nUpdated {updated} ISBN(s) in book lists")
 
     covered = sum(1 for v in book_details.values() if v.get("coverUrl"))
     print(f"\nDone. {len(book_details)} entries in {BOOK_DETAILS_PATH.name}")
