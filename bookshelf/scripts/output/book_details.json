@@ -37,8 +37,8 @@
     "year": 2025,
     "tags": [],
     "ai_tags": [
-      "Generative AI",
-      "Azure OpenAI"
+      "OpenAI",
+      "Generative AI"
     ],
     "description": "",
     "coverUrl": "/covers/9781805125068.png",
@@ -53,7 +53,8 @@
     "tags": [],
     "ai_tags": [
       "LLM",
-      "RAG"
+      "LlamaIndex",
+      "Generative AI"
     ],
     "description": "This perfectly timed resource provides clear explanations, hands-on examples and practical skills to ingest, parse, index, and query information to build AI applications that produce insightful, high-quality responses grounded in facts.",
     "coverUrl": "/covers/9781835089507.jpg",
@@ -67,8 +68,9 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
+      "OpenAI",
       "Generative AI",
-      "OpenAI"
+      "Python"
     ],
     "description": "Improve your app development skills by building a ChatGPT clone, code bug fixer, quiz generator, translation app, email auto-reply, PowerPoint generator, and more Key Features Transition into an expert AI developer by mastering ChatGPT concepts, including fine-tuning and integrations Gain hands-on experience through real-world projects covering a wide range of AI applications Implement payment systems in your applications by integrating the ChatGPT API with Stripe Purchase of the print or Kindle book includes a free PDF eBook Book Description Unlock the power of AI in your applications with ChatGPT with this practical guide that shows you how to seamlessly integrate OpenAI APIs into your projects, enabling you to navigate complex APIs and ensure seamless functionality with ease. This new edition is updated with key topics such as OpenAI Embeddings, which’ll help you understand the semantic relationships between words and phrases. You’ll find out how to use ChatGPT, Whisper, and DALL-E APIs through 10 AI projects using the latest OpenAI models, GPT-3.5, and GPT-4, with Visual Studio Code as the IDE. Within these projects, you’ll integrate ChatGPT with frameworks and tools such as Flask, Django, Microsoft Office APIs, and PyQt. You’ll get to grips with NLP tasks, build a ChatGPT clone, and create an AI code bug-fixing SaaS app. The chapters will also take you through speech recognition, text-to-speech capabilities, language translation, generating email replies, creating PowerPoint presentations, and fine-tuning ChatGPT, along with adding payment methods by integrating the ChatGPT API with Stripe. By the end of this book, you’ll be able to develop, deploy, and monetize your own groundbreaking applications by harnessing the full potential of ChatGPT APIs. What you will learn Develop a solid foundation in using the OpenAI API for NLP tasks Build, deploy, and integrate payments into various desktop and SaaS AI applications Integrate ChatGPT with frameworks such as Flask, Django, and Microsoft Office APIs Unleash your creativity by integrating DALL-E APIs to generate stunning AI art within your desktop apps Experience the power of Whisper API's speech recognition and text-to-speech features Find out how to fine-tune ChatGPT models for your specific use case Master AI embeddings to measure the relatedness of text strings Who this book is for This book is for a diverse range of professionals, including programmers, entrepreneurs, and software enthusiasts. Beginner programmers, Python developers exploring AI applications with ChatGPT, software developers integrating AI technology, and web developers creating AI-powered web applications with ChatGPT will find this book beneficial. Scholars and researchers working on AI projects with ChatGPT will also find it valuable. Basic knowledge of Python and familiarity with APIs is needed to understand the topics covered in this book.",
     "coverUrl": "/covers/9781835884003.png",
@@ -82,8 +84,9 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
+      "Python",
       "Generative AI",
-      "Python"
+      "LLM"
     ],
     "description": "Begin your generative AI journey with Python as you explore large language models, understand responsible generative AI practices, and apply your knowledge to real-world applications through guided tutorials Key Features: - Gain expertise in prompt engineering, LLM fine-tuning, and domain adaptation - Use transformers-based LLMs and diffusion models to implement AI applications - Discover strategies to optimize model performance, address ethical considerations, and build trust in AI systems - Purchase of the print or Kindle book includes a free PDF eBook Book Description: The intricacies and breadth of generative AI (GenAI) and large language models can sometimes eclipse their practical application. It is pivotal to understand the foundational concepts needed to implement generative AI. This guide explains the core concepts behind -of-the-art generative models by combining theory and hands-on application. Generative AI Foundations in Python begins by laying a foundational understanding, presenting the fundamentals of generative LLMs and their historical evolution, while also setting the stage for deeper exploration. You'll also understand how to apply generative LLMs in real-world applications. The book cuts through the complexity and offers actionable guidance on deploying and fine-tuning pre-trained language models with Python. Later, you'll delve into topics such as task-specific fine-tuning, domain adaptation, prompt engineering, quantitative evaluation, and responsible AI, focusing on how to effectively and responsibly use generative LLMs. By the end of this book, you'll be well-versed in applying generative AI capabilities to real-world problems, confidently navigating its enormous potential ethically and responsibly. What You Will Learn: - Discover the fundamentals of GenAI and its foundations in NLP - Dissect foundational generative architectures including GANs, transformers, and diffusion models - Find out how to fine-tune LLMs for specific NLP tasks - Understand transfer learning and fine-tuning to facilitate domain adaptation, including fields such as finance - Explore prompt engineering, including in-context learning, templatization, and rationalization through chain-of-thought and RAG - Implement responsible practices with generative LLMs to minimize bias, toxicity, and other harmful outputs Who this book is for: This book is for developers, data scientists, and machine learning engineers embarking on projects driven by generative AI. A general understanding of machine learning and deep learning, as well as some proficiency with Python, is expected. Table of Contents - Understanding Generative AI: An Introduction - Surveying GenAI Types and Modes: An Overview of GANs, Diffusers, and Transformers - Tracing the Foundations of Natural Language Processing and the Impact of the Transformer - Applying Pretrained Generative Models: From Prototype to Production - Fine-Tuning Generative Models for Specific Tasks - Understanding Domain Adaptation for Large Language Models - Mastering the Fundamentals of Prompt Engineering - Addressing Ethical Considerations and Charting a Path Toward Trustworthy Generative AI",
     "coverUrl": "/covers/9781835460825.png",
@@ -97,8 +100,9 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "Generative AI",
-      "PyTorch"
+      "Python",
+      "PyTorch",
+      "Generative AI"
     ],
     "description": "",
     "coverUrl": "/covers/9781835884447.png",
@@ -112,8 +116,8 @@
     "year": 2025,
     "tags": [],
     "ai_tags": [
-      "LLM",
-      "LangChain"
+      "LangChain",
+      "Generative AI"
     ],
     "description": "",
     "coverUrl": "/covers/9781837022014.png",
@@ -128,7 +132,7 @@
     "tags": [],
     "ai_tags": [
       "Python",
-      "APIs"
+      "API"
     ],
     "description": "Get to grips with the Model Context Protocol (MCP) and learn how to build scalable, intelligent web applications with AI-ready architecture in Python Key Features The only resource you'll need to build, test, and deploy MCP servers and clients Take a modern approach toward building, testing, and securing distributed agentic AI apps Get clear, professional guidance on developing for both LLM and non-LLM clients Purchase of the print or Kindle book includes a free PDF eBook Book DescriptionLearn Model Context Protocol with Python introduces developers, architects, and AI practitioners to the transformative capabilities of Model Context Protocol (MCP), an emerging protocol designed to standardize, distribute, and scale AI-driven applications. Through the lens of a practical project, the book tackles the modern challenges of resource management, client-server interaction, and deployment at scale. Drawing from Christoffer's expertise as a published author and tutor at the University of Oxford, you’ll explore the components of MCP and how they streamline server and client development. Next, you’ll progress from building robust backends and integrating LLMs into intelligent clients to interacting with servers via tools such as Claude for desktop and Visual Studio Code agents. The chapters help you understand how to describe the capabilities of hosts, clients, and servers, facilitating better interoperability, easier integration, and clearer communication between different components. The book also covers security best practices and building for the cloud, ensuring that you're ready to deploy your MCP-based apps. Each chapter enables you to develop hands-on skills for building and operating MCP-based agentic apps. The Python primer at the end rounds out the practical toolkit, making this book essential for any team building AI-native applications today.What you will learn Understand the MCP protocol and its core components Build MCP servers that expose tools and resources to a variety of clients Test and debug servers using the interactive inspector tools Consume servers using Claude Desktop and Visual Studio Code Agents Secure MCP apps, as well as managing and mitigating common threats Build and deploy MCP apps using cloud-based strategies Who this book is for This book is ideal for web developers, software architects, AI practitioners, and tech leads looking to build scalable AI-integrated applications using MCP. Product managers overseeing AI initiatives will also find this book valuable. A basic understanding of web development and AI concepts is needed to make the most of this book.",
     "coverUrl": "/covers/9781806103225.png",
@@ -143,7 +147,7 @@
     "tags": [],
     "ai_tags": [
       "TypeScript",
-      "APIs"
+      "API"
     ],
     "description": "Get to grips with the Model Context Protocol (MCP) and learn how to build scalable, intelligent web applications with AI-ready architecture in TypeScript Free with your book: DRM-free PDF version + access to Packt's next-gen Reader* Key Features The only resource you'll need to build, test, and deploy MCP servers and clients Take a modern approach toward building, testing, and securing distributed agentic AI apps Get clear, professional guidance on developing for both LLM and non-LLM clients Purchase of the print or Kindle book includes a free PDF eBook Book DescriptionLearn Model Context Protocol with TypeScript introduces developers, architects, and AI practitioners to the transformative capabilities of Model Context Protocol (MCP), an emerging protocol designed to standardize, distribute, and scale AI-driven applications. Through the lens of a practical project, the book tackles the modern challenges of resource management, client-server interaction, and deployment at scale. Drawing from Christoffer's expertise as a published author and tutor at the University of Oxford, you’ll explore the components of MCP and how they streamline server and client development. After that, you’ll progress from building robust backends and integrating LLMs into intelligent clients to interacting with servers via tools such as Claude for desktop and Visual Studio Code agents. The chapters help you understand the capabilities of hosts, clients, and servers, facilitating better interoperability, easier integration, and clearer communication between different components. The book also covers security best practices and building for the cloud, ensuring that you're ready to deploy your MCP-based apps. Each chapter enables you to develop hands-on skills for building and operating MCP-based agentic apps. *Email sign-up and proof of purchase requiredWhat you will learn Understand the MCP protocol and its core components Build MCP servers that expose tools and resources to a variety of clients Test and debug servers using the interactive inspector tools Consume servers using Claude for desktop and Visual Studio Code agents Secure MCP apps, as well as managing and mitigating common threats Build and deploy MCP apps using cloud-based strategies Who this book is for This book is ideal for web developers, software architects, AI practitioners, and tech leads looking to build scalable AI-integrated applications using MCP. Product managers overseeing AI initiatives will also find this book valuable. A basic understanding of web development and AI concepts is needed to make the most of this book.",
     "coverUrl": "/covers/9781806661381.jpg",
@@ -186,7 +190,8 @@
     "year": 2025,
     "tags": [],
     "ai_tags": [
-      "LLM"
+      "LLM",
+      "Software Architecture"
     ],
     "description": "This book helps you gain practical skills to develop and deploy LLMs.",
     "coverUrl": "/covers/9781836207030.png",
@@ -230,8 +235,10 @@
     "year": 2022,
     "tags": [],
     "ai_tags": [
-      "Machine Learning",
-      "PyTorch"
+      "Python",
+      "PyTorch",
+      "Scikit-Learn",
+      "Machine Learning"
     ],
     "description": "This book of the bestselling and widely acclaimed Python Machine Learning series is a comprehensive guide to machine and deep learning using PyTorch s simple to code framework. Purchase of the print or Kindle book includes a free eBook in PDF format. Key Features Learn applied machine learning with a solid foundation in theory Clear, intuitive explanations take you deep into the theory and practice of Python machine learning Fully updated and expanded to cover PyTorch, transformers, XGBoost, graph neural networks, and best practices Book DescriptionMachine Learning with PyTorch and Scikit-Learn is a comprehensive guide to machine learning and deep learning with PyTorch. It acts as both a step-by-step tutorial and a reference you'll keep coming back to as you build your machine learning systems. Packed with clear explanations, visualizations, and examples, the book covers all the essential machine learning techniques in depth. While some books teach you only to follow instructions, with this machine learning book, we teach the principles allowing you to build models and applications for yourself. Why PyTorch? PyTorch is the Pythonic way to learn machine learning, making it easier to learn and simpler to code with. This book explains the essential parts of PyTorch and how to create models using popular libraries, such as PyTorch Lightning and PyTorch Geometric. You will also learn about generative adversarial networks (GANs) for generating new data and training intelligent agents with reinforcement learning. Finally, this new edition is expanded to cover the latest trends in deep learning, including graph neural networks and large-scale transformers used for natural language processing (NLP). This PyTorch book is your companion to machine learning with Python, whether you're a Python developer new to machine learning or want to deepen your knowledge of the latest developments.What you will learn Explore frameworks, models, and techniques for machines to learn from data Use scikit-learn for machine learning and PyTorch for deep learning Train machine learning classifiers on images, text, and more Build and train neural networks, transformers, and boosting algorithms Discover best practices for evaluating and tuning models Predict continuous target outcomes using regression analysis Dig deeper into textual and social media data using sentiment analysis Who this book is for If you have a good grasp of Python basics and want to start learning about machine learning and deep learning, then this is the book for you. This is an essential resource written for developers and data scientists who want to create practical machine learning and deep learning applications using scikit-learn and PyTorch. Before you get started with this book, you’ll need a good understanding of calculus, as well as linear algebra.",
     "coverUrl": "/covers/9781801816380.png",
@@ -246,7 +253,8 @@
     "tags": [],
     "ai_tags": [
       "Natural Language Processing",
-      "LLM"
+      "LLM",
+      "Machine Learning"
     ],
     "description": "This book covers mathematical foundations & advanced techniques for NLP, machine learning, and LLMs.",
     "coverUrl": "/covers/9781804619186.png",
@@ -261,7 +269,7 @@
     "tags": [],
     "ai_tags": [
       "SQL",
-      "Data Engineering"
+      "Python"
     ],
     "description": "Level up from basic SQL to advanced, analytics-grade data analysis and use real PostgreSQL datasets, modern features, and practical business scenarios to turn raw data into clear, actionable insights. Free with your book: DRM-free PDF version + access to Packt's next-gen Reader* Key Features Solve real business problems with advanced SQL techniques Work with time-series, geospatial, and text data using PostgreSQL Build job-ready data analysis skills with hands-on SQL projects Purchase of the print or Kindle book includes a free PDF eBook Book DescriptionSQL remains one of the most essential tools for modern data analysis and mastering it can set you apart in a competitive data landscape. This book helps you go beyond basic query writing to develop a deep, practical understanding of how SQL powers real-world decision-making. SQL for Data Analytics, Fourth Edition, is for anyone who wants to go beyond basic SQL syntax and confidently analyze real-world data. Whether you're trying to make sense of production data for the first time or upgrading your analytics toolkit, this book gives you the skills to turn data into actionable outcomes. You'll start by creating and managing structured databases before advancing to data retrieval, transformation, and summarization. From there, you’ll take on more complex tasks such as window functions, statistical operations, and analyzing geospatial, time-series, and text data. With hands-on exercises, case studies, and detailed guidance throughout, this book prepares you to apply SQL in everyday business contexts, whether you're cleaning data, building dashboards, or presenting findings to stakeholders. By the end, you'll have a powerful SQL toolkit that translates directly to the work analysts do every day. *Email sign-up and proof of purchase requiredWhat you will learn Write SQL Queries to explore and analyze structured data. Use JOINs, subqueries, views, and CTEs to build analytics-ready datasets Apply window functions to identify trends, patterns, and cohort behavior Perform statistical analysis and hypothesis testing directly in SQL Analyze JSON, arrays, text, geospatial, and time-series data Improve SQL performance with indexing strategies and query plan optimization Load data with Python and automate analytics workflows Complete a full case study simulating a real-world data analysis project Who this book is for This book is for aspiring and early-career data analysts, data engineers, backend developers, business analysts, and students who want to apply SQL to real-world data analytics. You should have basic SQL familiarity and college-level math knowledge, along with the desire to advance toward analytics-grade SQL, data transformation, pattern discovery, and business insight generation.",
     "coverUrl": "/covers/9781836646242.png",
@@ -275,8 +283,9 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
+      "PyTorch",
       "Computer Vision",
-      "PyTorch"
+      "Deep Learning"
     ],
     "description": "The definitive computer vision book is back, featuring the latest neural network architectures and an exploration of foundation and diffusion models Purchase of the print or Kindle book includes a free eBook in PDF format Key Features Understand the inner workings of various neural network architectures and their implementation, including image classification, object detection, segmentation, generative adversarial networks, transformers, and diffusion models Build solutions for real-world computer vision problems using PyTorch All the code files are available on GitHub and can be run on Google Colab Book DescriptionWhether you are a beginner or are looking to progress in your computer vision career, this book guides you through the fundamentals of neural networks (NNs) and PyTorch and how to implement state-of-the-art architectures for real-world tasks. The second edition of Modern Computer Vision with PyTorch is fully updated to explain and provide practical examples of the latest multimodal models, CLIP, and Stable Diffusion. You’ll discover best practices for working with images, tweaking hyperparameters, and moving models into production. As you progress, you'll implement various use cases for facial keypoint recognition, multi-object detection, segmentation, and human pose detection. This book provides a solid foundation in image generation as you explore different GAN architectures. You’ll leverage transformer-based architectures like ViT, TrOCR, BLIP2, and LayoutLM to perform various real-world tasks and build a diffusion model from scratch. Additionally, you’ll utilize foundation models' capabilities to perform zero-shot object detection and image segmentation. Finally, you’ll learn best practices for deploying a model to production. By the end of this deep learning book, you'll confidently leverage modern NN architectures to solve real-world computer vision problems.What you will learn Get to grips with various transformer-based architectures for computer vision, CLIP, Segment-Anything, and Stable Diffusion, and test their applications, such as in-painting and pose transfer Combine CV with NLP to perform OCR, key-value extraction from document images, visual question-answering, and generative AI tasks Implement multi-object detection and segmentation Leverage foundation models to perform object detection and segmentation without any training data points Learn best practices for moving a model to production Who this book is for This book is for beginners to PyTorch and intermediate-level machine learning practitioners who want to learn computer vision techniques using deep learning and PyTorch. It's useful for those just getting started with neural networks, as it will enable readers to learn from real-world use cases accompanied by notebooks on GitHub. Basic knowledge of the Python programming language and ML is all you need to get started with this book. For more experienced computer vision scientists, this book takes you through more advanced models in the latter part of the book.",
     "coverUrl": "/covers/9781803240930.png",
@@ -305,8 +314,8 @@
     "year": 2025,
     "tags": [],
     "ai_tags": [
-      "Generative AI",
-      "OpenAI"
+      "OpenAI",
+      "Generative AI"
     ],
     "description": "Transform your professional world with ChatGPT and OpenAI—master prompt design to revolutionize development, marketing, research, and enterprise implementation Key Features Turn ChatGPT into your companion for marketing, research, personal productivity, art and coding Learn prompt engineering techniques that deliver consistent, relevant, and ethical AI-powered results Build custom GPTs and assistants tailored to your specific business needs and workflows Purchase of the print or Kindle book includes a free PDF eBook Book DescriptionPractical Generative AI with ChatGPT is your hands-on guide to unlocking the full potential of ChatGPT. From building AI assistants and mastering prompt engineering to analyzing documents and images and even generating code, this book equips you with the skills to integrate generative AI into your workflow. Written by a technical architect specializing in AI and intelligent applications, this book provides the tools and knowledge you need to streamline tasks, enhance productivity, and create intelligent solutions. You’ll learn how to craft precise prompts, leverage ChatGPT for daily efficiency, and develop custom AI assistants tailored to your needs. The chapters show you how to use ChatGPT’s multimodal capabilities to generate images with DALL·E and even transform images into code. This ChatGPT book goes beyond basic interactions by showing you how to design custom GPTs and integrate OpenAI’s APIs into your applications. You’ll explore how businesses use OpenAI models, from building AI applications, including semantic search, to creating an AI roadmap. Each chapter is packed with practical examples, ensuring you can apply the techniques right away. By the end of this book, you’ll be well equipped to leverage OpenAI's technology for competitive advantage.What you will learn Explore the fundamentals of generative AI and GPT models Master prompt engineering to consistently get relevant and reliable outputs from ChatGPT Develop marketing strategies and conduct meaningful A/B testing with AI assistance Boost your coding with code generation, review, and optimization Enhance research with real-time knowledge mining Enhance your visual creativity with image generation, image understanding, and style transfer Design custom GPTs and assistants tailored to specific business functions Discover how enterprises are leveraging large language models for their AI apps Who this book is for This book is ideal for business professionals, developers, marketers, researchers, and decision-makers who want to leverage AI to enhance productivity. No advanced technical background is required for the foundational sections, making the content accessible to beginners, while later chapters provide depth for technical professionals implementing enterprise solutions. If you’re seeking practical applications of generative AI in business contexts, you’ll find immediate, actionable value in this book.",
     "coverUrl": "/covers/9781836647843.png",
@@ -321,7 +330,8 @@
     "tags": [],
     "ai_tags": [
       "Natural Language Processing",
-      "LLM"
+      "Computer Vision",
+      "Generative AI"
     ],
     "description": "The definitive guide to LLMs, from architectures, pretraining, and fine-tuning to Retrieval Augmented Generation (RAG), multimodal AI, risk mitigation, and practical implementations with ChatGPT, Hugging Face, and Vertex AI Get With Your Book: PDF Copy, AI Assistant, and Next-Gen Reader Free Key Features Compare and contrast 20+ models (including GPT, BERT, and Llama) and multiple platforms and libraries to find the right solution for your project Apply RAG with LLMs using customized texts and embeddings Mitigate LLM risks, such as hallucinations, using moderation models and knowledge bases Book DescriptionTransformers for Natural Language Processing and Computer Vision, Third Edition, explores Large Language Model (LLM) architectures, practical applications, and popular platforms (Hugging Face, OpenAI, and Google Vertex AI) used for Natural Language Processing (NLP) and Computer Vision (CV). The book guides you through a range of transformer architectures from foundation models and generative AI. You’ll pretrain and fine-tune LLMs and work through different use cases, from summarization to question-answering systems leveraging embedding-based search. You'll also implement Retrieval Augmented Generation (RAG) to enhance accuracy and gain greater control over your LLM outputs. Additionally, you’ll understand common LLM risks, such as hallucinations, memorization, and privacy issues, and implement mitigation strategies using moderation models alongside rule-based systems and knowledge integration. Dive into generative vision transformers and multimodal architectures, and build practical applications, such as image and video classification. Go further and combine different models and platforms to build AI solutions and explore AI agent capabilities. This book provides you with an understanding of transformer architectures, including strategies for pretraining, fine-tuning, and LLM best practices.What you will learn Breakdown and understand the architectures of the Transformer, BERT, GPT, T5, PaLM, ViT, CLIP, and DALL-E Fine-tune BERT, GPT, and PaLM models Learn about different tokenizers and the best practices for preprocessing language data Pretrain a RoBERTa model from scratch Implement retrieval augmented generation and rules bases to mitigate hallucinations Visualize transformer model activity for deeper insights using BertViz, LIME, and SHAP Go in-depth into vision transformers with CLIP, DALL-E, and GPT Who this book is for This book is ideal for NLP and CV engineers, data scientists, machine learning practitioners, software developers, and technical leaders looking to advance their expertise in LLMs and generative AI or explore latest industry trends. Familiarity with Python and basic machine learning concepts will help you fully understand the use cases and code examples. However, hands-on examples involving LLM user interfaces, prompt engineering, and no-code model building ensure this book remains accessible to anyone curious about the AI revolution.",
     "coverUrl": "/covers/9781805123743.png",
@@ -350,7 +360,8 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "System Design"
+      "Python",
+      "Algorithms"
     ],
     "description": "Get in the game and learn essential computer algorithms by solving competitive programming problems, in the fully revised second edition of the bestselling original. (Still no math required!) Are you hitting a wall with data structures and algorithms? Whether you’re a student prepping for coding interviews or an independent learner, this book is your essential guide to efficient problem-solving in programming. UNLOCK THE POWER OF DATA STRUCTURES & ALGORITHMS: Learn the intricacies of hash tables, recursion, dynamic programming, trees, graphs, and heaps. Become proficient in choosing and implementing the best solutions for any coding challenge. REAL-WORLD, COMPETITION-PROVEN CODE EXAMPLES: The programs and challenges in this book aren’t just theoretical—they’re drawn from real programming competitions. Train with problems that have tested and honed the skills of coders around the world. GET INTERVIEW-READY: Prepare yourself for coding interviews with practice exercises that help you think algorithmically, weigh different solutions, and implement the best choices efficiently. WRITTEN IN C, USEFUL ACROSS LANGUAGES: The code examples are written in C and designed for clarity and accessibility to those familiar with languages like C++, Java, or Python. If you need help with the C code, no problem: We’ve got recommended reading, too. Algorithmic Thinking is the complete package, providing the solid foundation you need to elevate your coding skills to the next level.",
     "coverUrl": "/covers/9781718503236.jpg",
@@ -393,7 +404,7 @@
     "tags": [],
     "ai_tags": [
       "Python",
-      "Machine Learning"
+      "Algorithms"
     ],
     "description": "Harness the power of randomness (and Python code) to solve real-world problems in fun, hands-on experiments—from simulating evolution to encrypting messages to making machine-learning algorithms! The Art of Randomness is a hands-on guide to mastering the many ways you can use randomized algorithms to solve real programming and scientific problems. You’ll learn how to use randomness to run simulations, hide information, design experiments, and even create art and music. All you need is some Python, basic high school math, and a roll of the dice. Author Ronald T. Kneusel focuses on helping you build your intuition so that you’ll know when and how to use random processes to get things done. You’ll develop a randomness engine (a Python class that supplies random values from your chosen source), then explore how to leverage randomness to: Simulate Darwinian evolution and optimize with swarm-based search algorithms Design scientific experiments to produce more meaningful results by making them truly random Implement machine learning algorithms like neural networks and random forests Use Markov Chain Monte Carlo methods to sample from complex distributions Hide information in audio files and images, generate art, and create music Reconstruct original signals and images from only randomly sampled data Scientific anecdotes and code examples throughout illustrate how randomness plays into areas like optimization, machine learning, and audio signals. End-of-chapter exercises encourage further exploration. Whether you’re a programmer, scientist, engineer, mathematician, or artist, you’ll find The Art of Randomness to be your ticket to discovering the hidden power of applied randomness and the ways it can transform your approach to solving problems, from the technical to the artistic.",
     "coverUrl": "/covers/9781718503250.jpg",
@@ -407,6 +418,7 @@
     "year": 2019,
     "tags": [],
     "ai_tags": [
+      "Statistics",
       "Machine Learning"
     ],
     "description": "Fun guide to learning Bayesian statistics and probability through unusual and illustrative examples. Probability and statistics are increasingly important in a huge range of professions. But many people use data in ways they don't even understand, meaning they aren't getting the most from it. Bayesian Statistics the Fun Way will change that. This book will give you a complete understanding of Bayesian statistics through simple explanations and un-boring examples. Find out the probability of UFOs landing in your garden, how likely Han Solo is to survive a flight through an asteroid shower, how to win an argument about conspiracy theories, and whether a burglary really was a burglary, to name a few examples. By using these off-the-beaten-track examples, the author actually makes learning statistics fun. And you'll learn real skills, like how to: - How to measure your own level of uncertainty in a conclusion or belief - Calculate Bayes theorem and understand what it's useful for - Find the posterior, likelihood, and prior to check the accuracy of your conclusions - Calculate distributions to see the range of your data - Compare hypotheses and draw reliable conclusions from them Next time you find yourself with a sheaf of survey results and no idea what to do with them, turn to Bayesian Statistics the Fun Way to get the most value from your data.",
@@ -435,8 +447,8 @@
     "year": 2023,
     "tags": [],
     "ai_tags": [
-      "Data Engineering",
-      "Python"
+      "Python",
+      "Machine Learning"
     ],
     "description": "Learn how to use data science and Python to solve everyday business problems. Dive into the exciting world of data science with this practical introduction. Packed with essential skills and useful examples, Dive Into Data Science will show you how to obtain, analyze, and visualize data so you can leverage its power to solve common business challenges. With only a basic understanding of Python and high school math, you’ll be able to effortlessly work through the book and start implementing data science in your day-to-day work. From improving a bike sharing company to extracting data from websites and creating recommendation systems, you’ll discover how to find and use data-driven solutions to make business decisions. Topics covered include conducting exploratory data analysis, running A/B tests, performing binary classification using logistic regression models, and using machine learning algorithms. You’ll also learn how to: Forecast consumer demand Optimize marketing campaigns Reduce customer attrition Predict website traffic Build recommendation systems With this practical guide at your fingertips, harness the power of programming, mathematical theory, and good old common sense to find data-driven solutions that make a difference. Don’t wait; dive right in!",
     "coverUrl": "/covers/9781718502895.png",
@@ -450,6 +462,7 @@
     "year": 2023,
     "tags": [],
     "ai_tags": [
+      "Generative AI",
       "Machine Learning"
     ],
     "description": "AI isn’t magic. How AI Works demystifies the explosion of artificial intelligence by explaining—without a single mathematical equation—what happened, when it happened, why it happened, how it happened, and what AI is actually doing \"under the hood.\" Artificial intelligence is everywhere—from self-driving cars, to image generation from text, to the unexpected power of language systems like ChatGPT—yet few people seem to know how it all really works. How AI Works unravels the mysteries of artificial intelligence, without the complex math and unnecessary jargon. You’ll learn: The relationship between artificial intelligence, machine learning, and deep learning The history behind AI and why the artificial intelligence revolution is happening now How decades of work in symbolic AI failed and opened the door for the emergence of neural networks What neural networks are, how they are trained, and why all the wonder of modern AI boils down to a simple, repeated unit that knows how to multiply input numbers to produce an output number. The implications of large language models, like ChatGPT and Bard, on our society—nothing will be the same again AI isn’t magic. If you’ve ever wondered how it works, what it can do, or why there’s so much hype, How AI Works will teach you everything you want to know.",
@@ -465,7 +478,7 @@
     "tags": [],
     "ai_tags": [
       "Python",
-      "System Design"
+      "Algorithms"
     ],
     "description": "Dive Into Algorithms is a broad introduction to algorithms using the Python Programming Language. Dive Into Algorithms is a wide-ranging, Pythonic tour of many of the world's most interesting algorithms. With little more than a bit of computer programming experience and basic high-school math, you'll explore standard computer science algorithms for searching, sorting, and optimization; human-based algorithms that help us determine how to catch a baseball or eat the right amount at a buffet; and advanced algorithms like ones used in machine learning and artificial intelligence. You'll even explore how ancient Egyptians and Russian peasants used algorithms to multiply numbers, how the ancient Greeks used them to find greatest common divisors, and how Japanese scholars in the age of samurai designed algorithms capable of generating magic squares. You'll explore algorithms that are useful in pure mathematics and learn how mathematical ideas can improve algorithms. You'll learn about an algorithm for generating continued fractions, one for quick calculations of square roots, and another for generating seemingly random sets of numbers. You'll also learn how to: • Use algorithms to debug code, maximize revenue, schedule tasks, and create decision trees • Measure the efficiency and speed of algorithms • Generate Voronoi diagrams for use in various geometric applications • Use algorithms to build a simple chatbot, win at board games, or solve sudoku puzzles • Write code for gradient ascent and descent algorithms that can find the maxima and minima of functions • Use simulated annealing to perform global optimization • Build a decision tree to predict happiness based on a person's characteristics Once you've finished this book you'll understand how to code and implement important algorithms as well as how to measure and optimize their performance, all while learning the nitty-gritty details of today's most powerful algorithms.",
     "coverUrl": "/covers/9781718500693.png",
@@ -537,7 +550,7 @@
     "tags": [],
     "ai_tags": [
       "Machine Learning",
-      "LLM"
+      "Generative AI"
     ],
     "description": "Learn the answers to 30 cutting-edge questions in machine learning and AI and level up your expertise in the field. If you’re ready to venture beyond introductory concepts and dig deeper into machine learning, deep learning, and AI, the question-and-answer format of Machine Learning Q and AI will make things fast and easy for you, without a lot of mucking about. Born out of questions often fielded by author Sebastian Raschka, the direct, no-nonsense approach of this book makes advanced topics more accessible and genuinely engaging. Each brief, self-contained chapter journeys through a fundamental question in AI, unraveling it with clear explanations, diagrams, and hands-on exercises. WHAT'S INSIDE: FOCUSED CHAPTERS: Key questions in AI are answered concisely, and complex ideas are broken down into easily digestible parts. WIDE RANGE OF TOPICS: Raschka covers topics ranging from neural network architectures and model evaluation to computer vision and natural language processing. PRACTICAL APPLICATIONS: Learn techniques for enhancing model performance, fine-tuning large models, and more. You’ll also explore how to: • Manage the various sources of randomness in neural network training • Differentiate between encoder and decoder architectures in large language models • Reduce overfitting through data and model modifications • Construct confidence intervals for classifiers and optimize models with limited labeled data • Choose between different multi-GPU training paradigms and different types of generative AI models • Understand performance metrics for natural language processing • Make sense of the inductive biases in vision transformers If you’ve been on the hunt for the perfect resource to elevate your understanding of machine learning, Machine Learning Q and AI will make it easy for you to painlessly advance your knowledge beyond the basics.",
     "coverUrl": "/covers/9781718503779.jpg",
@@ -552,7 +565,7 @@
     "tags": [],
     "ai_tags": [
       "Deep Learning",
-      "Machine Learning"
+      "Mathematics"
     ],
     "description": "Math for Deep Learning provides the essential math you need to understand deep learning discussions, explore more complex implementations, and better use the deep learning toolkits. With Math for Deep Learning, you'll learn the essential mathematics used by and as a background for deep learning. You’ll work through Python examples to learn key deep learning related topics in probability, statistics, linear algebra, differential calculus, and matrix calculus as well as how to implement data flow in a neural network, backpropagation, and gradient descent. You’ll also use Python to work through the mathematics that underlies those algorithms and even build a fully-functional neural network. In addition you’ll find coverage of gradient descent including variations commonly used by the deep learning community: SGD, Adam, RMSprop, and Adagrad/Adadelta.",
     "coverUrl": "/covers/9781718501911.jpg",
@@ -594,6 +607,7 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
+      "Software Architecture",
       "Testing"
     ],
     "description": "The art of unit testing is more than just learning the right collection of tools and practices. It's about understanding what makes great tests tick, finding the right strategy for each unique situation, and knowing what to do when the testing process gets messy. This book delivers insights and advice that will transform the way you test your software. The art of unit testing, third edition shows you how to create readable and maintainable tests. It goes well beyond basic test creation into organization-wide test strategies, troubleshooting, working with legacy code, and \"merciless\" refactoring. You'll love the practical examples and familiar scenarios that make testing come alive as you read. This third edition has been updated with techniques specific to object-oriented, functional, and modular coding styles. The examples use JavaScript.",
@@ -623,7 +637,7 @@
     "tags": [],
     "ai_tags": [
       "Machine Learning",
-      "Data Engineering"
+      "Algorithms"
     ],
     "description": "This advanced machine learning book highlights many algorithms from a geometric perspective and introduces tools in network science, metric geometry, and topological data analysis through practical application. Whether you’re a mathematician, seasoned data scientist, or marketing professional, you’ll find The Shape of Data to be the perfect introduction to the critical interplay between the geometry of data structures and machine learning. This book’s extensive collection of case studies (drawn from medicine, education, sociology, linguistics, and more) and gentle explanations of the math behind dozens of algorithms provide a comprehensive yet accessible look at how geometry shapes the algorithms that drive data analysis. In addition to gaining a deeper understanding of how to implement geometry-based algorithms with code, you’ll explore: Supervised and unsupervised learning algorithms and their application to network data analysis The way distance metrics and dimensionality reduction impact machine learning How to visualize, embed, and analyze survey and text data with topology-based algorithms New approaches to computational solutions, including distributed computing and quantum algorithms",
     "coverUrl": "/covers/9781718503090.png",
@@ -652,7 +666,7 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "Generative AI",
+      "OpenAI",
       "Web Development"
     ],
     "description": "Build a Website with ChatGPT teaches you zero-coding web development utilizing powerful generative AI tools like ChatGPT",
@@ -682,7 +696,8 @@
     "year": 2019,
     "tags": [],
     "ai_tags": [
-      "APIs"
+      "API",
+      "Web Development"
     ],
     "description": "Summary The Design of Web APIs is a practical, example-packed guide to crafting extraordinary web APIs. Author Arnaud Lauret demonstrates fantastic design principles and techniques you can apply to both public and private web APIs. About the technology An API frees developers to integrate with an application without knowing its code-level details. Whether you’re using established standards like REST and OpenAPI or more recent approaches like GraphQL or gRPC, mastering API design is a superskill. It will make your web-facing services easier to consume and your clients—internal and external—happier. Purchase of the print book includes a free eBook in PDF, Kindle, and ePub formats from Manning Publications. About the book Drawing on author Arnaud Lauret's many years of API design experience, this book teaches you how to gather requirements, how to balance business and technical goals, and how to adopt a consumer-first mindset. It teaches effective practices using numerous interesting examples. What's inside Characteristics of a well-designed API User-oriented and real-world APIs Secure APIs by design Evolving, documenting, and reviewing API designs About the reader Written for developers with minimal experience building and consuming APIs. About the author A software architect with extensive experience in the banking industry, Arnaud Lauret has spent 10 years using, designing, and building APIs. He blogs under the name of API Handyman and has created the API Stylebook website.",
     "coverUrl": "/covers/9781617295102.jpeg",
@@ -696,8 +711,8 @@
     "year": 2022,
     "tags": [],
     "ai_tags": [
-      "APIs",
-      "REST"
+      "API",
+      "Web Development"
     ],
     "description": "Customer-facing and internal APIs have become the most common wayto integrate the components of web-based software. Using standards like OpenAPI, you can provide reliable, easy-to-use interfaces that allow other developers safe, controlled access to your software. Designing APIs with Swagger and OpenAPI is a hands-on primer to properly designing and describing your APIs using the most widely-adopted standard.",
     "coverUrl": "/covers/9781617296284.jpeg",
@@ -726,7 +741,8 @@
     "year": 2023,
     "tags": [],
     "ai_tags": [
-      "TypeScript"
+      "TypeScript",
+      "Web Development"
     ],
     "description": "\"TypeScript is a popular superset of JavaScript that adds support for static typing. TypeScript's typing features, which will be instantly familiar to C# or Java programmers, help you reduce errors and improve the overall quality of your JavaScript code.\"--Page [4] of cover.",
     "coverUrl": "/covers/9781633437319.jpeg",
@@ -740,7 +756,8 @@
     "year": 2016,
     "tags": [],
     "ai_tags": [
-      "JavaScript"
+      "JavaScript",
+      "Web Development"
     ],
     "description": "Summary Functional Programming in JavaScript teaches JavaScript developers functional techniques that will improve extensibility, modularity, reusability, testability, and performance. Through concrete examples and jargon-free explanations, this book teaches you how to apply functional programming to real-life development tasks Purchase of the print book includes a free eBook in PDF, Kindle, and ePub formats from Manning Publications. About the Technology In complex web applications, the low-level details of your JavaScript code can obscure the workings of the system as a whole. As a coding style, functional programming (FP) promotes loosely coupled relationships among the components of your application, making the big picture easier to design, communicate, and maintain. About the Book Functional Programming in JavaScript teaches you techniques to improve your web applications - their extensibility, modularity, reusability, and testability, as well as their performance. This easy-to-read book uses concrete examples and clear explanations to show you how to use functional programming in real life. If you're new to functional programming, you'll appreciate this guide's many insightful comparisons to imperative or object-oriented programming that help you understand functional design. By the end, you'll think about application design in a fresh new way, and you may even grow to appreciate monads! What's Inside High-value FP techniques for real-world uses Using FP where it makes the most sense Separating the logic of your system from implementation details FP-style error handling, testing, and debugging All code samples use JavaScript ES6 (ES 2015) About the Reader Written for developers with a solid grasp of JavaScript fundamentals and web application design. About the Author Luis Atencio is a software engineer and architect building enterprise applications in Java, PHP, and JavaScript. Table of Contents PART 1 THINK FUNCTIONALLY Becoming functional Higher-order JavaScript PART 2 GET FUNCTIONAL Few data structures, many operations Toward modular, reusable code Design patterns against complexity PART 3 ENHANCING YOUR FUNCTIONAL SKILLS Bulletproofing your code Functional optimizations Managing asynchronous events and data",
     "coverUrl": "/covers/9781638353591.jpeg",
@@ -754,7 +771,8 @@
     "year": 2016,
     "tags": [],
     "ai_tags": [
-      "JavaScript"
+      "JavaScript",
+      "Web Development"
     ],
     "description": "Summary Get Programming with JavaScript is a hands-on introduction to programming for readers who have never programmed. You'll be writing your own web apps, games, and programs in no time! Foreword by Remy Sharp. Purchase of the print book includes a free eBook in PDF, Kindle, and ePub formats from Manning Publications. About the Book Are you ready to start writing your own web apps, games, and programs? You’re in the right place! Get Programming with JavaScript is a hands-on introduction to programming for readers who have never written a line of code. Since you’re just getting started, this friendly book offers you lots of examples backed by careful explanations. As you go along, you’ll find exercises to check your understanding and plenty of opportunities to practice your new skills. You don’t need any­thing special to follow the examples—just the text editor and web browser already installed on your computer. We even give you links to working online code so you can see how everything should look live on your screen. What’s Inside All the basics—objects, functions, responding to users, and more Think like a coder and design your own programs Create a text-based adventure game Enhance web pages with JavaScript Run your programs in a web browser Four bonus chapters available online About the Reader No experience required! All you need is a web browser and an internet connection. About the Author John Larsen is a mathematics and computing teacher with an interest in educational research. He has an MA in mathematics and an MSc in information technology. He started programming in 1982, writing simple programs for teaching mathematics in 1993, building websites in 2001, and developing data-driven web-based applications for education in 2006. Table of Contents PART 1 CORE CONCEPTS ON THE CONSOLE Programming, JavaScript, and JS Bin Variables: storing data in your program Objects: grouping your data Functions: code on demand Arguments: passing data to functions Return values: getting data from functions Object arguments: functions working with objects Arrays: putting data into lists Constructors: building objects with functions Bracket notation: flexible property names PART 2 ORGANIZING YOUR PROGRAMS Scope: hiding information Conditions: choosing code to run Modules: breaking a program into pieces Models: working with data Views: displaying data Controllers: linking models and views PART 3 JAVASCRIPT IN THE BROWSER HTML: building web pages Controls: getting user input Templates: filling placeholders with data XHR: loading data Conclusion: get programming with JavaScript BONUS ONLINE CHAPTERS Node: running JavaScript outside the browser Express: building an API Polling: repeating requests with XHR Socket.IO: real-time messaging",
     "coverUrl": "/covers/9781638353423.jpg",
@@ -798,7 +816,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "React in Depthteaches the React libraries, tools and techniques that are vital to build amazing apps. You'll put each skill you learn into practice with hands-on projects like a goal-focused task manager, expenses tracker, and custom UI library",
     "coverUrl": "/covers/9781633437340.jpg",
@@ -827,7 +845,8 @@
     "year": 2016,
     "tags": [],
     "ai_tags": [
-      "JavaScript"
+      "JavaScript",
+      "Web Development"
     ],
     "description": "More than ever, the web is a universal platform for all types of applications, and JavaScript is the language of the web. For anyone serious about web development, it's not enough to be a decent JavaScript coder. They need to be ninja-stealthy, efficient, and ready for anything. Secrets of the JavaScript Ninja, Second Edition dives below the surface and helps readers understand the deceptively-complex world of JavaScript and browser-based application development. It skips the basics, and dives into core JavaScript concepts such as functions, closures, objects, prototypes, promises, and so on. With examples, illustrations, and insightful explanations, readers will benefit from the collective wisdom of seasoned experts John Resig, Bear Bibeault, and Josip Maras. Purchase of the print book includes a free eBook in PDF, Kindle, and ePub formats from Manning Publications.",
     "coverUrl": "/covers/9781617292859.jpg",
@@ -842,7 +861,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "Learn the skills you need to build React applications quickly! This fully revised second edition introduces JSX, functional components, React hooks, event and form handling, and more. In React Quickly, Second Edition you will learn how to: Master React fundamentals Implement best practices and the components of good architecture Build intuitive user interfaces Create dynamic components with JSX Use lightweight functional components in React Make your app interactive with stateful components Utilize React hooks Handle events like button clicks and pass data between components Build your skills with React fast! There’s no slow theory and tedious history in React Quickly—you’ll dive into React code right from the very first chapter. As you go, you’ll explore over 80 useful and practical examples that put React into action. This new second edition has been completely rewritten to cover the latest developments in the React framework. Perfect, whether you’re a React beginner or an experienced pro looking to keep their skills up to date. About the technology React makes it a breeze to build beautiful, reliable web frontends. This amazing JavaScript library has a modular architecture, so you can create, combine, and test components seamlessly. React is perfect for small prototypes, enterprise scale sites, and everything in between. About the book React Quickly, Second Edition offers a unique approach to learning the React framework. More than 80 concise examples guide you from your first steps through advanced applications. You’ll appreciate the up-to-date coverage of functional components, React hooks, and web accessibility, along with interesting projects to practice your new skill. What's inside Master React fundamentals Best practices of component-based design Create dynamic components with JSX Make your app interactive with stateful components About the reader For developers comfortable building web applications with JavaScript. About the author Morten Barklund is an expert in React, web testing, and accessibility and is the founder of Coding Heaven. Azat Mardan is a seasoned software engineer, startup mentor, and best-selling author. Table of Contents 1 Meeting React 2 Baby steps with React 3 Introduction to JSX 4 Functional Components 5 Making React interactive with states 6 Effects and the React component life cycle 7 Hooks to fuel your web applications 8 Handling events in React 9 Working with forms in React 10 Advanced React hooks for scaling 11 Project: Website menu 12 Project: Timer 13 Project: Task manager",
     "coverUrl": "/covers/9781638352662.jpeg",
@@ -899,8 +918,8 @@
     "year": 2023,
     "tags": [],
     "ai_tags": [
-      "Data Engineering",
-      "Microservices"
+      "Databases",
+      "Software Architecture"
     ],
     "description": "The exponential growth of data combined with the need to derive real-time business value is a critical issue today. An event-driven data mesh can power real-time operational and analytical workloads, all from a single set of data product streams. With practical real-world examples, this book shows you how to successfully design and build an event-driven data mesh. Building an Event-Driven Data Mesh provides: Practical tips for iteratively building your own event-driven data mesh, including hurdles you'll experience, possible solutions, and how to obtain real value as soon as possible Solutions to pitfalls you may encounter when moving your organization from monoliths to event-driven architectures A clear understanding of how events relate to systems and other events in the same stream and across streams A realistic look at event modeling options, such as fact, delta, and command type events, including how these choices will impact your data products Best practices for handling events at scale, privacy, and regulatory compliance Advice on asynchronous communication and handling eventual consistency",
     "coverUrl": "/covers/9781098127602.png",
@@ -915,7 +934,7 @@
     "tags": [],
     "ai_tags": [
       "Web Development",
-      "Software Architecture"
+      "Security"
     ],
     "description": "When you launch an application on the web, every hacker in the world has access to it. Are you sure your web apps can stand up to the most sophisticated attacks? Grokking Web Application Security is a brilliantly illustrated and clearly written guide that delivers detailed coverage on: How the browser security model works, including sandboxing, the same-origin policy, and methods of securing cookies Securing web servers with input validation, escaping of output, and defense in depth A development process that prevents security bugs Protecting yourself from browser vulnerabilities such as cross-site scripting, cross-site request forgery, and clickjacking Network vulnerabilities like man-in-the-middle attacks, SSL-stripping, and DNS poisoning Preventing authentication vulnerabilities that allow brute forcing of credentials by using single sign-on or multi-factor authentication Authorization vulnerabilities like broken access control and session jacking How to use encryption in web applications Injection attacks, command execution attacks, and remote code execution attacks Malicious payloads that can be used to attack XML parsers, and file upload functions",
     "coverUrl": "/covers/9781633438262.jpeg",
@@ -930,7 +949,7 @@
     "tags": [],
     "ai_tags": [
       "Microservices",
-      "System Design"
+      "Software Architecture"
     ],
     "description": "Organizations today often struggle to balance business requirements with ever-increasing volumes of data. Additionally, the demand for leveraging large-scale, real-time data is growing rapidly among the most competitive digital industries. Conventional system architectures may not be up to the task. With this practical guide, you'll learn how to leverage large-scale data usage across the business units in your organization using the principles of event-driven microservices. Author Adam Bellemare takes you through the process of building an event-driven microservice-powered organization. You'll reconsider how data is produced, accessed, and propagated across your organization. Learn powerful yet simple patterns for unlocking the value of this data. Incorporate event-driven design and architectural principles into your own systems. And completely rethink how your organization delivers value by unlocking near-real-time access to data at scale. You'll learn: How to leverage event-driven architectures to deliver exceptional business value The role of microservices in supporting event-driven designs Architectural patterns to ensure success both within and between teams in your organization Application patterns for developing powerful event-driven microservices Components and tooling required to get your microservice ecosystem off the ground",
     "coverUrl": "/covers/9781492057895.png",
@@ -944,7 +963,7 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "Serverless",
+      "C#",
       "Software Architecture"
     ],
     "description": "Software as a service (SaaS) is on the path to becoming the de facto model for building, delivering, and operating software solutions. Adopting the multi-tenant model of SaaS requires builders to take on a broad range of new architecture, implementation, and operational challenges. How data is stored, how resources are isolated, how tenants are authenticated, how microservices are built--these are all examples of areas that builders must consider when designing and creating SaaS offerings. This practical book equips SaaS builders and architects with a collection of patterns, strategies, and insights to help you bridge these technical and business challenges. Tod Golding, a global SaaS lead at AWS, provides you with an end-to-end view of SaaS architecture and development techniques for addressing the unique blend of challenges associated with building a robust SaaS solution that realizes its full potential. Develop a clear view of the landscape of SaaS architecture patterns and strategies Walk through all the moving parts of the SaaS environment, identifying the trade-offs and considerations that will influence the footprint of your multi-tenant solution Examine multi-tenant constructs through the lens of real-world SaaS solutions Go inside multi-tenant microservices, exploring strategies and techniques that are used to reduce developer complexity and hide away the details of tenancy Identify design and architecture strategies that allow teams to support a range of workloads and tenant experiences Learn foundational principles for building robust multi-tenant SaaS offerings Learn the inner workings of SaaS architecture patterns, including tenant isolation, noisy neighbor, tiering, onboarding, identity, and data partitioning",
@@ -1002,8 +1021,8 @@
     "year": 2018,
     "tags": [],
     "ai_tags": [
-      "Software Architecture",
-      "System Design"
+      "Microservices",
+      "Software Architecture"
     ],
     "description": "The race to compete in today's fast-moving markets, large enterprises are busy adopting new technologies for creating new products, processes, and business models. But one obstacle on the road to digital transformation is placing too much emphasis on technology, and not enough on the types of processes technology enables. What if different lines of business could build their own services and applications-and decision-making was distributed rather than centralized? This report explores the concept of a digital business platform as a way of empowering individual business sectors to act on data in real time. Much innovation in a digital enterprise will increasingly happen at the edge, whether it involves business users (from marketers to data scientists) or IoT devices. To facilitate the process, your core IT team can provide these sectors with the digital tools they need to innovate quickly",
     "coverUrl": null,
@@ -1017,8 +1036,8 @@
     "year": 2022,
     "tags": [],
     "ai_tags": [
-      "System Design",
-      "Software Architecture"
+      "Software Architecture",
+      "Databases"
     ],
     "description": "In many systems, scalability becomes the primary driver as the user base grows. Attractive features and high utility breed success, which brings more requests to handle and more data to manage. But organizations reach a tipping point when design decisions that made sense under light loads suddenly become technical debt. This practical book covers design approaches and technologies that make it possible to scale an application quickly and cost-effectively. Author Ian Gorton takes software architects and developers through the principles of foundational distributed systems. You'll explore the essential ingredients of scalable solutions, including replication, state management, load balancing, and caching. Specific chapters focus on the implications of scalability for databases, microservices, and event-based streaming systems. You'll focus on: Foundations of scalable systems: Learn basic design principles of scalability, its costs, and architectural tradeoffs Designing scalable services: Dive into service design, caching, asynchronous messaging, serverless processing, and microservices Designing scalable data systems: Learn data system fundamentals, NoSQL databases, and eventual consistency versus strong consistency Designing scalable streaming systems: Explore stream processing systems and scalable event-driven processing",
     "coverUrl": "/covers/9781098106065.png",
@@ -1046,7 +1065,8 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "Microservices"
+      "Microservices",
+      "Software Architecture"
     ],
     "description": "Microservices can be a very effective approach for delivering value to your organization and to your customers. If you get them right, microservices help you to move fast, making changes to small parts of your system hundreds of times a day. But get them wrong and microservices just make everything more complicated. In this book, technical strategist Sarah Wells provides practical, in-depth advice for moving to microservices. Having built her first microservices architecture in 2013 for the Financial Times, Sarah discusses the approaches you need to take from the start, and explains the potential traps most likely to trip you up. You'll also learn how to maintain the architecture as your systems mature while minimizing the time you spend on support and maintenance. With this book, you will: Learn the impact of microservices on software development patterns and practices Identify the organizational changes you need to make to successfully build and operate this architecture Determine the steps you must take before you move to microservices Understand the traps to avoid when you create a microservices architecture--and learn how to recover if you fall into one",
     "coverUrl": "/covers/9781098130794.png",
@@ -1060,8 +1080,7 @@
     "year": 2020,
     "tags": [],
     "ai_tags": [
-      "Software Architecture",
-      "Data Engineering"
+      "Software Architecture"
     ],
     "description": "The evolution of software design is moving into a phase dominated by events and streaming data. Serverless programming, IOT data capture, and even live video provide a near real-time look at the world around us. Software is being developed now that can optimize the ways not only how technology interacts, but how businesses themselves integrate with other businesses to meet customer needs, a phenomenon I call \"flow\". Flow may best be defined as the defacto patterns and standards by which activity and related data is communicated between arbitrary parties over the Internet. This book explores a critical implication of that evolution: what happens when the sources, formats, and mechanisms that enable the exchange of events and data streams are commoditized and standard, and businesses can discover and link new sources of activity to enhance existing businesses or drive new markets altogether? And what are some of the technologies and architectural patterns that you can begin to adopt today to position your company for the tremendous opportunities enabled by flow? As HTTP revolutionized the way we linked information, will de facto event standards revolutionize the way we link activity?",
     "coverUrl": "/covers/9781492075899.png",
@@ -1089,7 +1108,7 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "System Design"
+      "Software Architecture"
     ],
     "description": "A decade ago, developers built information-sharing software by writing a lot of custom code in a single code base, then adding layers of caching. Now we build information systems: interdependent software and services, data platforms, and event streams. Many of our software-to-systems initiatives fail, though, and when they do, we double down on traditional linear approaches. But linear thinking cannot resolve systems challenges. We need to shift to systems thinking. This book shows software developers and architects how systems thinking can guide you through the emerging complexity of modern systems. Author Diana Montalion presents a vision of technology architecture that transforms how we learn, communicate, and collaborate with others. Through practical examples and scenarios, you'll learn how to develop critical self-reflection and decision-making skills amid complexity and uncertainty--and lead impactful cultural change within your organization. You'll learn: How linear thinking limits your perspective on software systems The obstacles to changing your perspective and how to move past them How systems and nonlinear thinking help you understand and navigate complex issues arising from internal and external factors Methods for creating sound, cross-functional recommendations in the midst of complexity and uncertainty How nonlinear approaches improve the quality of architectural thinking and deliver impactful change for organizations How to provide a modern style of leadership as software becomes information systems",
     "coverUrl": "/covers/9781098151331.png",
@@ -1118,7 +1137,7 @@
     "tags": [],
     "ai_tags": [
       "Microservices",
-      "Serverless"
+      "Software Architecture"
     ],
     "description": "In today's IT architectures, microservices and serverless functions play an increasingly important role. But how can you create meaningful, comprehensive, and connected business solutions if the individual components are decoupled and independent by design? This book provides a framework through examples and practical advice, and reveals how you can design complex processes in such an environment to deliver true business value. Systems that become more distributed, asynchronous, and reactive usually require state handling to deal with long-running interactions. Author Bernd Ruecker demonstrates how to use process automation technology to apply typical long-running patterns around resiliency, messaging, orchestration, or consistency without forcing your service implementation to become stateful itself. With this guide, you'll discover how process automation compares to business process management, service-oriented architecture, batch processing, event streaming, and data pipeline solutions. Learn how to utilize process automation in cloud-scale or low-latency scenarios Explore options for designing architecture that facilitates process automation Learn methods for modeling processes properly to avoid potential pitfalls Understand the difference between orchestration and choreography and how to balance both Examine process automation use cases to learn viable solutions and appreciate the possibilities",
     "coverUrl": "/covers/9781492061458.png",
@@ -1132,7 +1151,7 @@
     "year": 2023,
     "tags": [],
     "ai_tags": [
-      "APIs",
+      "API",
       "Software Architecture"
     ],
     "description": "Most organizations with a web presence build and operate APIs; the doorway for customers to interact with the company's services. Designing, building, and managing these critical programs affect everyone in the organization, from engineers and product owners to C-suite executives. But the real challenge for developers and solution architects is creating an API platform from the ground up. With this practical book, you'll learn strategies for building and testing REST APIs that use API gateways to combine offerings at the microservice level. Authors James Gough, Daniel Bryant, and Matthew Auburn demonstrate how simple additions to this infrastructure can help engineers and organizations migrate to the cloud; and open the opportunity to connect internal services using technologies like a service mesh. Learn API fundamentals and architectural patterns for building an API platform Explore evolving trends such as asynchronous and streaming APIs Help drive your API program by performing an informed architectural role Build and configure key components of an API platform Deploy gateways and service meshes based on case studies Understand core security and vulnerabilities in API architecture Secure data and services using OAuth 2.0, TLS, and web application firewalls",
@@ -1148,7 +1167,7 @@
     "tags": [],
     "ai_tags": [
       "REST",
-      "APIs"
+      "API"
     ],
     "description": "",
     "coverUrl": "/covers/9781098106744.png",
@@ -1191,7 +1210,6 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "Serverless",
       "Software Architecture"
     ],
     "description": "The adoption of serverless is on the rise, but until now, little guidance has been available for development teams that want to apply this technology on AWS. This definitive guide is packed with architectural, security, and data best practices and patterns for architects and engineers who want to build reliable enterprise-scale serverless solutions. Sheen Brisals, an AWS Serverless Hero, and Luke Hedger, an AWS Community Builder, outline the serverless adoption requirements for an enterprise, examine the development tools your team needs, and explain in depth the nuances of testing event-driven and distributed serverless services. You'll gain practical guidance for keeping up with change and learn how to build serverless solutions with sustainability in mind. Examine the serverless technology ecosystem and AWS services needed to develop serverless applications Learn the approach and preparation required for a successful serverless adoption in an enterprise Learn serverless architectures and implementation patterns Design, develop, and test distributed serverless microservices on AWS cloud Apply security best practices while building serverless solutions Identify and adapt the implementation patterns for your particular use case Incorporate the necessary measures for observable serverless applications Implement sustainable serverless applications in the cloud",
@@ -1235,7 +1253,7 @@
     "tags": [],
     "ai_tags": [
       "SQL",
-      "Data Engineering"
+      "Python"
     ],
     "description": "With the shift from data warehouses to data lakes, data now lands in repositories before it's been transformed, enabling engineers to model raw data into clean, well-defined datasets. DBT (data build tool) helps you take data further. This practical book shows data analysts, data engineers, BI developers, and data scientists how to create a true self-service transformation platform through the use of dynamic SQL. Authors Rui Machado from Monstarlab and Helder Russa from Jumia show you how to quickly deliver new data products by focusing more on value delivery and less on architectural and engineering aspects. If you know your business well and have the technical skills to model raw data into clean, well-defined datasets, you'll learn how to design and deliver data models without any technical influence. With this book, you'll learn: What DBT is and how a DBT project is structured How DBT fits into the data engineering and analytics worlds How to collaborate on building data models The main tools and architectures for building useful, functional data models How to fit DBT into data warehousing and laking architecture How to build tests for data transformations",
     "coverUrl": "/covers/9781098142384.png",
@@ -1277,8 +1295,8 @@
     "year": 2025,
     "tags": [],
     "ai_tags": [
-      "SQL",
-      "Data Engineering"
+      "DuckDB",
+      "SQL"
     ],
     "description": "",
     "coverUrl": "/covers/9781098159696.png",
@@ -1292,6 +1310,7 @@
     "year": 2020,
     "tags": [],
     "ai_tags": [
+      "Cassandra",
       "Databases"
     ],
     "description": "Imagine what you could do if scalability wasn't a problem. With this hands-on guide, you'll learn how the Cassandra database management system handles hundreds of terabytes of data while remaining highly available across multiple data centers. This third edition--updated for Cassandra 4.0--provides the technical details and practical examples you need to put this database to work in a production environment. Authors Jeff Carpenter and Eben Hewitt demonstrate the advantages of Cassandra's nonrelational design, with special attention to data modeling. If you're a developer, DBA, or application architect looking to solve a database scaling issue or future-proof your application, this guide helps you harness Cassandra's speed and flexibility. Understand Cassandra's distributed and decentralized structure Use the Cassandra Query Language (CQL) and cqlsh--the CQL shell Create a working data model and compare it with an equivalent relational model Develop sample applications using client drivers for languages including Java, Python, and Node.js Explore cluster topology and learn how nodes exchange data",
@@ -1306,8 +1325,7 @@
     "year": 2023,
     "tags": [],
     "ai_tags": [
-      "SQL",
-      "Data Engineering"
+      "SQL"
     ],
     "description": "If you were handed two different but related sets of data, what tools would you use to find the matches? What if all you had was SQL SELECT access to a database? In this practical book, author Jim Lehmer provides best practices, techniques, and tricks to help you import, clean, match, score, and think about heterogeneous data using SQL. DBAs, programmers, business analysts, and data scientists will learn how to identify and remove duplicates, parse strings, extract data from XML and JSON, generate SQL using SQL, regularize data and prepare datasets, and apply data quality and ETL approaches for finding the similarities and differences between various expressions of the same data. Full of real-world techniques, the examples in the book contain working code. You'll learn how to: Identity and remove duplicates in two different datasets using SQL Regularize data and achieve data quality using SQL Extract data from XML and JSON Generate SQL using SQL to increase your productivity Prepare datasets for import, merging, and better analysis using SQL Report results using SQL Apply data quality and ETL approaches to finding similarities and differences between various expressions of the same data",
     "coverUrl": "/covers/9781098152277.png",
@@ -1321,7 +1339,7 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "SQL",
+      "MySQL",
       "Databases"
     ],
     "description": "Geared to intermediate- to advanced-level DBAs and IT professionals looking to enhance their MySQL skills, this guide provides a comprehensive overview on how to manage and optimize MySQL databases. You'll learn how to create databases and implement backup and recovery, security configurations, high availability, scaling techniques, and performance tuning. Using practical techniques, tips, and real-world examples, authors Arunjith Aravindan and Jeyaram Ayyalusamy show you how to deploy and manage MySQL, Amazon RDS, Amazon Aurora, and Azure MySQL. By the end of the book, you'll have the knowledge and skills necessary to administer, manage, and optimize MySQL databases effectively. You'll learn how to: Design and implement a scalable and reliable database infrastructure using MySQL 8.0 on premises and cloud Install and configure software, manage user accounts, and optimize database performance Use backup and recovery strategies, security measures, and high availability solutions Apply best practices for database schema design, indexing strategies, and replication techniques Implement advanced database features and techniques such as replication, clustering, load balancing, and high availability Troubleshoot common issues and errors, using diagnostic tools and techniques to identify and resolve problems quickly and efficiently Facilitate major MySQL upgrades such as MySQL 5.7 to MySQL 8",
@@ -1336,7 +1354,7 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "Data Engineering"
+      "Databases"
     ],
     "description": "Get a concise yet comprehensive overview of Airtable, one of the most versatile platforms to emerge from the no-code/low-code movement. Whether you're planning a new project, sharing data analysis within your organization, tracking a detailed initiative among stakeholders, or dealing with any other well-structured collaboration, this practical book shows you how to tackle these challenges with Airtable. Author Elliott Adams guides developers, product managers, and remote teams through the process of building low-code applications, evaluating whether a solution built on Airtable can accommodate your software needs, and extending your platform using code. You'll also learn how the platform can replace inadequate spreadsheets and time-consuming application development with graceful tools. With this book, you will: Learn how Airtable can reduce the need for custom-built applications Use Airtable to replace internal tools such as spreadsheets Learn how to extend Airtable with code Build applications utilizing relational data--without any knowledge of software programming Evaluate whether you can build a solution on Airtable rather than purchasing software Articulate limitations of the Airtable platform when compared with writing a software application from scratch",
     "coverUrl": "/covers/9781098133375.png",
@@ -1352,7 +1370,7 @@
     "ai_tags": [
       "PHP",
       "JavaScript",
-      "SQL"
+      "MySQL"
     ],
     "description": "Build interactive, data-driven websites with the potent combination of open source technologies and web standards, even if you have only basic HTML knowledge. With the latest edition of this popular hands-on guide, you'll tackle dynamic web programming using the most recent versions of today's core technologies: PHP, MySQL, JavaScript, CSS, HTML5, jQuery, Node.js, and the powerful React library. Web designers will learn how to use these technologies together while picking up valuable web programming practices along the way, including how to optimize websites for mobile devices. You'll put everything together to build a fully functional social networking site suitable for both desktop and mobile browsers. Explore MySQL from database structure to complex queries Use the MySQL PDO extension, PHP's improved MySQL interface Create dynamic PHP web pages that tailor themselves to the user Manage cookies and sessions and maintain a high level of security Enhance JavaScript with the React library Use Ajax calls for background browser-server communication Style your web pages by acquiring CSS skills Implement HTML5 features including geolocation, audio, video, and the canvas element Reformat your websites into mobile web apps",
     "coverUrl": "/covers/9781098152352.png",
@@ -1366,7 +1384,7 @@
     "year": 2022,
     "tags": [],
     "ai_tags": [
-      "SQL",
+      "MySQL",
       "Databases"
     ],
     "description": "How can you realize MySQL's full power? With High Performance MySQL, you'll learn advanced techniques for everything from choosing the right abstraction layer for databases to designing schemas, indexes, and queries to tuning your server, operating system, and hardware to achieve their full potential. This guide also teaches database administrators safe and practical ways to scale applications through replication, load balancing, high availability, and failover. Updated to reflect recent advances in cloud- and self-hosted MySQL, InnoDB performance, features, and tools, this revised edition helps you design a data platform that will scale with your business. You'll learn the latest in cloud-hosted MySQL offerings, best practices for database security, and hard-earned lessons in both performance and database stability. Dive into MySQL's architecture, including key facts about its storage engines Learn how server configuration works with your hardware and deployment choices Make query performance part of your software delivery process Examine enhancements to MySQL's replication and high availability Compare different MySQL offerings in managed cloud environments Explore MySQL's full stack optimization from application-side configuration to server tuning Turn traditional database management tasks into automated processes",
@@ -1382,7 +1400,7 @@
     "tags": [],
     "ai_tags": [
       "SQL",
-      "Databases"
+      "Snowflake"
     ],
     "description": "To help you on the path to becoming a Snowflake pro, this concise yet comprehensive guide reviews fundamentals and best practices for Snowflake's SQL and Scripting languages. Developers and data professionals will learn how to generate, modify, and query data in the Snowflake relational database management system as well as how to apply analytic functions for reporting. Author Alan Beaulieu also shows you how to create scripts, stored functions, and stored procedures to return data sets using Snowflake Scripting. This book is ideal whether you're new to databases and need to run queries or reports against a Snowflake database, or transitioning from databases such as Oracle, SQL Server, or MySQL to cloud-based platforms. With this book, you will: Generate and modify Snowflake data using Insert, Update, Delete Query data in Snowflake using Select, including joining multiple tables, using subqueries, and grouping Apply analytic functions for performing subtotals, grand totals, row comparisons, and other reporting functionality Build scripts combining SQL statements with looping, if-then-else, and exception handling Learn how to build stored procedures and functions Use stored procedures to return data sets",
     "coverUrl": "/covers/9781098140328.png",
@@ -1410,7 +1428,7 @@
     "year": 2007,
     "tags": [],
     "ai_tags": [
-      "SQL",
+      "MySQL",
       "Databases"
     ],
     "description": "This new book in the popular Learning series offers an easy-to-use resource for newcomers to the MySQL relational database. This tutorial explains in plain English how to set up MySQL and related software from the beginning, and how to do common tasks.",
@@ -1425,7 +1443,7 @@
     "year": 2022,
     "tags": [],
     "ai_tags": [
-      "SQL",
+      "MySQL",
       "Databases"
     ],
     "description": "For MySQL, the price of popularity comes with a flood of questions from users on how to solve specific data-related issues. That's where this cookbook comes in. When you need quick solutions or techniques, this handy resource provides scores of short, focused pieces of code, hundreds of worked-out examples, and clear, concise explanations for programmers who don't have the time (or expertise) to resolve MySQL problems from scratch. In this updated fourth edition, authors Sveta Smirnova and Alkin Tezuysal provide more than 200 recipes that cover powerful features in both MySQL 5.7 and 8.0. Beginners as well as professional database and web developers will dive into topics such as MySQL Shell, MySQL replication, and working with JSON. You'll learn how to: Connect to a server, issue queries, and retrieve results Retrieve data from the MySQL Server Store, retrieve, and manipulate strings Work with dates and times Sort query results and generate summaries Assess the characteristics of a dataset Write stored functions and procedures Use stored routines, triggers, and scheduled events Perform basic MySQL administration tasks Understand MySQL monitoring fundamentals",
@@ -1440,7 +1458,7 @@
     "year": 2017,
     "tags": [],
     "ai_tags": [
-      "SQL",
+      "PostgreSQL",
       "Databases"
     ],
     "description": "Thinking of migrating to PostgreSQL? This clear, fast-paced introduction helps you understand and use this open source database system. Not only will you learn about the enterprise class features in versions 9.5 to 10, you'll also discover that PostgeSQL is more than a database system--it's an impressive application platform as well. With examples throughout, this book shows you how to achieve tasks that are difficult or impossible in other databases. This third edition covers new features, such as ANSI-SQL constructs found only in proprietary databases until now: foreign data wrapper (FDW) enhancements; new full text functions and operator syntax introduced in version 9.6; XML constructs new in version 10; query parallelization features introduced in 9.6 and enhanced in 10; built-in logical replication introduced in Version 10.e. If you're a current PostgreSQL user, you'll pick up gems you may have missed before. Learn basic administration tasks such as role management, database creation, backup, and restore Apply the psql command-line utility and the pgAdmin graphical administration tool Explore PostgreSQL tables, constraints, and indexes Learn powerful SQL constructs not generally found in other databases Use several different languages to write database functions Tune your queries to run as fast as your hardware will allow Query external and variegated data sources with foreign data wrappers Learn how to use built-in replication to replicate data",
@@ -1470,7 +1488,7 @@
     "year": 2020,
     "tags": [],
     "ai_tags": [
-      "Data Engineering"
+      "Databases"
     ],
     "description": "The world's most valuable resource is data. Companies across all industry verticals are using data-driven insights as a key competitive advantage. But the time required for transforming raw data to insights can take days or weeks when you want it in minutes or hours. Data scientists spend nearly 80% of their time in data engineering, rather than developing insights. And most organizations can't scale their data science teams fast enough to keep up with growing business needs for better, faster insights. This book will help data engineers, data scientists, and data team managers address these issues by building a self-service data science platform that democratizes the ability to extract insights from the data to everyone in the organization. Data scientists, software engineers, product managers, and marketers can use it to discover, transform, and analyze data and publish automated insights in production. This book is not: A deep dive into the \"shiny new\" technologies, or any one specific technology A silver bullet technology for building a self-service portal. Organizations differ in their maturity, people, process, and technology and require tailored solutions This book is: A collection of must-have operational capabilities for building a self-service data portal A blueprint for achieving better and faster insights A process for democratizing data engineering expertise across an organization A practical and indispensable guide for any decision-maker, implementer, or strategist working with an organization's data science platform.",
     "coverUrl": "/covers/9781492075257.png",
@@ -1498,6 +1516,7 @@
     "year": 2019,
     "tags": [],
     "ai_tags": [
+      "MongoDB",
       "Databases"
     ],
     "description": "Manage your data in a database system designed to support modern application development. The updated edition of this authoritative and accessible guide shows you the many advantages of using document-oriented databases, including how this secure, high-performance system enables flexible data models, high availability, and horizontal scalability. Written by current and former members of the MongoDB team, the third edition is updated for MongoDB 4.0. You'll find substantial updates on querying, indexing, aggregation, replica sets, ops manager, sharding administration, data administration, durability, monitoring, and security. Authors Shannon Bradshaw (MongoDB) and Kristina Chodorow (Google) provide guidance for database developers, advanced configuration for system administrators, and use cases for a variety of projects. Ideal for NoSQL newcomers and experienced MongoDB users alike, this book also includes many real-world schema design examples.",
@@ -1512,8 +1531,7 @@
     "year": 2021,
     "tags": [],
     "ai_tags": [
-      "SQL",
-      "Data Engineering"
+      "SQL"
     ],
     "description": "With the explosion of computing power, thanks to analytic databases and cloud data warehouses, SQL has become an even more robust and flexible tool for the savvy analyst or data scientist. This practical book reveals hidden ways to get the most out of your SQL workflow. You'll learn how to use both common and exotic SQL functions such as joins, window functions, subqueries, and regular expressions in new, innovative waysâ??as well as how to combine SQL techniques to accomplish your goals faster, with more understandable code. If you work with SQL databases, this is a must-have reference. SQL for Data Analysis covers useful applications such as: Cohort analysis Text analysis Anomaly detection Time series analysis Experiment analysis Creating complex datasets for further exploration in statistical and visualization tools And more",
     "coverUrl": "/covers/9781492088783.png",
@@ -1527,7 +1545,7 @@
     "year": 2021,
     "tags": [],
     "ai_tags": [
-      "SQL",
+      "MySQL",
       "Databases"
     ],
     "description": "You'll find several books on basic or advanced MySQL performance, but nothing in between. That's because explaining MySQL performance without addressing its complexity is difficult. This practical book bridges the gap by teaching software engineers mid-level MySQL knowledge beyond the fundamentals, but well shy of deep-level internals required by database administrators (DBAs). Daniel Nichter shows you how to apply the best practices and techniques that directly affect MySQL performance. You'll learn how to improve performance by analyzing query execution, indexing for common SQL clauses and table joins, optimizing data access, and understanding the most important MySQL metrics. You'll also discover how replication, transactions, row locking, and the cloud influenceMySQL performance. Understand why query response time is the North Star of MySQL performance Learn query metrics in detail, including aggregation, reporting, and analysis See how to index effectively for common SQL clauses and table joins Explore the most important server metrics and what they reveal about performance Dive into transactions and row locking to gain deep, actionable insight Achieve remarkable MySQL performance at any scale",
@@ -1570,7 +1588,6 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "Data Engineering",
       "Databases"
     ],
     "description": "Real-time applications are becoming the norm today. But building a model that works properly requires real-time data from the source, in-flight stream processing, and low latency serving of its analytics. With this practical book, data engineers, data architects, and data analysts will learn how to use streaming databases to build real-time solutions. Authors Hubert Dulay and Ralph M. Debusmann take you through streaming database fundamentals, including how these databases reduce infrastructure for real-time solutions. You'll learn the difference between streaming databases, stream processing, and real-time online analytical processing (OLAP) databases. And you'll discover when to use push queries versus pull queries, and how to serve synchronous and asynchronous data emanating from streaming databases. This guide helps you: Explore stream processing and streaming databases Learn how to build a real-time solution with a streaming database Understand how to construct materialized views from any number of streams Learn how to serve synchronous and asynchronous data Get started building low-complexity streaming solutions with minimal setup",
@@ -1585,7 +1602,7 @@
     "year": 2025,
     "tags": [],
     "ai_tags": [
-      "LLM",
+      "Generative AI",
       "Software Architecture"
     ],
     "description": "A must-read guide for software architects to master AI integration in complex systems. It covers key principles, risk mitigation, and practical applications for building scalable, AI-driven solutions",
@@ -1601,7 +1618,7 @@
     "tags": [],
     "ai_tags": [
       "C#",
-      "Web Development"
+      "Software Architecture"
     ],
     "description": "Backend design like you've never seen it before – a guide to building SOLID ASP.NET Core web apps that stand the test of time. Featuring more Minimal APIs, more testing, a new e-commerce project, and the modular monolith! Purchase of the print or Kindle book includes a free PDF eBook. Key Features Learn multiple ways to organize your application code and become a more flexible ASP.NET Core developer Explore hands-on design patterns, learn architectural principles, and how to sidestep anti-patterns Refactor code toward modern application design, such as feature-based vertical slice and clean architecture Book DescriptionThis unique ASP.NET Core book will fill in the gaps in your REST API and backend designs. Learn how to build robust, maintainable, and flexible apps using Gang of Four (GoF) design patterns and modern architectural principles. This new edition is updated for .NET 8 and focuses exclusively on the backend, with new content on REST APIs, the REPR pattern, and building modular monoliths. You’ll start by covering foundational concepts like REST, the SOLID principles, Minimal APIs, dependency injection in .NET, and other ASP.NET Core 8 mechanisms. Then, you’ll learn to develop components using design patterns, including many from the GoF. Finally, you’ll explore organizing your application code with patterns that vary from layers to feature-oriented vertical slice designs, covering CQS and a deep dive into microservices along the way. A brand-new e-commerce project at the end of the book will tie it all together. This how-to guide will teach you how to assemble your own APIs from building blocks, to suit whatever real-world requirements you may have.What you will learn Apply the SOLID principles for building flexible and maintainable software Test your apps effectively with automated tests, including black-box testing Embark on mastering ASP.NET Core dependency injection Work with GoF design patterns including strategy, decorator, facade, and composite Design REST APIs using Minimal APIs and ASP.NET Core MVC Discover layering and the tenets of clean architecture Use feature-oriented techniques as an alternative to layering Explore microservices, CQS, REPR, vertical slice architecture, and many more patterns Who this book is for This book is for intermediate-level ASP.NET Core developers who want to improve their C# app code structure and API design skills. ASP.NET developers who want to modernize their knowledge and enhance their technical architecture skills will also like this book. It’s also a good refresher for those in software design roles with more experience looking to update their expertise. A good knowledge of C# programming and a basic understanding of web concepts is necessary to get the most out of this book, though some refreshers are included along the way.",
     "coverUrl": "/covers/9781805129301.png",
@@ -1615,8 +1632,7 @@
     "year": 2021,
     "tags": [],
     "ai_tags": [
-      "C++",
-      "Software Architecture"
+      "C++"
     ],
     "description": "Become a better programmer with performance improvement techniques such as concurrency, lock-free programming, atomic operations, parallelism, and memory management Key Features Learn proven techniques from a heavyweight and recognized expert in C++ and high-performance computing Understand the limitations of modern CPUs and their performance impact Find out how you can avoid writing inefficient code and get the best optimizations from the compiler Learn the tradeoffs and costs of writing high-performance programs Book DescriptionThe great free lunch of \"performance taking care of itself\" is over. Until recently, programs got faster by themselves as CPUs were upgraded, but that doesn't happen anymore. The clock frequency of new processors has almost peaked, and while new architectures provide small improvements to existing programs, this only helps slightly. To write efficient software, you now have to know how to program by making good use of the available computing resources, and this book will teach you how to do that. The Art of Efficient Programming covers all the major aspects of writing efficient programs, such as using CPU resources and memory efficiently, avoiding unnecessary computations, measuring performance, and how to put concurrency and multithreading to good use. You'll also learn about compiler optimizations and how to use the programming language (C++) more efficiently. Finally, you'll understand how design decisions impact performance. By the end of this book, you'll not only have enough knowledge of processors and compilers to write efficient programs, but you'll also be able to understand which techniques to use and what to measure while improving performance. At its core, this book is about learning how to learn.What you will learn Discover how to use the hardware computing resources in your programs effectively Understand the relationship between memory order and memory barriers Familiarize yourself with the performance implications of different data structures and organizations Assess the performance impact of concurrent memory accessed and how to minimize it Discover when to use and when not to use lock-free programming techniques Explore different ways to improve the effectiveness of compiler optimizations Design APIs for concurrent data structures and high-performance data structures to avoid inefficiencies Who this book is for This book is for experienced developers and programmers who work on performance-critical projects and want to learn new techniques to improve the performance of their code. Programmers in algorithmic trading, gaming, bioinformatics, computational genomics, or computational fluid dynamics communities will get the most out of the examples in this book, but the techniques are fairly universal. Although this book uses the C++ language, the concepts demonstrated in the book can be easily transferred or applied to other compiled languages such as C, Java, Rust, Go, and more.",
     "coverUrl": "/covers/9781800202740.png",
@@ -1645,7 +1661,6 @@
     "year": 2023,
     "tags": [],
     "ai_tags": [
-      "System Design",
       "Software Architecture"
     ],
     "description": "Apply modern architectural patterns and techniques to achieve scalable, resilient, and secure intelligent IoT solutions built for manufacturing, consumer, agriculture, smart cities, and other domains Key Features Get empowered to quickly develop IoT solutions using listed patterns and related guidance Learn the applications of IoT architectural patterns in various domains through real-world case studies Explore sensor and actuator selection, analytics, security, and emerging tools for architecting IoT systems Purchase of the print or Kindle book includes a free PDF eBook Book DescriptionAs the Internet of Things (IoT) expands and moves to new domains, architectural patterns need to enable faster digital transformation and more uniform development. Through numerous use cases and examples, this book helps you conceptualize and implement IoT architectural patterns and use them in diverse contexts in real-world scenarios. The book begins by introducing you to a variety of IoT architectural patterns and then helps you understand how they are used in domains such as retail, smart manufacturing, consumer, smart cities, and smart agriculture. You’ll also find out how cross-cutting concerns such as security require special considerations in the IoT context. As you advance, you’ll discover all the nuances that are inherent in each layer of IoT reference architecture, including considerations related to analytics for edge/constrained devices, data visualizations, and so on. In the concluding chapters, you’ll explore emerging technologies such as blockchain, 3D printing, 5G, generative AI, quantum computing, and large language models (LLMs) that enhance IoT capabilities to realize broader applications. By the end of this book, you’ll have learned to architect scalable, secure, and unique IoT solutions in any domain using the power of IoT architectural patterns, and you will be able to avoid the pitfalls that typically derail IoT projects.What you will learn Get to grips with the essentials of different architectural patterns and anti-patterns Discover the underlying commonalities in diverse IoT applications Combine patterns from physical and virtual realms to develop innovative applications Choose the right set of sensors and actuators for your solution Explore analytics-related tools and techniques such as TinyML and sensor fusion Overcome the challenges faced in securing IoT systems Leverage use cases based on edge computing and emerging technologies such as 3D printing, 5G, generative AI, and LLMs Who this book is for This book is for IoT systems and solutions architects as well as other IoT practitioners, such as developers and both technical program and pre-sales managers who are interested in understanding how various IoT architectural patterns and techniques can be applied to developing unique and diverse IoT solutions. Prior knowledge of IoT fundamental concepts and its application areas is helpful but not mandatory.",
@@ -1749,7 +1764,7 @@
     "tags": [],
     "ai_tags": [
       "Ruby",
-      "Web Development"
+      "Software Architecture"
     ],
     "description": "Transition from the traditional Rails MVC trio to an abstraction model and evolve your application codebase with synchronized components, boosting flexibility and maintainability Key Features Understand Rails' architectural patterns along with its advantages and disadvantages Organize business logic in Rails apps when the default approach is insufficient Introduce new abstractions to address design problems Purchase of the print or Kindle book includes a free PDF eBook Book DescriptionThe Ruby on Rails framework boosts productivity by leveraging the convention-over-configuration principle and model-view-controller (MVC) pattern, enabling developers to build features efficiently. This initial simplicity often leads to complexity, making a well-structured codebase difficult to maintain. Written by a seasoned software engineer and award-winning contributor to many other open-source projects, including Ruby on Rails and Ruby, this book will help you keep your code maintainable while working on a Rails app. You’ll get to grips with the framework’s capabilities and principles to harness the full potential of Rails, and tackle many common design problems by discovering useful patterns and abstraction layers. By implementing abstraction and dividing the application into manageable modules, you’ll be able to concentrate on specific parts of the app development without getting overwhelmed by the entire codebase. This also encourages code reuse, simplifying the process of adding new features and enhancing the application's capabilities. Additionally, you’ll explore further steps in scaling Rails codebase, such as service extractions. By the end of this book, you’ll become a code design specialist with a deep understanding of the Rails framework principles.What you will learn Get to grips with Rails' core components and its request/response cycle See how Rails' convention-over-configuration principle affects development Explore patterns for software flexibility, extensibility, and testability in Rails Identify and address Rails' anti-patterns for cleaner code Implement design patterns for handling bloated models and messy views Expand from mailers to multi-channel notification deliveries Introduce different authorization models and layers to your codebase Take a class-based approach to configuration in Rails Who this book is for This book is for Rails application developers looking to efficiently manage the growing complexity of their projects. Whether you've recently launched your first Rails minimum viable product or are struggling to progress with a sizable monolithic application, this book is here to help. A deep understanding of core Rails principles is a must. Prior experience in building web apps using the Rails framework will help you understand and apply the concepts in the book in a better way.",
     "coverUrl": "/covers/9781801812436.png",
@@ -1763,8 +1778,7 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "Software Architecture",
-      "Microservices"
+      "Software Architecture"
     ],
     "description": "Design and build Internal Developer Platforms (IDPs) with future-oriented design strategies, using the Platform as a Product mindset Key Features: - Learn how to design platforms that create value and drive user adoption - Benefit from expert techniques for shifting to a product-centric mindset as an architect and platform team - Implement best practices to understand platform complexity, manage technical debt, and ensure its evolution - Purchase of the print or Kindle book includes a free PDF eBook Book Description: The rapid pace of technological advancements, the shortage of IT talent, and the complexity of modern systems highlight the need for structured guidance in building resilient, user-centric platforms for cloud-native environments. This book empowers platform engineers and architects to implement value-driven internal development platforms. You'll learn how to identify end users, understand their challenges, and define the purpose of a platform, with a focus on self-service solutions for modern cloud-native software development, delivery, and operations. The book incorporates real-world examples of building platforms within and for the cloud, leveraging the power of Kubernetes. You'll learn how adopting a product mindset for architecting and building platforms helps foster successful platform engineering teams. This emphasizes early end-user involvement and provides a framework that gives you the flexibility to easily adapt and extend for future use cases. The book also offers insights into building a sustainable platform without accumulating technical debt. By the end of this book, you'll be able to drive the design, definition, and implementation of platform capabilities as a product that aligns with your organizational requirements and strategy. What You Will Learn: - Make informed decisions based on your organization's platform needs - Identify missing platform capabilities and technical debt - Develop a critical user journey through your platform capabilities - Define the purpose, principles, and key performance indicators (KPIs) for your platform - Utilize relevant data points for making data-driven product decisions - Implement your own platform reference and target architectures Who this book is for: This book is for platform architects and solutions architects seeking to enhance their skills in designing and building a platform as a product. It also offers valuable insights for decision-makers, platform engineers, and DevOps professionals. While familiarity with cloud-native concepts, CI/CD, and Kubernetes is beneficial, the book builds on these topics to address self-service, cost management, and technical debt. It's particularly suited to experts tackling the challenge of integrating diverse domains to create effective internal developer platforms with top-notch operational readiness. Table of Contents - Platform Engineering and the Art of Crafting Platforms - Understanding Platform Architecture to Build Platform as a Product - Building the Foundation for Supporting Platform Capabilities - Architecting the Platform Core - Kubernetes as a Unified Layer - Integration, Delivery, and Deployment - Automation is Ubiquitous - Build for Developers and Their Self-Service - Building Secure and Compliant Products - Cost Management and Best Practices - Choosing Technical Debt to Unbreak Platforms - Crafting Platform Products for the Future",
     "coverUrl": "/covers/9781836203599.png",
@@ -1821,7 +1835,6 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "Serverless",
       "Software Architecture"
     ],
     "description": "Delve into the second edition to master serverless proficiency and explore new chapters on security techniques, multi-regional deployment, and optimizing observability. Key Features Gain insights from a seasoned CTO on best practices for designing enterprise-grade software systems Deepen your understanding of system reliability, maintainability, observability, and scalability with real-world examples Elevate your skills with software design patterns and architectural concepts, including securing in-depth and running in multiple regions Book DescriptionOrganizations undergoing digital transformation rely on IT professionals to design systems to keep up with the rate of change while maintaining stability. With this edition, enriched with more real-world examples, you’ll be perfectly equipped to architect the future for unparalleled innovation. This book guides through the architectural patterns that power enterprise-grade software systems while exploring key architectural elements (such as events-driven microservices, and micro frontends) and learning how to implement anti-fragile systems. First, you'll divide up a system and define boundaries so that your teams can work autonomously and accelerate innovation. You'll cover the low-level event and data patterns that support the entire architecture while getting up and running with the different autonomous service design patterns. This edition is tailored with several new topics on security, observability, and multi-regional deployment. It focuses on best practices for security, reliability, testability, observability, and performance. You'll be exploring the methodologies of continuous experimentation, deployment, and delivery before delving into some final thoughts on how to start making progress. By the end of this book, you'll be able to architect your own event-driven, serverless systems that are ready to adapt and change.What you will learn Explore architectural patterns to create anti-fragile systems Focus on DevSecOps practices that empower self-sufficient, full-stack teams Apply microservices principles to the frontend Discover how SOLID principles apply to software and database architecture Gain practical skills in deploying, securing, and optimizing serverless architectures Deploy a multi-regional system and explore the strangler pattern for migrating legacy systems Master techniques for collecting and utilizing metrics, including RUM, Synthetics, and Anomaly detection Who this book is for This book is for software architects who want to learn more about different software design patterns and best practices. This isn't a beginner's manual – you'll need an intermediate level of programming proficiency and software design experience to get started.You'll get the most out of this software design book if you already know the basics of the cloud, but it isn't a prerequisite.",
@@ -1912,7 +1925,8 @@
     "tags": [],
     "ai_tags": [
       "C#",
-      "React"
+      "React",
+      "Web Development"
     ],
     "description": "Build fully functional, cloud-ready, and professional web applications using the latest features in the .NET 5 framework and React.js with Microsoft Azure Key FeaturesExplore the new features of .NET 5 with this updated edition of ASP.NET Core 5 and ReactDiscover strategies for adopting a full-stack development approach, clean architecture techniques, and development best practicesLearn how to manage data, design and package applications, and secure your web appsBook Description Microsoft’s .NET framework is a robust server-side framework, now even more powerful thanks to the recent unification of the Microsoft ecosystem with the .NET 5 framework. This updated second edition addresses these changes in the .NET framework and the latest release of React. The book starts by taking you through React and TypeScript components for building an intuitive single-page application and then shows you how to design scalable REST APIs that can integrate with a React-based frontend. Next, you’ll get to grips with the latest features, popular patterns, and tools available in the React ecosystem, including function-based components, React Router, and Redux. As you progress through the chapters, you'll learn how to use React with TypeScript to make the frontend robust and maintainable and cover key ASP.NET 5 features such as API controllers, attribute routing, and model binding to build a sturdy backend. In addition to this, you’ll explore API security with ASP.NET 5 identity and authorization policies and write reliable unit tests using both .NET and React, before deploying your app on Azure. By the end of this book, you’ll have gained the knowledge you need to enhance your C# and JavaScript skills and build full-stack, production-ready applications with ASP.NET 5 and React. What you will learnBuild RESTful APIs with .NET 5 using API controllersSecure REST APIs with identity and authorization policiesCreate strongly typed, interactive, and function-based React components using HooksUnderstand how to style React components using Emotion.jsPerform client-side state management with ReduxRun a range of automated tests on the frontend and backendImplement continuous integration and continuous delivery (CI/CD) processes in Azure using Azure DevOpsWho this book is for If you're a web developer looking to get up to speed with full-stack web application development with .NET Core and React, this book is for you. Although the book does not assume any knowledge of React, a basic understanding of .NET Core will help you to get to grips with the concepts covered.",
     "coverUrl": "/covers/9781800207684.png",
@@ -1927,7 +1941,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "Learn how to create SEO-friendly, powerful static websites using Gatsby by harnessing the power of React Key FeaturesUnderstand how to use Gatsby to build, test, and deploy an end-to-end website and manage SEOBuild reusable templates to streamline your workflowsCreate plugins, add authentication, and work with real-time dataBook Description Gatsby is a powerful React static site generator that enables you to create lightning-fast web experiences. With the latest version of Gatsby, you can combine your static content with server-side rendered and deferred static content to create a fully rounded application. Elevating React Web Development with Gatsby provides a comprehensive introduction for anyone new to GatsbyJS and will help you get up to speed in no time. Complete with hands-on tutorials and projects, this easy-to-follow guide starts by teaching you the core concepts of GatsbyJS. You'll then discover how to build performant, accessible, and scalable websites with the GatsbyJS framework. Once you've worked through the practical projects in the book, you'll be able to build anything from a personal website to large-scale applications with authentication and make your site rise through those SEO rankings. By the end of this Gatsby development book, you'll be well-versed in every aspect of the tool's performance and accessibility and have learned how to build client websites that your users will love. What you will learnUnderstand what GatsbyJS is, where it excels, and how to use itStructure and build a GatsbyJS site with confidenceElevate your site with an industry-standard approach to stylingConfigure your GatsbyJS projects with search engine optimization to improve their rankingGet to grips with advanced GatsbyJS concepts to create powerful and dynamic sitesSupercharge your site with translations for a global audienceDiscover how to use third-party services that provide interactivity to usersWho this book is for This book is for web developers who want to use GatsbyJS with React to build better static and dynamic client-side apps. Prior experience of working with React basics is necessary. Knowledge of Node.js fundamentals will help you to get the most out of this web development book.",
     "coverUrl": "/covers/9781800202962.png",
@@ -1941,8 +1955,9 @@
     "year": 2020,
     "tags": [],
     "ai_tags": [
+      "React",
       "TypeScript",
-      "React"
+      "Web Development"
     ],
     "description": "Discover the current landscape of full-stack development and how to leverage modern web technologies for building production-ready React.js applications to deploy on AWS Key FeaturesUnderstand the architecture of React and single-page applicationsBuild a modern Web API for your SPA using Node.js, Express, and GraphQLGain a clear and practical understanding of how to build a complete full-stack applicationBook Description React sets the standard for building high-performance client-side web apps. Node.js is a scalable application server that is used in thousands of websites, while GraphQL is becoming the standard way for large websites to provide data and services to their users. Together, these technologies, when reinforced with the capabilities of TypeScript, provide a cutting-edge stack for complete web application development. This book takes a hands-on approach to implementing modern web technologies and the associated methodologies for building full-stack apps. You’ll begin by gaining a strong understanding of TypeScript and how to use it to build high-quality web apps. The chapters that follow delve into client-side development with React using the new Hooks API and Redux. Next, you’ll get to grips with server-side development with Express, including authentication with Redis-based sessions and accessing databases with TypeORM. The book will then show you how to use Apollo GraphQL to build web services for your full-stack app. Later, you’ll learn how to build GraphQL schemas and integrate them with React using Hooks. Finally, you’ll focus on how to deploy your application onto an NGINX server using the AWS cloud. By the end of this book, you’ll be able to build and deploy complete high-performance web applications using React, Node, and GraphQL. What you will learnDiscover TypeScript’s most important features and how they can be used to improve code quality and maintainabilityUnderstand what React Hooks are and how to build React apps using themImplement state management for your React app using ReduxSet up an Express project with TypeScript and GraphQL from scratchBuild a fully functional online forum app using React and GraphQLAdd authentication to your web app using RedisSave and retrieve data from a Postgres database using TypeORMConfigure NGINX on the AWS cloud to deploy and serve your appsWho this book is for The book is for web developers who want to go beyond front-end web development and enter the world of full-stack web development by learning about modern web technologies and how they come together. A good understanding of JavaScript programming is required before getting started with this web development book.",
     "coverUrl": "/covers/9781839214691.png",
@@ -1956,7 +1971,7 @@
     "year": 2024,
     "tags": [],
     "ai_tags": [
-      "System Design"
+      "Software Architecture"
     ],
     "description": "Enhance your system design skills to build scalable and efficient systems by working through real-world case studies and expert strategies to excel in interviews Key Features: - Comprehensive coverage of distributed systems concepts and practical system design techniques. - Insider tips and proven strategies from engineering leaders at top tech companies. - Detailed case studies of widely used applications and their system architectures. - Purchase of the print or Kindle book includes a free PDF eBook Book Description: Building scalable software systems is more critical than ever. Yet, many software professionals struggle to navigate the complexities of system design, especially when aiming for positions at top tech companies. Written by Dhirendra Sinha, a seasoned Engineering Leader at Google with a blend of experience working at large companies such as Cisco, Oracle, and Yahoo, and Tejas Chopra, a Senior Software Engineer at Netflix, a TEDx speaker, and a Co-Founder of GoEB1, this comprehensive and authoritative resource on system design offers invaluable insights and strategies to help you excel in interviews with all major tech companies. This guide covers the basics of system design, including the principles and techniques of distributed systems, and delves into core building blocks such as distributed system theorems, attributes, and the design and implementation of system components. Following examples of popular applications such as Uber, Twitter, Instagram, Google Docs, and Netflix, you'll learn how to apply concepts to real-world scenarios. The book offers expert advice and strategies for preparing and acing system design interviews, along with a mind map/cheat sheet summarizing the key takeaways. By the end of this book, you'll be equipped with unique techniques and the confidence to solve any coding interview question. What You Will Learn: - Design for scalability and efficiency with expert insights - Apply distributed system theorems and attributes - Implement DNS, databases, caches, queues, and APIs - Analyze case studies of real-world systems - Discover tips to excel in system design interviews with confidence - Apply industry-standard methodologies for system design and evaluation - Explore the architecture and operation of cloud-based systems Who this book is for: This book is a must-have resource for experienced software professionals, particularly those with 5-15 years of experience in building scalable distributed systems, web applications, and backend microservices. Whether you're a seasoned developer or an architect looking to deepen your expertise in system design, this book provides the insights and practical knowledge you need to excel in tech interviews and advance your career. A solid foundation in distributed systems, data structures/algorithms, and web development will help you get the most out of this comprehensive guide. Table of Contents - Basics of System Design - Distributed System Attributes - Distributed Systems Theorems and Data Structures - Distributed Systems Building Blocks: DNS, Load Balancers, and Application Gateways - Design and Implementation of System Components - Databases and Storage - Distributed Cache - Pub/Sub and Distributed Queues - Design and Implementation of System Components: API, Security, and Metrics - System Design - URL Shortener - System Design - Proximity Service - Designing a Service Like Twitter - Designing a Service Like Instagram - Designing a Service Like Google Docs - Designing a Service Like Netflix - Tips for Interviewees - System Design Cheat Sheet",
     "coverUrl": "/covers/9781805124993.png",
@@ -1971,7 +1986,8 @@
     "tags": [],
     "ai_tags": [
       "GraphQL",
-      "React"
+      "React",
+      "Web Development"
     ],
     "description": "Unleash the power of GraphQL, React 17, Node, and Express to build a scalable and production-ready application from scratch to be deployed on AWS Key FeaturesBuild full-stack applications with modern APIs using GraphQL and React HooksIntegrate Apollo into React and build frontend components using GraphQLImplement a self-updating notification pop-up with a unique GraphQL feature called SubscriptionsBook Description React and GraphQL, when combined, provide you with a very dynamic, efficient, and stable tech stack to build web-based applications. GraphQL is a modern solution for querying an API that represents an alternative to REST and is the next evolution in web development. This book guides you in creating a full-stack web application from scratch using modern web technologies such as Apollo, Express.js, Node.js, and React. First, you'll start by configuring and setting up your development environment. Next, the book demonstrates how to solve complex problems with GraphQL, such as abstracting multi-table database architectures and handling image uploads using Sequelize. You'll then build a complete Graphbook from scratch. While doing so, you'll cover the tricky parts of connecting React to the backend, and maintaining and synchronizing state. In addition to this, you'll also learn how to write Reusable React components and use React Hooks. Later chapters will guide you through querying data and authenticating users in order to enable user privacy. Finally, you'll explore how to deploy your application on AWS and ensure continuous deployment using Docker and CircleCI. By the end of this web development book, you'll have learned how to build and deploy scalable full-stack applications with ease using React and GraphQL. What you will learnBuild a GraphQL API by implementing models and schemas with Apollo and SequelizeSet up an Apollo Client and build frontend components using ReactWrite Reusable React components and use React HooksAuthenticate and query user data using GraphQLUse Mocha to write test cases for your full-stack applicationDeploy your application to AWS using Docker and CircleCIWho this book is for This React GraphQL book is for web developers familiar with React and GraphQL who want to enhance their skills and build full-stack applications using industry standards like React, Apollo, Node.js, and SQL at scale while learning to solve complex problems with GraphQL.",
     "coverUrl": "/covers/9781801079174.png",
@@ -1986,6 +2002,7 @@
     "tags": [],
     "ai_tags": [
       "React",
+      "Web Development",
       "Java"
     ],
     "description": "PUBLISHER'S NOTE: A new edition of this book is now available, revised and updated for Spring Boot 3 and TypeScript. Key Features Utilize Spring Boot to make powerful, complex, and secure backends for your applications Leverage React’s full arsenal of tools for building slick, high-performance frontends Build modern, scalable full stack applications that comfortably meet the demands of your users Book DescriptionGetting started with full stack development can be daunting. Even developers who are familiar with the best tools, such as Spring Boot and React, can struggle to nail the basics, let alone master the more advanced elements. If you’re one of these developers, this comprehensive guide covers everything you need! This updated edition of the Full Stack Development with Spring Boot 2 and React book will take you from novice to proficient in this expansive domain. Taking a practical approach, this book will first walk you through the latest Spring Boot features for creating a robust backend, covering everything from setting up the environment and dependency injection to security and testing. Once this has been covered, you’ll advance to React frontend programming. If you’ve ever wondered about custom Hooks, third-party components, and MUI, this book will demystify all that and much more. You’ll explore everything that goes into developing, testing, securing, and deploying your applications using all the latest tools from Spring Boot, React, and other cutting-edge technologies. By the end of this book, you'll not only have learned the theory of building modern full stack applications but also have developed valuable skills that add value in any setting.What you will learn Make fast and RESTful web services powered by Spring Data REST Create and manage databases using ORM, JPA, Hibernate, and more Explore the use of unit tests and JWTs with Spring Security Employ React Hooks, props, states, and more to create your frontend Discover a wide array of advanced React and third-party components Build high-performance applications complete with CRUD functionality Harness MUI to customize your frontend Test, secure, and deploy your applications with high efficiency Who this book is for This book is for Java developers who are familiar with Spring Boot but don’t know where to start when it comes to building full stack applications. You'll also find this book useful if you're a frontend developer with knowledge of JavaScript basics looking to learn full stack development or a full stack developer experienced in other technology stacks looking to learn a new one.",
@@ -2001,7 +2018,8 @@
     "tags": [],
     "ai_tags": [
       "Python",
-      "React"
+      "React",
+      "Web Development"
     ],
     "description": "Wield the power of Python, React, and MongoDB to build web and data applications quickly and broaden your web development horizons Key FeaturesLearn how to build web applications without having to know the intricacies of the componentsBuild full stack projects without compromising on development speed and app performancePrepare yourself for the diverse world of web development, analytics, and data visualizationBook Description If you need to develop web applications quickly, where do you turn? Enter the FARM stack. The FARM stack combines the power of the Python ecosystem with REST and MongoDB and makes building web applications easy and fast. This book is a fast-paced, concise, and hands-on beginner's guide that will equip you with the skills you need to quickly build web applications by diving just deep enough into the intricacies of the stack's components. The book quickly introduces each element of the stack and then helps you merge them to build a medium-sized web application. You'll set up a document store with MongoDB, build a simple API with FastAPI, and create an application with React. Security is crucial on the web, so you'll learn about authentication and authorization with JSON Web Tokens. You'll also understand how to optimize images, cache responses with Redis, and add additional features to your application as well as explore tips, tricks, and best practices to make your development experience a breeze. Before you know it, you'll be deploying the application to different platforms. By the end of this book, you will have built a couple of functional applications efficiently and will have the springboard you need to delve into diverse and more specialized domains. What you will learnDiscover the flexibility of the FARM stackImplement complete JWT authentication with FastAPIExplore the various Python drivers for MongoDBDiscover the problems that React libraries solveBuild simple and medium web applications with the FARM stackDive into server-side rendering with Next.jsDeploy your app with Heroku, Vercel, Ubuntu Server and NetlifyUnderstand how to deploy and cache a FastAPI backendWho this book is for This book is for web developers and analysts who want to include the power of a modern asynchronous Python framework, a flexible data store and a powerful UI library with the combination of two of the most important programming languages today in their web development toolkit. Beginners in the field of information presentation will also find this book helpful. You must have a beginner-level understanding of Python, JavaScript, and HTML and CSS to get the most out of this book.",
     "coverUrl": "/covers/9781803249445.png",
@@ -2030,6 +2048,7 @@
     "year": 2023,
     "tags": [],
     "ai_tags": [
+      "Software Architecture",
       "Testing"
     ],
     "description": "This comprehensive guide redefines testing as a risk management function, bringing together diverse testing methodologies and expertise.",
@@ -2044,8 +2063,9 @@
     "year": 2022,
     "tags": [],
     "ai_tags": [
+      "React",
       "Java",
-      "React"
+      "Web Development"
     ],
     "description": "Create and deploy standalone, fully functional, web applications using Quarkus and React Key FeaturesGet up and running with web application development speedily using React and QuarkusGet an overview of how to make a Java backend work seamlessly with a JavaScript frontendLearn how to deploy your working application to Kubernetes and share it with the worldBook Description React has established itself as one of the most popular and widely adopted frameworks thanks to its simple yet scalable app development abilities. Quarkus comes across as a fantastic alternative for backend development by boosting developer productivity with features such as pre-built integrations, application services, and more that bring a new, revolutionary developer experience to Java. To make the best use of both, this hands-on guide will help you get started with Quarkus and React to create and deploy an end-to-end web application. This book is divided into three parts. In the first part, you'll begin with an introduction to Quarkus and its features, learning how to bootstrap a Quarkus project from the ground up to create a tested and secure HTTP server for your backend. The second part focuses on the frontend, showing you how to create a React project from scratch to build the application's user interface and integrate it with the Quarkus backend. The last part guides you through creating cluster configuration manifests and deploying them to Kubernetes as well as other alternatives, such as Fly.io. By the end of this full stack development book, you'll be confident in your skills to combine the robustness of both frameworks to create and deploy standalone, fully functional web applications. What you will learnCreate a Quarkus project from scratch to gain a basic understanding of its advantagesCreate a persistence layer in a Quarkus applicationSecure your application by adding authentication and authorization featuresUse Quarkus Dev services to implement integration tests with real-world databasesStart creating a React project from scratchUse React Testing Library to test React componentsIdentify the most suitable alternatives for deploying your application to the cloudWho this book is for This book is for backend web developers who have at least basic experience with Java and would like to learn React to build full stack apps by integrating it with a Quarkus-based backend. Frontend web developers with basic JavaScript experience will also find this book useful to learn how to implement a backend in Quarkus and integrate it with their frontend to create full stack web applications. Beginner-level knowledge of Java and JavaScript is recommended, but any developer experienced either with Java or JavaScript should be able to follow the backend and frontend parts easily.",
     "coverUrl": "/covers/9781800565159.png",
@@ -2060,7 +2080,8 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "TypeScript"
+      "TypeScript",
+      "Web Development"
     ],
     "description": "Take your first step in building modern-day component-based web apps using the latest features and capabilities of React and TypeScript with this easy-to-follow guide Key Features Learn to use different React hooks with TypeScript Explore different styling approaches while building React web apps Gain experience in using React Dev Tools to debug components Purchase of the print or Kindle book includes a free PDF eBook Book DescriptionReading, navigating, and debugging a large frontend codebase is a major issue faced by frontend developers. This book is designed to help web developers like you learn about ReactJS and TypeScript, both of which power large-scale apps for many organizations. This second edition of Learn React with TypeScript is updated, enhanced, and improved to cover new features of React 18 including hooks, state management libraries, and features of TypeScript 4. The book will enable you to create well-structured and reusable React components that are easy to read and maintain, leveraging modern design patterns. You’ll be able to ensure that all your components are type-safe, making the most of TypeScript features, including some advanced types. You’ll also learn how to manage complex states using Redux and how to interact with a GraphQL web API. Finally, you’ll discover how to write robust unit tests for React components using Jest. By the end of the book, you’ll be well-equipped to use both React and TypeScript.What you will learn Gain first-hand experience of TypeScript and its productivity features Understand how to transpile your TypeScript code into JavaScript for running in a browser Build a React frontend codebase with hooks Interact with REST and GraphQL web APIs Design and develop strongly typed reusable components Create automated component tests Who this book is for This book is for experienced frontend developers looking to build large scale web applications using React and TypeScript. Intermediate knowledge of JavaScript, HTML and CSS is a prerequisite.",
     "coverUrl": "/covers/9781804611050.png",
@@ -2075,7 +2096,8 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "JavaScript",
+      "Web Development"
     ],
     "description": "A practical, project-based guide to full-stack JavaScript web development combining the power of React with industry-tested server-side technologies Key Features Build your career as a full-stack developer with this practical guide Understand how the different aspects of a MERN application come together through a series of practical projects Master the MERN stack by building robust social media, E-commerce store, and web-based VR game apps Book DescriptionFacebook's React combined with industry-tested, server-side technologies, such as Node, Express, and MongoDB, enables you to develop and deploy robust real-world full-stack web apps. This updated second edition focuses on the latest versions and conventions of the technologies in this stack, along with their new features such as Hooks in React and async/await in JavaScript. The book also explores advanced topics such as implementing real-time bidding, a web-based classroom app, and data visualization in an expense tracking app. Full-Stack React Projects will take you through the process of preparing the development environment for MERN stack-based web development, creating a basic skeleton app, and extending it to build six different web apps. You’ll build apps for social media, classrooms, media streaming, online marketplaces with real-time bidding, and web-based games with virtual reality features. Throughout the book, you’ll learn how MERN stack web development works, extend its capabilities for complex features, and gain actionable insights into creating MERN-based apps, along with exploring industry best practices to meet the ever-increasing demands of the real world. By the end of this React book, you’ll be able to build production-ready MERN full-stack apps using advanced tools and techniques in modern web development.What you will learn Extend a basic MERN-based application to build a variety of applications Add real-time communication capabilities with Socket.IO Implement data visualization features for React applications using Victory Develop media streaming applications using MongoDB GridFS Improve SEO for your MERN apps by implementing server-side rendering with data Implement user authentication and authorization using JSON web tokens Set up and use React 360 to develop user interfaces with VR capabilities Make your MERN stack applications reliable and scalable with industry best practices Who this book is for This is one of the most useful web development books for JavaScript developers who may have worked with React but have minimal experience in full-stack development with Node, Express, and MongoDB.",
     "coverUrl": "/covers/9781839213113.jpg",
@@ -2105,7 +2127,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "Learn how React Native works under the hood and what this means for building large-scale, cross-platform, production-ready applications without compromising on the quality and performance Key Features Explore a modern approach to React Native, covering state management, animations, gestures, and more Implement best practices and practical techniques for creating large-scale, production-ready apps Create a development process including workflow automation with GitHub Actions, Fastlane, and Bitrise Book DescriptionThe React Native framework offers a range of powerful features that make it possible to efficiently build high-quality, easy-to-maintain frontend applications across multiple platforms such as iOS, Android, Linux, Mac OS X, Windows, and the web, helping you save both time and money. And this book is your key to unlocking its capabilities. Professional React Native provides the ultimate coverage of essential concepts, best practices, advanced processes, and tips for everyday developer problems. The book makes it easy to understand how React Native works under the hood using step-by-step explanations and practical examples so you can use this knowledge to develop highly performant apps. As you follow along, you'll learn the difference between React and React Native, navigate the React Native ecosystem, and revisit the basics of JavaScript and TypeScript needed to create a React Native application. What’s more, you’ll work with animations and even control your app with gestures. Finally, you'll be able to structure larger apps and improve developer efficiency through automated processes, testing, and continuous integration. By the end of this React native app development book, you'll have gained the confidence to build high-performance apps for multiple platforms, even on a bigger scale.What you will learn Become familiar with how React Native works under the hood Understand how to make the most of React Native for app development Explore different approaches to building apps across various platforms Become familiar with process automation and automated testing Contribute to open source code and structure your own code library Understand how to set up the architecture for bigger React Native projects Who this book is for This book is for developers who want to get started with React Native as well as experienced React Native developers interested in building professional cross-platform applications. Familiarity with the basics of JavaScript (including its syntax) and general software engineering concepts, such as data types, control flows, and server/client structures, is required. Although useful, experience with React Native is not necessary.",
     "coverUrl": "/covers/9781800561199.png",
@@ -2120,7 +2142,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "PUBLISHER'S NOTE: An updated 2024 edition of this book, with new emphasis on TypeScript, is now available. Key Features Discover React’s latest features including automatic state update batching and prioritizing state updates Get to grips with React architecture to write cross-platform apps using libraries such as NativeBase Understand GraphQL and Apollo for building a scalable backend for your applications Book DescriptionOver the years, React and React Native has proven itself among JavaScript developers as a popular choice for a complete and practical guide to the React ecosystem. This fourth edition comes with the latest features, enhancements, and fixes to align with React 18, while also being compatible with React Native. It includes new chapters covering critical features and concepts in modern cross-platform app development with React. From the basics of React to popular components such as Hooks, GraphQL, and NativeBase, this definitive guide will help you become a professional React developer in a step-by-step manner. You'll begin by learning about the essential building blocks of React components. As you advance through the chapters, you'll work with higher-level functionalities in application development and then put your knowledge to work by developing user interface components for the web and native platforms. In the concluding chapters, you'll learn how to bring your application together with robust data architecture. By the end of this book, you'll be able to build React applications for the web and React Native applications for multiple mobile platforms.What you will learn Explore React architecture, component properties, state, and context Work with React Hooks for handling functions and components Implement code splitting using lazy components and Suspense Build robust user interfaces for mobile and desktop apps using Material-UI Write shared components for Android and iOS apps using React Native Simplify layout design for React Native apps using NativeBase Write GraphQL schemas to power web and mobile apps Implement Apollo-driven components Who this book is for This book is for any JavaScript developer who wants to start learning how to use React and React Native for mobile and web application development. No prior knowledge of React is required, however working knowledge of JavaScript is necessary to be able to follow along the content covered.",
     "coverUrl": "/covers/9781803249995.png",
@@ -2149,7 +2171,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "A hands-on guide to help you develop skills and confidence in building and structuring React applications in a well-organized way using the best tools in the React 18 ecosystem Key Features Discover solutions to complex problems faced while creating production-ready apps with React Develop scalable React applications with Next.js using a step-by-step approach from analysis to deployment Get an overview of the React ecosystem and identify the best tools to meet your app requirements Book DescriptionBuilding large-scale applications in production can be overwhelming with the amount of tooling choices and lack of cohesive resources. To address these challenges, this hands-on guide covers best practices and web application development examples to help you build enterprise-ready applications with React in no time. Throughout the book, you’ll work through a real-life practical example that demonstrates all the concepts covered. You’ll learn to build modern frontend applications—built from scratch and ready for production. Starting with an overview of the React ecosystem, the book will guide you in identifying the tools available to solve complex development challenges. You’ll then advance to building APIs, components, and pages to form a complete frontend app. The book will also share best practices for testing, securing, and packaging your app in a structured way before finally deploying your app with scalability in mind. By the end of the book, you’ll be able to efficiently build production-ready applications by following industry practices and expert tips.What you will learn Use a good project structure that scales well with your application Create beautiful UIs with Chakra UI and emotion Configure a base Next.js app with static code analysis and Git hooks Learn to mock API endpoints for prototyping, local development and testing Choose an optimal rendering strategy in Next.js based on the page needs Learn to choose the best state management solution for given problem Write unit tests, integration tests and e2e tests in your React Application Deploy your React applications on Vercel Who this book is for This book is for intermediate-level web developers who already have a solid understanding of JavaScript, React, and web development in general and want to build large-scale React applications effectively. Beginner-level TypeScript experience, along with JavaScript and React, will be beneficial.",
     "coverUrl": "/covers/9781801077408.png",
@@ -2164,7 +2186,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "Build scalable, maintainable, and powerful React web apps with design patterns and insightful best practices Key Features Make the most of design patterns in React – including render props and controlled and uncontrolled inputs Master React Hooks with the help of this updated third edition Work through examples that can be used to create reusable code and extensible designs Book DescriptionFilled with useful React patterns that you can use in your projects straight away, this book will help you save time and build better web applications with ease. React 17 Design Patterns and Best Practices is a hands-on guide for those who want to take their coding skills to a new level. You’ll spend most of your time working your way through the principles of writing maintainable and clean code, but you’ll also gain a deeper insight into the inner workings of React. As you progress through the chapters, you’ll learn how to build components that are reusable across the application, how to structure applications, and create forms that actually work. Then you’ll build on your knowledge by exploring how to style React components and optimize them to make applications faster and more responsive. Once you’ve mastered the rest, you’ll learn how to write tests effectively and how to contribute to React and its ecosystem. By the end of this book, you'll be able to avoid the process of trial and error and developmental headaches. Instead, you’ll be able to use your new skills to efficiently build and deploy real-world React web applications you can be proud of.What you will learn Get to grips with the techniques of styling and optimizing React components Create components using the new React Hooks Use server-side rendering to make applications load faster Get up to speed with the new React Suspense technique and using GraphQL in your projects Write a comprehensive set of tests to create robust and maintainable code Build high-performing applications by optimizing components Who this book is for This book is for web developers who want to understand React better and apply it to real-life app development. You’ll need an intermediate-level experience with React and JavaScript before you get started.",
     "coverUrl": "/covers/9781800561762.png",
@@ -2179,7 +2201,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "Explore global state management and select the best library for your application Key Features Understand the essential concepts and features of micro state management Discover solutions to common problems faced while implementing micro state management Explore the different libraries, their coding style, and the optimum approach to rendering optimization Book Description State management is one of the most complex concepts in React. Traditionally, developers have used monolithic state management solutions. Thanks to React Hooks, micro state management is something tuned for moving your application from a monolith to a microservice. This book provides a hands-on approach to the implementation of micro state management that will have you up and running and productive in no time. You'll learn basic patterns for state management in React and understand how to overcome the challenges encountered when you need to make the state global. Later chapters will show you how slicing a state into pieces is the way to overcome limitations. Using hooks, you'll see how you can easily reuse logic and have several solutions for specific domains, such as form state and server cache state. Finally, you'll explore how to use libraries such as Zustand, Jotai, and Valtio to organize state and manage development efficiently. By the end of this React book, you'll have learned how to choose the right global state management solution for your app requirement. What you will learn Understand micro state management and how you can deal with global state Build libraries using micro state management along with React Hooks Discover how micro approaches are easy using React Hooks Understand the difference between component state and module state Explore several approaches for implementing a global state Become well-versed with concrete examples and libraries such as Zustand, Jotai, and Valtio Who this book is for If you're a React developer dealing with complex global state management solutions and want to learn how to choose the best alternative based on your requirements, this book is for you. Basic knowledge of JavaScript programming, React Hooks and TypeScript is assumed.",
     "coverUrl": "/covers/9781801810043.png",
@@ -2194,7 +2216,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "Learn how to develop real-world applications of varying complexity for the web, mobile, and VR devices using React, React Native, React 360, and more Key Features • Build React applications at scale using React patterns and best practices • Explore React features such as Hooks, the Context API, and the Suspense API • Extend React's integration with React Native for building cross-platform mobile apps and games Book Description Developed by Facebook, React is a popular library for building impressive user interfaces. React extends its capabilities to mobile platforms using the React Native framework and integrates with popular web and mobile tools to build scalable applications. React Projects is your guide to learning React development by using modern development patterns and integrating React with powerful web tools, such as GraphQL, Expo, and React 360. You'll start building a real-world project right from the first chapter and get hands-on with developing scalable applications as you advance to building more complex projects. Throughout the book, you'll use the latest versions of React and React Native to explore features such as routing, Context, and Hooks on multiple platforms, which will help you build full-stack web and mobile applications efficiently. Finally, you'll get to grips with unit testing with Jest and end-to-end testing with Cypress to build test-driven apps. By the end of this React book, you'll have developed the skills necessary to start building scalable React apps across web and mobile platforms. What you will learn • Create a wide range of applications using various modern React tools and frameworks • Discover how React Hooks modernize state management for React apps • Develop web applications using styled and reusable React components • Build test-driven React applications using Jest, React Testing Library, and Cypress • Understand full-stack development using GraphQL, Apollo, and React • Perform server-side rendering using React and Next.js • Create animated games using React Native and Expo • Design gestures and animations for a cross-platform game using React Native Who this book is for The book is for JavaScript developers who want to explore React tooling and frameworks for building cross-platform applications. Basic knowledge of web development, ECMAScript, and React will assist with understanding key concepts covered in this book. Table of Contents • Creating a Single-Page Application in React • Creating a Portfolio in React with Reusable Components and Routing • Building a Dynamic Project Management Board • Building a Server-Side-Rendered Community Feed Using Next.js • Build a Personal Shopping List Application Using Context and Hooks • Building an Application Exploring TDD Using the React Testing Library and Cypress • Building a Full-Stack E-Commerce Application with Next.js and GraphQL • Building an Animated Game Using React Native and Expo • Building a Full-Stack Social Media Application with React Native and Expo • Creating a Virtual Reality Application with React and Three.js",
     "coverUrl": "/covers/9781801078115.png",
@@ -2239,7 +2261,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "Confidently implement React in your next project with this in-depth overview of React's core features – now updated for React 19. Purchase of the print or Kindle book includes a free PDF ebook and bonus content from the author. Key Features Work through clear, concise explanations of core React 19 functionalities Complete practical exercises that challenge you to build your own simple apps Discover fullstack React with Next.js, React Server Components, Suspense, and more Book DescriptionMaximilian Schwarzmüller is a bestselling instructor who has helped more than three million students worldwide learn how to code. His bestselling React video course, “React – The Complete Guide”, has over nine hundred thousand students on Udemy. Max has written this quick-start reference that distills the core concepts of React. Simple explanations, relevant examples, and step-by-step derivations make this guide the ideal resource for busy developers. In this second edition, Max guides you through changes brought by React 19, including the new use() hook, form actions, and how to think about React on the server. This book will support you through your next React projects in giving you a behind-the-scenes understanding of the framework – whether you've just finished Max's video course and are looking for a handy reference, or you’re using a variety of other learning materials and need a single study guide to bring everything together. You’ll find full solutions to all end-of-chapter quizzes and exercises in the book’s GitHub repository.What you will learn Build modern, user-friendly, and reactive web apps Create components and utilize props to pass data between them Handle events, perform state updates, and manage conditional content Add styles dynamically and conditionally for modern user interfaces Use advanced state management techniques such as React's Context API Utilize React Router to render different pages for different URLs Understand key best practices and optimization opportunities Learn about React Server Components and Server Actions Who this book is for This React book is for developers who have prior experience with, or who are currently learning, the basics of React. You can use this book as a standalone resource to consolidate your understanding or as a companion guide to other courses. To get the most value from this book, you should have a basic understanding of the fundamentals of JavaScript, HTML, and CSS.",
     "coverUrl": "/covers/9781836202264.png",
@@ -2254,7 +2276,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "Make fact-based decisions by comparing different solutions and learning popular ways to manage state in React Native with clear guidelines and recommendations by a React Native expert Key FeaturesExplore the big picture of state management in React Native using the most simplified versionImplement state management solutions by building a social media clone appCompare different state solutions in a contained environment to choose the best fit for your future projectsBook Description Managing state in a React Native app can be challenging as it is one of the most difficult concepts to grasp while learning React Native. This is because there are so many ways to do it, and because there is a lack of clear guidelines on what should be used and why. Simplifying State Management in React Native is a comprehensive introduction for those who are new to creating robust React Native apps that will have you up to speed in no time. You'll get to grips with the different state management strategies and libraries available. As you progress through the chapters, you'll try out different solutions, as well as compare and choose which solution is perfectly suited to your future projects and personal preferences. Finally, you'll create a social media clone app using all the concepts and examples that you've learned in this book. By the end of this book, you'll be able to take on existing projects that use various state management strategies and libraries, and confidently make decisions about state management. What you will learnStart out by going over the basic ReactJS “mindset”Explore all that ReactJS has to offer to manage state in apps by building an appUnderstand existing state management libraries such as Redux, MobX, XState, Jotai, and React QueryDecide which libraries you want to use in your appsDesign a social media app to fully understand state managementTry out all the solutions presented in the book in a social media clone appWho this book is for This book is for junior developers, React Native developers, and mobile app developers who are already using React Native, but are also on the lookout for advice and for a broader view to manage the state and changes in their applications. Basic knowledge of ReactJS and React Native, as well as familiarity with JavaScript and general mobile app development concepts are needed to grasp the topics covered in this book.",
     "coverUrl": "/covers/9781803244419.png",
@@ -2284,7 +2306,7 @@
     "tags": [],
     "ai_tags": [
       "React",
-      "JavaScript"
+      "Web Development"
     ],
     "description": "Work through engaging exercises and activities and gain practical skills to make your web applications function effortlessly with the help of React Key FeaturesExplore the React environment by creating live projectsSolve real-world problems relating to building modern web applicationsGain a thorough understanding of how data moves through different React componentsBook Description Are you interested in how React takes command of the view layer for web and mobile apps and changes the data of large web applications without needing to reload the page? This workshop will help you learn how and show you how to develop and enhance web apps using the features of the React framework with interesting examples and exercises. The workshop starts by demonstrating how to create your first React project. You’ll tap into React’s popular feature JSX to develop templates and use DOM events to make your project interactive. Next, you’ll focus on the lifecycle of the React component and understand how components are created, mounted, unmounted, and destroyed. Later, you’ll create and customize components to understand the data flow in React and how props and state communicate between components. You’ll also use Formik to create forms in React to explore the concept of controlled and uncontrolled components and even play with React Router to navigate between React components. The chapters that follow will help you build an interesting image-search app to fetch data from the outside world and populate the data to the React app. Finally, you’ll understand what ref API is and how it is used to manipulate DOM in an imperative way. By the end of this React book, you’ll have the skills you need to set up and create web apps using React. What you will learnUse JSX to include logic in the view layer of applicationsGet familiar with the important methods and events in the React lifecycleDistinguish between class and functional component syntaxesCreate forms with Formik and handle errorsUnderstand the React Hooks API and the problems it can solveFetch outside data using the Axios library and populate the data to the appWho this book is for The React Workshop is for web developers and programmers who are looking to learn React and use it for creating and enhancing web applications. Although the workshop is for beginners, prior knowledge of JavaScript programming and HTML and CSS is necessary to easily understand the concepts that are covered.",
     "coverUrl": "/covers/9781838821661.png",
