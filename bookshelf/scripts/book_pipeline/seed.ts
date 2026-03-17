@@ -16,7 +16,7 @@ import { readFileSync, existsSync } from "fs"
 import { resolve } from "path"
 import { fileURLToPath } from "url"
 import { Redis } from "@upstash/redis"
-import type { Book } from "../lib/books"
+import type { Book } from "../../lib/books"
 
 export async function seedBooks(
   redis: Redis,
@@ -90,9 +90,9 @@ async function main() {
     process.exit(1)
   }
 
-  const detailsPath = resolve(__dirname, "book_details.json")
+  const detailsPath = resolve(__dirname, "../output/book_details.json")
   if (!existsSync(detailsPath)) {
-    console.error("book_details.json not found. Run extract_books.py first.")
+    console.error("output/book_details.json not found. Run extract_books.py first.")
     process.exit(1)
   }
 

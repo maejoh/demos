@@ -25,8 +25,8 @@ npm run extract            # extract from a folder path directly
 `scripts/extract_books.py` walks a folder of epubs, extracts metadata from OPF, enriches title/author/year/description via Google Books API, and extracts cover images directly from the epub zip.
 
 Outputs:
-- `scripts/book_list.json` — `{isbn, title, title_raw}[]` — used for tracking scanned books, informs skip logic to avoid re-processing books when --force isn't specified
-- `scripts/book_details.json` — `{[isbn]: Book}` — full enriched data, only missing books without ISBNs
+- `scripts/output/book_list.json` — `{isbn, title, title_raw}[]` — used for tracking scanned books, informs skip logic to avoid re-processing books when --force isn't specified
+- `scripts/output/book_details.json` — `{[isbn]: Book}` — full enriched data, only missing books without ISBNs
 - `public/covers/{isbn}.{ext}` — cover images extracted from epubs. Not all are guaranteed to exist.
 
 Flags:
@@ -43,7 +43,7 @@ npm run seed -- --wipe     # wipe namespace first, then seed
 npm run seed:preview       # → "preview" namespace
 npm run seed:prod          # → "production" namespace
 ```
-`scripts/seed.ts` reads `book_details.json` and writes to Redis. Re-seeding preserves existing vote counts. `--wipe` deletes all keys in the target namespace before seeding — use this to fix duplicate/stale entries.
+`scripts/book_pipeline/seed.ts` reads `book_details.json` and writes to Redis. Re-seeding preserves existing vote counts. `--wipe` deletes all keys in the target namespace before seeding — use this to fix duplicate/stale entries.
 
 ## Redis key structure
 All keys are prefixed by environment namespace (e.g. `development:`, `production:`):
@@ -63,8 +63,8 @@ Extracted from epub files at extraction time and saved to `public/covers/`. The 
   - `books.ts` — `Book` type definition and Redis fetch helpers
 - `scripts/` — data pipeline (not deployed)
   - `extract_books.py` — epub extraction + Google Books enrichment
-  - `seed.ts` — Redis seeding script
-  - `book_details.json` — source of truth for seed *(not committed)*
-  - `book_list.json` — scanned epub index, drives skip logic *(not committed)*
+  - `book_pipeline/seed.ts` — Redis seeding script
+  - `output/book_details.json` — source of truth for seed *(not committed)*
+  - `output/book_list.json` — scanned epub index, drives skip logic *(not committed)*
 - `public/covers/` — cover images extracted from epubs, served statically
 - `next.config.ts` — Next.js config

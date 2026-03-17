@@ -6,9 +6,9 @@ build_tag_prompt, build_normalization_prompt, apply_tag_assignments) are
 tested directly. tag_book is tested with a mocked Anthropic client.
 """
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
-from scripts.tag_books import (
+from scripts.book_pipeline.tag_books import (
     _strip_fences,
     apply_tag_assignments,
     build_normalization_prompt,
@@ -231,7 +231,7 @@ class TestTagBook:
     def test_returns_empty_list_on_api_exception(self):
         client = MagicMock()
         client.messages.create.side_effect = Exception("API error")
-        result = tag_book({"title": "A Book", "description": ""}, client)
+        result = tag_book({"title": "A Book", "description": ""}, client, retries=0)
         assert result == []
 
     def test_returns_empty_list_on_unparseable_response(self):
@@ -243,3 +243,20 @@ class TestTagBook:
         client = self._make_client('["python"]')
         result = tag_book({"title": "A Book"}, client)  # no description key
         assert result == ["python"]
+
+    def test_retries_on_exception_and_succeeds(self):
+        client = MagicMock()
+        ok_response = MagicMock(text='["python"]')
+        client.messages.create.side_effect = [Exception("rate limit"), MagicMock(content=[ok_response])]
+        with patch("scripts.book_pipeline.tag_books.time.sleep"):
+            result = tag_book({"title": "A Book", "description": ""}, client, retries=1, retry_delay=0)
+        assert result == ["python"]
+        assert client.messages.create.call_count == 2
+
+    def test_exhausts_retries_and_returns_empty_list(self):
+        client = MagicMock()
+        client.messages.create.side_effect = Exception("rate limit")
+        with patch("scripts.book_pipeline.tag_books.time.sleep"):
+            result = tag_book({"title": "A Book", "description": ""}, client, retries=2, retry_delay=0)
+        assert result == []
+        assert client.messages.create.call_count == 3

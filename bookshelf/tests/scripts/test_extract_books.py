@@ -12,13 +12,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from scripts.extract_books import (
+from scripts.book_pipeline.epub import extract_epub_metadata
+from scripts.book_pipeline.google_books import (
     _author_looks_mangled,
     _google_request,
     _parse_volume,
-    extract_epub_metadata,
-    sanitize_title,
 )
+from scripts.book_pipeline.utils import sanitize_title
 
 
 # ---------------------------------------------------------------------------
@@ -106,7 +106,7 @@ class TestGoogleRequest:
         mock_response.status_code = 200
         mock_response.json.return_value = {"items": []}
 
-        with patch("scripts.extract_books.requests.get", return_value=mock_response):
+        with patch("scripts.book_pipeline.google_books.requests.get", return_value=mock_response):
             result = _google_request({"q": "test"})
 
         assert result == {"items": []}
@@ -116,8 +116,8 @@ class TestGoogleRequest:
         success = MagicMock(status_code=200)
         success.json.return_value = {"items": []}
 
-        with patch("scripts.extract_books.requests.get", side_effect=[rate_limited, success]):
-            with patch("scripts.extract_books.time.sleep"):  # don't actually wait
+        with patch("scripts.book_pipeline.google_books.requests.get", side_effect=[rate_limited, success]):
+            with patch("scripts.book_pipeline.google_books.time.sleep"):  # don't actually wait
                 result = _google_request({"q": "test"})
 
         assert result == {"items": []}
@@ -125,8 +125,8 @@ class TestGoogleRequest:
     def test_returns_none_after_three_429s(self):
         rate_limited = MagicMock(status_code=429)
 
-        with patch("scripts.extract_books.requests.get", return_value=rate_limited):
-            with patch("scripts.extract_books.time.sleep"):
+        with patch("scripts.book_pipeline.google_books.requests.get", return_value=rate_limited):
+            with patch("scripts.book_pipeline.google_books.time.sleep"):
                 result = _google_request({"q": "test"})
 
         assert result is None

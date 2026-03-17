@@ -54,44 +54,15 @@ import argparse
 import json
 import re
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import anthropic
 
-SCRIPTS_DIR = Path(__file__).parent
-BOOK_DETAILS_PATH = SCRIPTS_DIR / "book_details.json"
+from .utils import BOOK_DETAILS_PATH, load_env_local, load_json, save_json
+
 MODEL = "claude-haiku-4-5-20251001"
-
-
-def load_env_local() -> dict[str, str]:
-    """Load key=value pairs from .env.local in the project root."""
-    env_path = SCRIPTS_DIR.parent / ".env.local"
-    result = {}
-    if not env_path.exists():
-        return result
-    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#"):
-            continue
-        match = re.match(r'^([^=]+)=(.*)$', line)
-        if match:
-            key = match.group(1).strip()
-            value = match.group(2).strip().strip('"').strip("'")
-            result[key] = value
-    return result
-
-
-def load_json(path: Path, default):
-    if path.exists():
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return default
-
-
-def save_json(path: Path, data):
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 def _strip_fences(text: str) -> str:
@@ -191,19 +162,26 @@ def build_normalization_prompt(
     )
 
 
-def tag_book(book: dict, client: anthropic.Anthropic) -> list[str]:
+def tag_book(book: dict, client: anthropic.Anthropic, retries: int = 2, retry_delay: float = 5.0) -> list[str]:
     """Call the Anthropic API to generate tags for a single book."""
     prompt = build_tag_prompt(book.get("title", ""), book.get("description", ""))
-    try:
-        message = client.messages.create(
-            model=MODEL,
-            max_tokens=256,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        return parse_tag_response(message.content[0].text)
-    except Exception as e:
-        print(f"  [warn] API call failed for {book.get('title', 'unknown')}: {e}")
-        return []
+    title = book.get("title", "unknown")
+    for attempt in range(retries + 1):
+        try:
+            message = client.messages.create(
+                model=MODEL,
+                max_tokens=256,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            return parse_tag_response(message.content[0].text)
+        except Exception as e:
+            if attempt < retries:
+                print(f"  [retry {attempt + 1}/{retries}] {title}: {e} — waiting {retry_delay}s")
+                time.sleep(retry_delay)
+            else:
+                print(f"  [warn] API call failed for {title}: {e}")
+                return []
+    return []
 
 
 def apply_tag_assignments(

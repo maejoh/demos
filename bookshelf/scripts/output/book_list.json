@@ -1,0 +1,52 @@
+[
+  {
+    "isbn": "9781805125068",
+    "title": "Azure OpenAI Essentials",
+    "title_raw": "Azure OpenAI Essentials"
+  },
+  {
+    "isbn": "9781835884003",
+    "title": "Building AI Applications with OpenAI APIs",
+    "title_raw": "Building AI Applications with OpenAI APIs"
+  },
+  {
+    "isbn": "9781835089507",
+    "title": "Building Data-Driven Applications with LlamaIndex",
+    "title_raw": "Building Data-Driven Applications with LlamaIndex"
+  },
+  {
+    "isbn": "9781835462317",
+    "title": "Building LLM Powered Applications",
+    "title_raw": "Building LLM Powered Applications"
+  },
+  {
+    "isbn": "9781835887509",
+    "title": "Essential Guide to LLMOps",
+    "title_raw": "Essential Guide to LLMOps"
+  },
+  {
+    "isbn": "9781835460825",
+    "title": "Generative AI Foundations in Python",
+    "title_raw": "Generative AI Foundations in Python"
+  },
+  {
+    "isbn": "9781836207030",
+    "title": "LLM Design Patterns",
+    "title_raw": "LLM Design Patterns"
+  },
+  {
+    "isbn": "9781804619186",
+    "title": "Mastering NLP from Foundations to LLMs",
+    "title_raw": "Mastering NLP from Foundations to LLMs"
+  },
+  {
+    "isbn": "9781836200918",
+    "title": "RAG-Driven Generative AI",
+    "title_raw": "RAG-Driven Generative AI"
+  },
+  {
+    "isbn": "9781835887905",
+    "title": "Unlocking Data with Generative AI and RAG",
+    "title_raw": "Unlocking Data with Generative AI and RAG"
+  }
+]

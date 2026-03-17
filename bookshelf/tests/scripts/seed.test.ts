@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { seedBooks } from "@/scripts/seed"
+import { seedBooks } from "@/scripts/book_pipeline/seed"
 import type { Book } from "@/lib/books"
 import type { Redis } from "@upstash/redis"
 
