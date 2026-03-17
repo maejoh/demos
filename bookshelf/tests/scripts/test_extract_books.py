@@ -1,199 +1,277 @@
 """
-Tests for extract_books.py.
+Tests for scripts/book_pipeline/extract_books.py.
 
-Pure functions (sanitize_title, _author_looks_mangled, _parse_volume) are tested
-directly. _google_request is tested with mocked HTTP to verify retry behaviour.
-extract_epub_metadata is tested with a minimal epub built in-memory.
+All external calls (extract_epub_metadata, fetch_google_book, extract_epub_cover,
+load_env_local) are mocked. Output path constants are monkeypatched to temp
+directories so real file I/O can be inspected without touching the project.
 """
 
-import io
-import zipfile
-from unittest.mock import MagicMock, patch
+import json
+import sys
+from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
-from scripts.extract_books import (
-    _author_looks_mangled,
-    _google_request,
-    _parse_volume,
-    extract_epub_metadata,
-    sanitize_title,
-)
+from scripts.book_pipeline.extract_books import main
+
+PATCH = "scripts.book_pipeline.extract_books"
+
+
+def _meta(epub_path: Path, title="Test Book", author="Test Author", isbn="9781234567890", year=2020) -> dict:
+    """Minimal metadata dict as returned by extract_epub_metadata."""
+    return {"title": title, "author": author, "isbn": isbn, "year": year, "epub_path": epub_path}
+
+
+def _google_result(isbn="9781234567890", title="Test Book", author="Test Author", year=2020, desc="") -> dict:
+    return {"isbn": isbn, "title": title, "author": author, "year": year, "description": desc}
+
+
+@pytest.fixture
+def epub_dir(tmp_path) -> tuple[Path, Path]:
+    """A temp bundle folder with one empty .epub file."""
+    bundle = tmp_path / "My Bundle"
+    bundle.mkdir()
+    epub = bundle / "test_book.epub"
+    epub.write_bytes(b"")
+    return bundle, epub
+
+
+@pytest.fixture
+def paths(tmp_path, monkeypatch) -> dict[str, Path]:
+    """Patch all output path constants to temp paths and return them."""
+    import scripts.book_pipeline.extract_books as eb_mod
+
+    book_list = tmp_path / "book_list.json"
+    book_details = tmp_path / "book_details.json"
+    manual = tmp_path / "book_list_manual_isbn.json"
+
+    monkeypatch.setattr(eb_mod, "BOOK_LIST_PATH", book_list)
+    monkeypatch.setattr(eb_mod, "BOOK_DETAILS_PATH", book_details)
+    monkeypatch.setattr(eb_mod, "BOOK_LIST_MANUAL_ISBN_PATH", manual)
+
+    return {"book_list": book_list, "book_details": book_details, "manual": manual}
 
 
 # ---------------------------------------------------------------------------
-# sanitize_title
+# Fast mode — skip logic
 # ---------------------------------------------------------------------------
 
-class TestSanitizeTitle:
-    def test_strips_second_edition_suffix(self):
-        assert sanitize_title("Learning Python, Second Edition") == "Learning Python"
+class TestFastModeSkipLogic:
+    def test_skips_book_whose_isbn_is_already_in_book_details(self, monkeypatch, epub_dir, paths):
+        bundle, epub = epub_dir
 
-    def test_strips_numeric_edition_suffix(self):
-        assert sanitize_title("Clean Architecture, 3rd Edition") == "Clean Architecture"
+        paths["book_details"].write_text(json.dumps({
+            "9781234567890": {"id": "1", "title": "Test Book", "author": "Author",
+                              "isbn": "9781234567890", "year": 2020, "tags": [],
+                              "ai_tags": [], "description": "", "coverUrl": None, "humbleBundle": "My Bundle"}
+        }))
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle)])
 
-    def test_leaves_plain_title_unchanged(self):
-        assert sanitize_title("The Pragmatic Programmer") == "The Pragmatic Programmer"
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book") as mock_fetch:
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
 
-    def test_case_insensitive(self):
-        assert sanitize_title("Pro Git, SECOND EDITION") == "Pro Git"
+        mock_fetch.assert_not_called()
 
+    def test_skips_book_via_title_raw_lookup_in_book_list(self, monkeypatch, epub_dir, paths):
+        """
+        Regression: a book with no epub ISBN that was previously enriched via
+        book_list (title_raw → isbn mapping) should not be re-enriched.
 
-# ---------------------------------------------------------------------------
-# _author_looks_mangled
-# ---------------------------------------------------------------------------
+        This simulates the steady state after a first run where isbn_discovered
+        backfilled the isbn into both book_list and book_list_manual_isbn.
+        """
+        bundle, epub = epub_dir
 
-class TestAuthorLooksMangled:
-    def test_normal_name_is_not_mangled(self):
-        assert _author_looks_mangled("Martin Kleppmann") is False
+        # Both lists have the isbn filled in, reflecting the post-backfill state
+        paths["book_list"].write_text(json.dumps([
+            {"isbn": "9780000000001", "title": "Test Book", "title_raw": "Test Book"}
+        ]))
+        paths["manual"].write_text(json.dumps([
+            {"isbn": "9780000000001", "title": "Test Book", "title_raw": "Test Book"}
+        ]))
+        paths["book_details"].write_text(json.dumps({
+            "9780000000001": {"id": "1", "title": "Test Book", "author": "Author",
+                              "isbn": "9780000000001", "year": 2020, "tags": [],
+                              "ai_tags": [], "description": "", "coverUrl": None, "humbleBundle": "My Bundle"}
+        }))
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle)])
 
-    def test_all_caps_name_is_mangled(self):
-        assert _author_looks_mangled("MARTIN KLEPPMANN") is True
+        # Epub has no ISBN
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p, isbn=None)):
+            with patch(f"{PATCH}.fetch_google_book") as mock_fetch:
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
 
-    def test_majority_caps_name_is_mangled(self):
-        # requires strictly more than half — "KYLE JAMES Simpson" is 2/3
-        assert _author_looks_mangled("KYLE JAMES Simpson") is True
+        mock_fetch.assert_not_called()
 
-    def test_ampersand_joined_normal_names_are_not_mangled(self):
-        assert _author_looks_mangled("David Thomas & Andrew Hunt") is False
+    def test_enriches_new_book_not_yet_in_book_details(self, monkeypatch, epub_dir, paths):
+        bundle, epub = epub_dir
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle)])
 
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result()):
+                with patch(f"{PATCH}.extract_epub_cover", return_value="/covers/9781234567890.jpg"):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
 
-# ---------------------------------------------------------------------------
-# _parse_volume
-# ---------------------------------------------------------------------------
-
-class TestParseVolume:
-    def test_prefers_isbn13_over_isbn10(self):
-        volume_info = {
-            "industryIdentifiers": [
-                {"type": "ISBN_10", "identifier": "0135957052"},
-                {"type": "ISBN_13", "identifier": "9780135957059"},
-            ]
-        }
-        result = _parse_volume(volume_info)
-        assert result["isbn"] == "9780135957059"
-
-    def test_falls_back_to_isbn10_when_no_isbn13(self):
-        volume_info = {
-            "industryIdentifiers": [
-                {"type": "ISBN_10", "identifier": "0135957052"},
-            ]
-        }
-        result = _parse_volume(volume_info)
-        assert result["isbn"] == "0135957052"
-
-    def test_joins_multiple_authors_with_ampersand(self):
-        volume_info = {"authors": ["David Thomas", "Andrew Hunt"]}
-        result = _parse_volume(volume_info)
-        assert result["author"] == "David Thomas & Andrew Hunt"
-
-    def test_falls_back_to_epub_year_when_api_has_no_date(self):
-        result = _parse_volume({}, epub_year=2019)
-        assert result["year"] == 2019
-
-    def test_parses_year_from_published_date(self):
-        result = _parse_volume({"publishedDate": "2020-06-15"})
-        assert result["year"] == 2020
+        saved = json.loads(paths["book_details"].read_text())
+        assert "9781234567890" in saved
+        assert saved["9781234567890"]["coverUrl"] == "/covers/9781234567890.jpg"
 
 
 # ---------------------------------------------------------------------------
-# _google_request — mocked HTTP
+# --list-only flag
 # ---------------------------------------------------------------------------
 
-class TestGoogleRequest:
-    def test_returns_json_on_success(self):
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"items": []}
+class TestListOnlyMode:
+    def test_writes_book_list_but_skips_enrichment(self, monkeypatch, epub_dir, paths):
+        bundle, epub = epub_dir
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle), "--list-only"])
 
-        with patch("scripts.extract_books.requests.get", return_value=mock_response):
-            result = _google_request({"q": "test"})
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book") as mock_fetch:
+                with patch(f"{PATCH}.load_env_local", return_value={}):
+                    main()
 
-        assert result == {"items": []}
+        mock_fetch.assert_not_called()
+        assert paths["book_list"].exists()
+        assert not paths["book_details"].exists()
 
-    def test_retries_on_429_and_succeeds(self):
-        rate_limited = MagicMock(status_code=429)
-        success = MagicMock(status_code=200)
-        success.json.return_value = {"items": []}
+    def test_book_list_contains_extracted_isbn_and_title(self, monkeypatch, epub_dir, paths):
+        bundle, epub = epub_dir
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle), "--list-only"])
 
-        with patch("scripts.extract_books.requests.get", side_effect=[rate_limited, success]):
-            with patch("scripts.extract_books.time.sleep"):  # don't actually wait
-                result = _google_request({"q": "test"})
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.load_env_local", return_value={}):
+                main()
 
-        assert result == {"items": []}
-
-    def test_returns_none_after_three_429s(self):
-        rate_limited = MagicMock(status_code=429)
-
-        with patch("scripts.extract_books.requests.get", return_value=rate_limited):
-            with patch("scripts.extract_books.time.sleep"):
-                result = _google_request({"q": "test"})
-
-        assert result is None
+        book_list = json.loads(paths["book_list"].read_text())
+        assert len(book_list) == 1
+        assert book_list[0]["isbn"] == "9781234567890"
+        assert book_list[0]["title"] == "Test Book"
 
 
 # ---------------------------------------------------------------------------
-# extract_epub_metadata — minimal in-memory epub fixture
+# --mode clean
 # ---------------------------------------------------------------------------
 
-CONTAINER_XML = b"""\
-<?xml version="1.0"?>
-<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
-  <rootfiles>
-    <rootfile full-path="content.opf"
-              media-type="application/oebps-package+xml"/>
-  </rootfiles>
-</container>
-"""
+class TestCleanMode:
+    def test_deletes_existing_book_list_and_book_details_before_run(self, monkeypatch, epub_dir, paths):
+        bundle, epub = epub_dir
 
-def make_epub(title="Test Book", author="Test Author", isbn="9781234567890", date="2020-01-01") -> io.BytesIO:
-    """Build a minimal valid epub (zip) in memory."""
-    opf = f"""\
-<?xml version="1.0" encoding="UTF-8"?>
-<package xmlns="http://www.idpf.org/2007/opf" version="3.0">
-  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"
-            xmlns:opf="http://www.idpf.org/2007/opf">
-    <dc:title>{title}</dc:title>
-    <dc:creator>{author}</dc:creator>
-    <dc:identifier opf:scheme="ISBN">{isbn}</dc:identifier>
-    <dc:date>{date}</dc:date>
-  </metadata>
-</package>
-""".encode()
+        # Pre-create output files with stale data
+        paths["book_list"].write_text(json.dumps([{"isbn": "0000000000", "title": "Old Book", "title_raw": "Old Book"}]))
+        paths["book_details"].write_text(json.dumps({"0000000000": {"title": "Old Book"}}))
 
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w") as zf:
-        zf.writestr("META-INF/container.xml", CONTAINER_XML)
-        zf.writestr("content.opf", opf)
-    buf.seek(0)
-    return buf
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle), "--mode", "clean"])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result()):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        # book_list should only have the freshly scanned book, not the old stale entry
+        book_list = json.loads(paths["book_list"].read_text())
+        isbns = [e["isbn"] for e in book_list]
+        assert "9781234567890" in isbns
+        assert "0000000000" not in isbns
+
+    def test_does_not_delete_book_list_manual_isbn(self, monkeypatch, epub_dir, paths):
+        """--mode clean should preserve the manual ISBN cache."""
+        bundle, epub = epub_dir
+
+        manual_entry = [{"isbn": "9781111111111", "title": "Manual Book", "title_raw": "Manual Book"}]
+        paths["manual"].write_text(json.dumps(manual_entry))
+
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle), "--mode", "clean"])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result()):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        assert paths["manual"].exists()
+        saved_manual = json.loads(paths["manual"].read_text())
+        assert any(e["title"] == "Manual Book" for e in saved_manual)
 
 
-class TestExtractEpubMetadata:
-    def test_extracts_title_author_isbn_and_year(self, tmp_path):
-        epub_path = tmp_path / "test.epub"
-        epub_path.write_bytes(make_epub().read())
+# ---------------------------------------------------------------------------
+# isbn_discovered — backfill to book lists
+# ---------------------------------------------------------------------------
 
-        result = extract_epub_metadata(epub_path)
+class TestIsbnDiscoveredBackfill:
+    def test_updates_book_list_when_google_finds_isbn_for_no_isbn_epub(self, monkeypatch, epub_dir, paths):
+        bundle, epub = epub_dir
 
-        assert result is not None
-        assert result["title"] == "Test Book"
-        assert result["author"] == "Test Author"
-        assert result["isbn"] == "9781234567890"
-        assert result["year"] == 2020
+        # book_list has this title but no isbn yet
+        paths["book_list"].write_text(json.dumps([
+            {"isbn": "", "title": "Test Book", "title_raw": "Test Book"}
+        ]))
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle)])
 
-    def test_returns_none_for_epub_with_no_title(self, tmp_path):
-        epub_path = tmp_path / "notitle.epub"
-        epub_path.write_bytes(make_epub(title="").read())
+        # Epub has no ISBN; Google discovers one
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p, isbn=None)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result(isbn="9780987654321")):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
 
-        result = extract_epub_metadata(epub_path)
+        book_list = json.loads(paths["book_list"].read_text())
+        isbns = [e.get("isbn") for e in book_list]
+        assert "9780987654321" in isbns
 
-        assert result is None
 
-    def test_returns_none_for_corrupt_epub(self, tmp_path):
-        epub_path = tmp_path / "corrupt.epub"
-        epub_path.write_bytes(b"not a zip file")
+# ---------------------------------------------------------------------------
+# Manual ISBN recovery (book_list_manual_isbn.json → book_details)
+# ---------------------------------------------------------------------------
 
-        result = extract_epub_metadata(epub_path)
+class TestManualIsbnRecovery:
+    def test_enriches_book_using_isbn_filled_into_manual_list(self, monkeypatch, epub_dir, paths):
+        bundle, epub = epub_dir
 
-        assert result is None
+        # Manual list has an isbn filled in for this title
+        paths["manual"].write_text(json.dumps([
+            {"isbn": "9781111111111", "title": "No ISBN Book", "title_raw": "No ISBN Book"}
+        ]))
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle)])
+
+        # Epub has no ISBN, but manual list has it
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p, title="No ISBN Book", isbn=None)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result(isbn="9781111111111", title="No ISBN Book")):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        saved = json.loads(paths["book_details"].read_text())
+        assert "9781111111111" in saved
+        assert saved["9781111111111"]["title"] == "No ISBN Book"
+
+
+# ---------------------------------------------------------------------------
+# humbleBundle field
+# ---------------------------------------------------------------------------
+
+class TestHumbleBundleField:
+    def test_humble_bundle_is_set_from_epub_parent_folder_name(self, monkeypatch, tmp_path, paths):
+        bundle = tmp_path / "Humble Dev Bundle"
+        bundle.mkdir()
+        epub = bundle / "book.epub"
+        epub.write_bytes(b"")
+
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle)])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result()):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        saved = json.loads(paths["book_details"].read_text())
+        assert saved["9781234567890"]["humbleBundle"] == "Humble Dev Bundle"

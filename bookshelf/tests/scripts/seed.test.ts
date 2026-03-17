@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { seedBooks } from "@/scripts/seed"
+import { seedBooks } from "@/scripts/book_pipeline/seed"
 import type { Book } from "@/lib/books"
 import type { Redis } from "@upstash/redis"
 
@@ -65,12 +65,32 @@ describe("seedBooks", () => {
     expect(voteCalls).toHaveLength(0)
   })
 
-  it("deletes all namespace keys when wipe is true", async () => {
+  it("deletes all namespace keys when clean is true", async () => {
     redis.keys.mockResolvedValue(["test:book:111", "test:votes:111", "test:books:all"])
 
     await seedBooks(redis as unknown as Redis, {}, "test", true)
 
     expect(redis.keys).toHaveBeenCalledWith("test:*")
     expect(redis.del).toHaveBeenCalledWith("test:book:111", "test:votes:111", "test:books:all")
+  })
+
+  it("does not call keys or del when clean is false", async () => {
+    await seedBooks(redis as unknown as Redis, {}, "test", false)
+
+    expect(redis.keys).not.toHaveBeenCalled()
+    expect(redis.del).not.toHaveBeenCalled()
+  })
+
+  it("correctly counts seeded and skipped across multiple books", async () => {
+    const books = {
+      a: makeBook({ isbn: "9781111111111", title: "Book A" }),
+      b: makeBook({ isbn: "", title: "No ISBN" }),
+      c: makeBook({ isbn: "9782222222222", title: "Book C" }),
+    }
+
+    const { seeded, skipped } = await seedBooks(redis as unknown as Redis, books, "test", false)
+
+    expect(seeded).toBe(2)
+    expect(skipped).toBe(1)
   })
 })

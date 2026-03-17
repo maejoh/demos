@@ -7,8 +7,10 @@ export type Book = {
   isbn: string
   year: number | null
   tags: string[]
+  ai_tags?: string[]
   description: string
   coverUrl?: string
+  humbleBundle?: string
   votes: number
 }
 

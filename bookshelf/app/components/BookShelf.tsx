@@ -5,13 +5,28 @@ import Image from "next/image"
 import type { Book } from "@/lib/books"
 
 export default function BookShelf({ books }: { books: Book[] }) {
-  const [activeTag, setActiveTag] = useState<string | null>(null)
+  const [activeFilter, setActiveFilter] = useState<{ tag: string; field: "tags" | "ai_tags" | "humbleBundle" } | null>(null)
   const [votes, setVotes] = useState<Record<string, number>>(
     Object.fromEntries(books.map((b) => [b.id, b.votes]))
   )
 
   const allTags = Array.from(new Set(books.flatMap((b) => b.tags))).sort()
-  const visible = activeTag ? books.filter((b) => b.tags.includes(activeTag)) : books
+  const aiTagCounts = books.flatMap((b) => b.ai_tags ?? []).reduce<Record<string, number>>((acc, t) => ({ ...acc, [t]: (acc[t] ?? 0) + 1 }), {})
+  const allAiTags = Object.keys(aiTagCounts).filter((t) => aiTagCounts[t] >= 5).sort()
+  const allBundles = Array.from(new Set(books.map((b) => b.humbleBundle).filter(Boolean))).sort() as string[]
+  const visible = activeFilter
+    ? books.filter((b) =>
+        activeFilter.field === "humbleBundle"
+          ? b.humbleBundle === activeFilter.tag
+          : (b[activeFilter.field] ?? []).includes(activeFilter.tag)
+      )
+    : books
+
+  function handleTagClick(tag: string, field: "tags" | "ai_tags" | "humbleBundle") {
+    setActiveFilter((prev) =>
+      prev?.tag === tag && prev?.field === field ? null : { tag, field }
+    )
+  }
 
   function handleVote(id: string) {
     // TODO: replace with server action that persists to Redis
@@ -23,23 +38,69 @@ export default function BookShelf({ books }: { books: Book[] }) {
       <header className="mb-10">
         <h1 className="text-3xl font-bold tracking-tight mb-2">My Technical Library</h1>
         <p className="text-gray-500 dark:text-gray-400">
-          Books I own, am reading, or have read. +1 anything relevant to you.
+          A browsable collection of publications related to programming — AI, LLMs, web dev, systems engineering and architecture, math, and more. Upvote anything that looks interesting to you too! Vote counts are persisted and public, so they reflect the collective interest of everyone who has visited so far.
+        </p>
+        <p className="text-sm text-gray-400 dark:text-gray-500 mt-3">
+          There&apos;s a gremlin inside me that buys tech books whenever Humble Bundle drops a software book bundle. These are all real books I&apos;ve purchased over the last 2 years.{" "}
+          </p><p className="text-sm text-gray-500 dark:text-gray-500 mt-3">
+          <a
+            href="https://github.com/maejoh/demos"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          >
+            View on GitHub →
+          </a>
         </p>
       </header>
 
-      <div className="flex flex-wrap gap-2 mb-8">
-        <TagButton active={activeTag === null} onClick={() => setActiveTag(null)}>
-          All
-        </TagButton>
-        {allTags.map((tag) => (
-          <TagButton
-            key={tag}
-            active={activeTag === tag}
-            onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-          >
-            {tag}
+      <div className="space-y-3 mb-8">
+        <div className="hidden flex-wrap gap-2 items-center">
+          <span className="text-xs text-gray-400 dark:text-gray-500 w-12 shrink-0">Topics</span>
+          <TagButton active={activeFilter === null} onClick={() => setActiveFilter(null)}>
+            All
           </TagButton>
-        ))}
+          {allTags.map((tag) => (
+            <TagButton
+              key={tag}
+              active={activeFilter?.tag === tag && activeFilter?.field === "tags"}
+              onClick={() => handleTagClick(tag, "tags")}
+            >
+              {tag}
+            </TagButton>
+          ))}
+        </div>
+        {allAiTags.length > 0 && (
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-xs text-gray-400 dark:text-gray-500 w-12 shrink-0">AI tags</span>
+            {allAiTags.map((tag) => (
+              <TagButton
+                key={tag}
+                active={activeFilter?.tag === tag && activeFilter?.field === "ai_tags"}
+                onClick={() => handleTagClick(tag, "ai_tags")}
+              >
+                {tag}
+              </TagButton>
+            ))}
+          </div>
+        )}
+        {allBundles.length > 0 && (
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-xs text-gray-400 dark:text-gray-500 w-12 shrink-0">Bundle</span>
+            <TagButton active={activeFilter === null} onClick={() => setActiveFilter(null)}>
+              All
+            </TagButton>
+            {allBundles.map((bundle) => (
+              <TagButton
+                key={bundle}
+                active={activeFilter?.tag === bundle && activeFilter?.field === "humbleBundle"}
+                onClick={() => handleTagClick(bundle, "humbleBundle")}
+              >
+                {bundle}
+              </TagButton>
+            ))}
+          </div>
+        )}
       </div>
 
       <ul className="space-y-4">
@@ -69,6 +130,14 @@ export default function BookShelf({ books }: { books: Book[] }) {
                   <span
                     key={tag}
                     className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"
+                  >
+                    {tag}
+                  </span>
+                ))}
+                {book.ai_tags?.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-xs px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300"
                   >
                     {tag}
                   </span>

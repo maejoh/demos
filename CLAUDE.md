@@ -11,20 +11,19 @@ Test coverage and READMEs are treated as first-class — they should stay curren
 with the code and be readable by someone encountering the project for the first time.
 
 ## App
-**BookShelf** (`demo-1/`) — a Next.js app for managing and browsing a personal book
+**BookShelf** (`bookshelf/`) — a Next.js app for managing and browsing a personal book
 collection, deployed on Vercel.
 
 Capabilities to date:
-- Redis-backed book shelf, with Redis namespaced by environment (prod/dev)
-- Adhoc Redis pipeline scripts for seeding and managing the database
-- Epub processing pipeline (Python, runs locally)
+- Redis-backed book shelf, namespaced by environment (prod/dev/preview)
+- TypeScript seed script with per-environment targeting and wipe support
+- Epub processing pipeline (Python, runs locally): OPF extraction → Google Books enrichment → cover image extraction
 
 Planned:
-- **AI tagging** — call the Anthropic API as part of the epub pipeline to tag books
-  based on their description and overlapping categories in the library
-- **LLM interaction on the site** — surface book recommendations, answer questions
-  about the portfolio, and/or take in a job description and respond based on the
-  library and my background
+- **AI tagging** — Anthropic API call in the epub pipeline to generate and normalize tags across the library
+- **LLM features on the site** — book recommendations, job description matching, natural language queries about the library
+- **MCP server** — hand-rolled, composable with the LLM layer
+- **Agentic demo** — React frontend + LLM + MCP tool(s)
 
 ## Deployment
 - Host: Vercel
@@ -32,7 +31,7 @@ Planned:
 
 ## Workflow (gstack skills)
 
-Skills live in `.claude/skills/gstack/` (forked from
+Skills live in `.claude/skills/` (forked from
 [garrytan/gstack](https://github.com/garrytan/gstack)).
 Claude Code auto-discovers them — no install step needed.
 
