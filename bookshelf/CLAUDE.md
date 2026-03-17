@@ -59,7 +59,7 @@ npm run tag -- --isbn ISBN     # retag a single book
 ### 3. Seed
 ```
 npm run seed               # → "development" namespace
-npm run seed -- --wipe     # wipe namespace first, then seed
+npm run seed -- --clean    # wipe namespace first, then seed
 npm run seed:preview       # → "preview" namespace
 npm run seed:prod          # → "production" namespace
 ```

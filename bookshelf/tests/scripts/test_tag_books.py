@@ -2,8 +2,9 @@
 Tests for tag_books.py.
 
 Pure functions (_strip_fences, parse_json_list, parse_assignments,
-build_vocabulary_prompt, build_assignment_prompt, apply_tag_assignments)
-are tested directly. tag_single_book is tested with a mocked Anthropic client.
+build_vocabulary_prompt, build_assignment_prompt, apply_tag_assignments,
+print_tag_summary) are tested directly. tag_single_book is tested with a
+mocked Anthropic client.
 """
 
 from unittest.mock import MagicMock, patch
@@ -15,6 +16,7 @@ from scripts.book_pipeline.tag_books import (
     build_vocabulary_prompt,
     parse_assignments,
     parse_json_list,
+    print_tag_summary,
     tag_single_book,
 )
 
@@ -205,6 +207,45 @@ class TestApplyTagAssignments:
             {"isbn1", "isbn2"},
         )
         assert updated == 2
+
+
+# ---------------------------------------------------------------------------
+# print_tag_summary
+# ---------------------------------------------------------------------------
+
+class TestPrintTagSummary:
+    def test_prints_each_tag_with_its_count(self, capsys):
+        book_details = {
+            "isbn1": {"ai_tags": ["Python", "Machine Learning"]},
+            "isbn2": {"ai_tags": ["Python"]},
+        }
+        print_tag_summary(book_details)
+        out = capsys.readouterr().out
+        assert "Python" in out
+        assert "Machine Learning" in out
+        assert "2" in out  # Python appears twice
+
+    def test_does_nothing_when_all_tags_are_empty(self, capsys):
+        print_tag_summary({"isbn1": {"ai_tags": []}})
+        assert capsys.readouterr().out == ""
+
+    def test_does_nothing_when_no_ai_tags_key(self, capsys):
+        print_tag_summary({"isbn1": {"title": "A Book"}})
+        assert capsys.readouterr().out == ""
+
+    def test_sorts_by_count_descending(self, capsys):
+        book_details = {
+            "isbn1": {"ai_tags": ["Python", "Databases"]},
+            "isbn2": {"ai_tags": ["Python"]},
+            "isbn3": {"ai_tags": ["Python"]},
+        }
+        print_tag_summary(book_details)
+        out = capsys.readouterr().out
+        lines = [l for l in out.splitlines() if l.strip()]
+        # "Python" (3) should appear before "Databases" (1)
+        python_line = next(i for i, l in enumerate(lines) if "Python" in l)
+        databases_line = next(i for i, l in enumerate(lines) if "Databases" in l)
+        assert python_line < databases_line
 
 
 # ---------------------------------------------------------------------------

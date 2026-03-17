@@ -6,6 +6,7 @@ from scripts.book_pipeline.google_books import (
     _author_looks_mangled,
     _google_request,
     _parse_volume,
+    fetch_google_book,
 )
 
 
@@ -57,6 +58,14 @@ class TestParseVolume:
         result = _parse_volume({"publishedDate": "2020-06-15"})
         assert result["year"] == 2020
 
+    def test_returns_none_isbn_when_no_identifiers(self):
+        result = _parse_volume({})
+        assert result["isbn"] is None
+
+    def test_returns_none_author_when_no_authors(self):
+        result = _parse_volume({})
+        assert result["author"] is None
+
 
 class TestGoogleRequest:
     def test_returns_json_on_success(self):
@@ -88,3 +97,87 @@ class TestGoogleRequest:
                 result = _google_request({"q": "test"})
 
         assert result is None
+
+    def test_returns_none_on_request_exception(self):
+        with patch("scripts.book_pipeline.google_books.requests.get", side_effect=Exception("timeout")):
+            result = _google_request({"q": "test"})
+        assert result is None
+
+
+class TestFetchGoogleBook:
+    def _volume_response(self, isbn="9781234567890", title="Test Book"):
+        return {
+            "items": [{
+                "volumeInfo": {
+                    "title": title,
+                    "authors": ["Test Author"],
+                    "publishedDate": "2020",
+                    "description": "A description.",
+                    "industryIdentifiers": [
+                        {"type": "ISBN_13", "identifier": isbn}
+                    ],
+                }
+            }]
+        }
+
+    def test_returns_parsed_volume_on_isbn_query_hit(self):
+        with patch("scripts.book_pipeline.google_books._google_request", return_value=self._volume_response()):
+            result = fetch_google_book("9781234567890", "Test Book", "Author", None, None)
+
+        assert result is not None
+        assert result["isbn"] == "9781234567890"
+        assert result["title"] == "Test Book"
+
+    def test_queries_by_isbn_first(self):
+        with patch("scripts.book_pipeline.google_books._google_request", return_value=self._volume_response()) as mock_req:
+            fetch_google_book("9781234567890", "Test Book", "Author", None, "api_key")
+
+        first_query = mock_req.call_args_list[0][0][0]["q"]
+        assert first_query == "isbn:9781234567890"
+
+    def test_skips_isbn_query_when_no_isbn_provided(self):
+        with patch("scripts.book_pipeline.google_books._google_request", return_value={"items": []}) as mock_req:
+            fetch_google_book(None, "Test Book", "Author", None, None)
+
+        queries = [call[0][0]["q"] for call in mock_req.call_args_list]
+        assert not any(q.startswith("isbn:") for q in queries)
+
+    def test_falls_back_to_title_author_query_when_isbn_returns_nothing(self):
+        no_results = {"items": []}
+        with patch("scripts.book_pipeline.google_books._google_request", side_effect=[no_results, self._volume_response()]) as mock_req:
+            result = fetch_google_book("9781234567890", "Test Book", "Author", None, None)
+
+        assert mock_req.call_count == 2
+        second_query = mock_req.call_args_list[1][0][0]["q"]
+        assert "intitle:" in second_query
+
+    def test_returns_none_when_all_queries_return_no_items(self):
+        with patch("scripts.book_pipeline.google_books._google_request", return_value={"items": []}):
+            result = fetch_google_book("9781234567890", "Test Book", "Author", None, None)
+        assert result is None
+
+    def test_returns_none_when_all_requests_fail(self):
+        with patch("scripts.book_pipeline.google_books._google_request", return_value=None):
+            result = fetch_google_book(None, "Test Book", "Author", None, None)
+        assert result is None
+
+    def test_includes_api_key_in_all_requests(self):
+        with patch("scripts.book_pipeline.google_books._google_request", return_value={"items": []}) as mock_req:
+            fetch_google_book(None, "Test Book", "Author", None, "my_api_key")
+
+        for call in mock_req.call_args_list:
+            assert call[0][0].get("key") == "my_api_key"
+
+    def test_omits_key_when_no_api_key(self):
+        with patch("scripts.book_pipeline.google_books._google_request", return_value={"items": []}) as mock_req:
+            fetch_google_book(None, "Test Book", "Author", None, None)
+
+        for call in mock_req.call_args_list:
+            assert "key" not in call[0][0]
+
+    def test_passes_epub_year_to_parse_volume(self):
+        # volumeInfo with no publishedDate — should fall back to epub_year
+        with patch("scripts.book_pipeline.google_books._google_request", return_value={"items": [{"volumeInfo": {}}]}):
+            result = fetch_google_book(None, "Test Book", "Author", 2019, None)
+
+        assert result["year"] == 2019
