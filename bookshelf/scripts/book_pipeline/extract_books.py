@@ -164,6 +164,7 @@ def main():
                 "isbn": found_isbn,
                 "year": result.get("year") or existing.get("year"),
                 "tags": existing.get("tags") or [],
+                "ai_tags": existing.get("ai_tags") or [],
                 "description": result.get("description") or existing.get("description") or "",
                 "coverUrl": existing.get("coverUrl"),
             }
@@ -251,6 +252,7 @@ def main():
                     "isbn": isbn,
                     "year": meta.get("year") or existing.get("year"),
                     "tags": existing.get("tags") or [],
+                    "ai_tags": existing.get("ai_tags") or [],
                     "description": existing.get("description") or "",
                     "coverUrl": cover_url or existing.get("coverUrl"),
                 }
@@ -272,6 +274,7 @@ def main():
             "isbn": isbn,
             "year": result.get("year") or existing.get("year"),
             "tags": existing.get("tags") or [],
+            "ai_tags": existing.get("ai_tags") or [],
             "description": result.get("description") or existing.get("description") or "",
             "coverUrl": cover_url or existing.get("coverUrl"),
         }
