@@ -11,7 +11,8 @@ export default function BookShelf({ books }: { books: Book[] }) {
   )
 
   const allTags = Array.from(new Set(books.flatMap((b) => b.tags))).sort()
-  const allAiTags = Array.from(new Set(books.flatMap((b) => b.ai_tags ?? []))).sort()
+  const aiTagCounts = books.flatMap((b) => b.ai_tags ?? []).reduce<Record<string, number>>((acc, t) => ({ ...acc, [t]: (acc[t] ?? 0) + 1 }), {})
+  const allAiTags = Object.keys(aiTagCounts).filter((t) => aiTagCounts[t] >= 5).sort()
   const allBundles = Array.from(new Set(books.map((b) => b.humbleBundle).filter(Boolean))).sort() as string[]
   const visible = activeFilter
     ? books.filter((b) =>
@@ -70,7 +71,7 @@ export default function BookShelf({ books }: { books: Book[] }) {
           ))}
         </div>
         {allAiTags.length > 0 && (
-          <div className="hidden flex-wrap gap-2 items-center">
+          <div className="flex flex-wrap gap-2 items-center">
             <span className="text-xs text-gray-400 dark:text-gray-500 w-12 shrink-0">AI tags</span>
             {allAiTags.map((tag) => (
               <TagButton

@@ -3,23 +3,22 @@
 Generate AI tags for books in book_details.json using the Anthropic API.
 
 Usage:
-    python scripts/tag_books.py                       # tag all untagged books
-    python scripts/tag_books.py --isbn 9781234567890  # tag/retag one book
-    python scripts/tag_books.py --clean               # retag all books
+    python -m scripts.book_pipeline.tag_books          # build vocabulary + tag untagged books
+    python -m scripts.book_pipeline.tag_books --clean  # rebuild vocabulary + retag all books
+    python -m scripts.book_pipeline.tag_books --normalize  # skip Pass 1, reassign from existing vocabulary
+    python -m scripts.book_pipeline.tag_books --isbn 9781234567890  # retag one book
 
 Two-pass approach:
 
-    Pass 1 — per-book tagging (concurrent, max 5 workers):
-        For each book without ai_tags (or all books with --clean, or the
-        specified book with --isbn), call the Anthropic API with the book's
-        title and description and store the returned tags as ai_tags.
+    Pass 1 — vocabulary discovery (one API call, all titles):
+        Send all book titles to the model. It extracts every specific
+        language/tool/library/framework mentioned by name, plus 5-10
+        broader topic categories (e.g. "Web Development", "Databases").
+        Returns a canonical tag list for the whole library.
 
-    Pass 2 — vocabulary derivation + assignment:
-        Send all candidate tags (keyed by ISBN) to the API. The model
-        derives a controlled vocabulary of 10-20 broad tags and assigns
-        1-3 final tags per book. Existing tags from unchanged books are
-        passed as context so new assignments stay consistent.
-        Existing ai_tags are never renamed — only Pass 1 books are updated.
+    Pass 2 — bulk assignment (one API call, all books):
+        Send all books (title + description) alongside the canonical
+        vocabulary. The model assigns 1-3 tags per book from the list.
 
     ┌─────────────────────┐
     │  book_details.json  │
@@ -27,17 +26,14 @@ Two-pass approach:
              │ load
              ▼
     ┌─────────────────────────────────────────────────┐
-    │  Pass 1: tag each book (ThreadPoolExecutor x5)  │
-    │  skip if ai_tags present (unless --isbn/--clean)│
-    │  generates 3-8 raw candidate tags per book      │
+    │  Pass 1: vocabulary discovery (single API call) │
+    │  all titles → canonical tag list                │
     └────────┬────────────────────────────────────────┘
-             │ intermediate save
+             │
              ▼
     ┌──────────────────────────────────────────────────────────┐
-    │  Pass 2: vocabulary derivation + assignment              │
-    │  candidates by ISBN → Anthropic → vocabulary (10-20)    │
-    │  + assignments (1-3 tags per book)                       │
-    │  existing ai_tags passed as context; never renamed       │
+    │  Pass 2: bulk assignment (single API call)               │
+    │  all books + canonical vocabulary → assignments by ISBN  │
     └────────┬─────────────────────────────────────────────────┘
              │ final save + tag summary
              ▼
@@ -55,8 +51,6 @@ import json
 import re
 import sys
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from pathlib import Path
 
 import anthropic
 
@@ -73,9 +67,9 @@ def _strip_fences(text: str) -> str:
     return text.strip()
 
 
-def parse_tag_response(text: str) -> list[str]:
+def parse_json_list(text: str) -> list[str]:
     """
-    Parse a JSON list of tags from an API response.
+    Parse a JSON array of strings from response text.
     Handles markdown fences and preamble text gracefully.
     Returns [] on any parse failure — never raises.
     """
@@ -87,17 +81,16 @@ def parse_tag_response(text: str) -> list[str]:
         result = json.loads(stripped)
         if isinstance(result, list) and all(isinstance(t, str) for t in result):
             return [t.strip() for t in result if t.strip()]
-        print(f"  [warn] unexpected tag response shape: {type(result)}")
+        print(f"  [warn] unexpected response shape: {type(result)}")
         return []
     except json.JSONDecodeError:
-        print(f"  [warn] could not parse tag response: {text[:100]!r}")
+        print(f"  [warn] could not parse response: {text[:100]!r}")
         return []
 
 
-def parse_normalization_response(text: str) -> dict:
+def parse_assignments(text: str) -> dict[str, list[str]]:
     """
-    Parse the normalization response.
-    Expected shape: {"vocabulary": [str, ...], "assignments": {isbn: [str, ...]}}
+    Parse a JSON object of {isbn: [tags]} from response text.
     Handles markdown fences and preamble text gracefully.
     Returns {} on any parse failure — never raises.
     """
@@ -107,65 +100,79 @@ def parse_normalization_response(text: str) -> dict:
         stripped = match.group()
     try:
         result = json.loads(stripped)
-        if (
-            isinstance(result, dict)
-            and isinstance(result.get("vocabulary"), list)
-            and isinstance(result.get("assignments"), dict)
-        ):
+        if isinstance(result, dict):
             return result
-        print(f"  [warn] unexpected normalization response shape: {type(result)}")
+        print(f"  [warn] unexpected assignments shape: {type(result)}")
         return {}
     except json.JSONDecodeError:
-        print(f"  [warn] could not parse normalization response: {text[:100]!r}")
+        print(f"  [warn] could not parse assignments: {text[:100]!r}")
         return {}
 
 
-def build_tag_prompt(title: str, description: str) -> str:
-    """Build the tagging prompt for a single book."""
-    desc_section = f"\nDescription: {description}" if description else ""
+def build_vocabulary_prompt(titles: list[str]) -> str:
+    """Build the Pass 1 prompt: discover a canonical tag vocabulary from all book titles."""
+    titles_xml = "\n".join(f"  <title>{t}</title>" for t in titles)
     return (
-        "You are tagging books for a personal technical library browsed by people in the tech industry — "
-        "software engineers, architects, and hiring managers.\n\n"
-        "Generate as few tags as accurately describe this book's main topics. "
-        "Most books need 2-4. Never exceed 6. "
-        "Tags should be short (1-4 words), lowercase, and reflect the main subjects covered. "
-        "Be specific — these candidates will be normalized into broader categories later.\n\n"
-        f"Title: {title}{desc_section}\n\n"
-        'Respond with ONLY a JSON array of strings. Example: ["machine learning", "python", "neural networks", "data pipelines"]'
+        "You are building a tag vocabulary for a personal technical library. "
+        "The audience is software engineers, architects, and hiring managers.\n\n"
+        "Here are all the book titles in the library:\n"
+        f"<titles>\n{titles_xml}\n</titles>\n\n"
+        "Your task:\n"
+        "1. Extract every specific programming language, tool, library, or framework "
+        "mentioned by name in these titles (e.g. Python, LangChain, Kubernetes, SQL).\n"
+        "2. Identify 5-10 broader topic categories that meaningfully group the library "
+        "(e.g. Web Development, Machine Learning, Databases, Software Architecture). "
+        "Only include a category if at least 3 books would share it.\n\n"
+        "Rules:\n"
+        "- Use standard capitalisation and acronyms (Python, LLM, SQL, REST, RAG, AI)\n"
+        "- Do not duplicate specific tools as broad categories "
+        "(e.g. don't list both 'PyTorch' and 'Deep Learning Frameworks')\n"
+        "- Total tag count should be 20-40\n\n"
+        "Respond with ONLY a JSON array of strings.\n"
+        'Example: ["Python", "LangChain", "Machine Learning", "Databases", "Web Development"]'
     )
 
 
-def build_normalization_prompt(
-    candidate_tags_by_isbn: dict[str, list[str]],
-    existing_vocabulary: list[str],
-) -> str:
-    """Build the vocabulary derivation and assignment prompt for Pass 2."""
-    candidates_str = json.dumps(candidate_tags_by_isbn, indent=2)
-    vocab_section = (
-        f"\nExisting tags already in use in this library (reuse these where appropriate):\n{json.dumps(existing_vocabulary)}\n"
-        if existing_vocabulary else ""
+def build_assignment_prompt(books: dict, vocabulary: list[str]) -> str:
+    """Build the Pass 2 prompt: assign tags from the canonical vocabulary to each book."""
+    books_xml = "\n".join(
+        f'  <book isbn="{isbn}">\n'
+        f"    <title>{book.get('title', '')}</title>\n"
+        + (f"    <description>{book.get('description', '')[:300]}</description>\n" if book.get('description') else "")
+        + "  </book>"
+        for isbn, book in books.items()
     )
+    vocab_json = json.dumps(vocabulary)
     return (
-        "You are building a tag vocabulary for a personal technical library displayed as filter buttons in a UI. "
-        "The audience is people in the tech industry — software engineers, architects, and hiring managers.\n\n"
-        f"Here are candidate tags generated for books that need final tag assignment (keyed by ISBN):\n{candidates_str}\n"
-        f"{vocab_section}\n"
-        "Your job:\n"
-        "1. Derive a controlled vocabulary of 10-20 tags that cover these books well. "
-        "Tags should be broad enough that multiple books share them — if fewer than 3 books would share a tag, "
-        "it is probably too specific. Use standard acronyms where widely recognised (RAG, LLM, SQL, REST, AI). "
-        "Incorporate existing tags where appropriate.\n"
-        "2. Assign each book 1-3 tags from your vocabulary.\n\n"
-        "Respond with ONLY a JSON object in this exact format:\n"
-        '{\n  "vocabulary": ["tag1", "tag2", ...],\n'
-        '  "assignments": {"isbn": ["tag1"], "isbn2": ["tag1", "tag2"], ...}\n}'
+        "You are assigning tags to books in a personal technical library. "
+        "The audience is software engineers, architects, and hiring managers.\n\n"
+        "Here are the books to tag:\n"
+        f"<library>\n{books_xml}\n</library>\n\n"
+        f"Canonical tag vocabulary (assign ONLY tags from this list):\n{vocab_json}\n\n"
+        "Rules:\n"
+        "- Assign 1-3 tags per book\n"
+        "- Only use tags from the vocabulary above — never invent new ones\n"
+        "- Prefer specific tags (e.g. 'Python') over broad ones (e.g. 'Programming') "
+        "when the title makes it explicit\n"
+        "- A book may get one specific and one broad tag "
+        "(e.g. ['Machine Learning', 'PyTorch'])\n\n"
+        "Example output:\n"
+        '{"9780000000001": ["Python", "Web Development"], "9780000000002": ["Machine Learning"]}\n\n'
+        "Respond with ONLY a JSON object mapping each ISBN to its list of tags."
     )
 
 
-def tag_book(book: dict, client: anthropic.Anthropic, retries: int = 2, retry_delay: float = 5.0) -> list[str]:
-    """Call the Anthropic API to generate tags for a single book."""
-    prompt = build_tag_prompt(book.get("title", ""), book.get("description", ""))
-    title = book.get("title", "unknown")
+def tag_single_book(
+    book: dict,
+    isbn: str,
+    vocabulary: list[str],
+    client: anthropic.Anthropic,
+    retries: int = 2,
+    retry_delay: float = 5.0,
+) -> list[str]:
+    """Assign tags to a single book from a known vocabulary."""
+    prompt = build_assignment_prompt({isbn: book}, vocabulary)
+    title = book.get("title", isbn)
     for attempt in range(retries + 1):
         try:
             message = client.messages.create(
@@ -173,7 +180,8 @@ def tag_book(book: dict, client: anthropic.Anthropic, retries: int = 2, retry_de
                 max_tokens=256,
                 messages=[{"role": "user", "content": prompt}],
             )
-            return parse_tag_response(message.content[0].text)
+            assignments = parse_assignments(message.content[0].text)
+            return assignments.get(isbn, [])
         except Exception as e:
             if attempt < retries:
                 print(f"  [retry {attempt + 1}/{retries}] {title}: {e} — waiting {retry_delay}s")
@@ -190,7 +198,7 @@ def apply_tag_assignments(
     isbn_filter: set[str],
 ) -> int:
     """
-    Apply final tag assignments directly to books.
+    Apply final tag assignments to books.
     Only books whose ISBNs are in isbn_filter are touched.
     Returns the number of books updated.
     """
@@ -229,17 +237,17 @@ def main():
     parser.add_argument(
         "--isbn",
         metavar="ISBN",
-        help="Tag (or retag) a single book by ISBN, overwriting any existing ai_tags",
+        help="Tag (or retag) a single book by ISBN using existing vocabulary",
     )
     parser.add_argument(
         "--clean",
         action="store_true",
-        help="Retag all books, overwriting existing ai_tags",
+        help="Rebuild vocabulary and retag all books",
     )
     parser.add_argument(
         "--normalize",
         action="store_true",
-        help="Skip Pass 1 and run normalization on all currently tagged books",
+        help="Skip Pass 1 and reassign tags using vocabulary derived from already-tagged books",
     )
     args = parser.parse_args()
 
@@ -260,115 +268,78 @@ def main():
 
     client = anthropic.Anthropic(api_key=api_key)
 
-    # Determine which books to tag in Pass 1
+    # --- Pass 1: vocabulary discovery ---
+    if args.isbn or args.normalize:
+        # Use vocabulary derived from already-tagged books
+        vocabulary = sorted({
+            tag
+            for book in book_details.values()
+            for tag in book.get("ai_tags", [])
+        })
+        if not vocabulary:
+            print("No existing vocabulary found. Run without --isbn/--normalize first.")
+            sys.exit(1)
+        print(f"Using existing vocabulary ({len(vocabulary)} tags): {vocabulary}")
+    else:
+        titles = [book.get("title", "") for book in book_details.values() if book.get("title")]
+        print(f"\nPass 1: discovering vocabulary from {len(titles)} book titles...")
+        try:
+            message = client.messages.create(
+                model=MODEL,
+                max_tokens=1024,
+                messages=[{"role": "user", "content": build_vocabulary_prompt(titles)}],
+            )
+            vocabulary = parse_json_list(message.content[0].text)
+        except Exception as e:
+            print(f"  [error] vocabulary API call failed: {e}")
+            sys.exit(1)
+        if not vocabulary:
+            print("  [error] No vocabulary returned — aborting.")
+            sys.exit(1)
+        print(f"Vocabulary ({len(vocabulary)} tags): {vocabulary}")
+
+    # --- Pass 2: assignment ---
     if args.isbn:
         if args.isbn not in book_details:
             print(f"Error: ISBN {args.isbn} not found in book_details.json")
             sys.exit(1)
-        to_tag = {args.isbn: book_details[args.isbn]}
-    elif args.clean:
-        to_tag = dict(book_details)
-    else:
-        to_tag = {
-            isbn: book
-            for isbn, book in book_details.items()
-            if not book.get("ai_tags")
-        }
+        book = book_details[args.isbn]
+        print(f"\nTagging {book.get('title', args.isbn)}...")
+        tags = tag_single_book(book, args.isbn, vocabulary, client)
+        if tags:
+            book_details[args.isbn]["ai_tags"] = tags
+            print(f"  [ok]   {book.get('title', args.isbn)}: {tags}")
+        else:
+            print(f"  [miss] {book.get('title', args.isbn)}: no tags assigned")
+        save_json(BOOK_DETAILS_PATH, book_details)
+        return
+
+    to_tag = dict(book_details) if (args.clean or args.normalize) else {
+        isbn: book for isbn, book in book_details.items() if not book.get("ai_tags")
+    }
+
+    if not to_tag:
+        print("\nAll books already tagged. Use --clean to retag all.")
+        print_tag_summary(book_details)
+        return
 
     skipped = len(book_details) - len(to_tag)
-    if skipped and not args.clean and not args.isbn:
+    if skipped:
         print(f"Skipping {skipped} already-tagged book(s). Use --clean to retag all.")
 
-    if args.normalize:
-        # Skip Pass 1 — build new_tags_by_isbn from all currently tagged books
-        new_tags_by_isbn = {
-            isbn: book["ai_tags"]
-            for isbn, book in book_details.items()
-            if book.get("ai_tags")
-        }
-        if not new_tags_by_isbn:
-            print("No books have ai_tags yet. Run without --normalize first.")
-            return
-        existing_vocabulary = set()
-        print(f"\nForcing normalization on {len(new_tags_by_isbn)} tagged book(s)...")
-    else:
-        if not to_tag:
-            print("Nothing to tag.")
-            return
-
-        # Collect existing vocabulary from books NOT being retagged
-        existing_vocabulary = set()
-        for isbn, book in book_details.items():
-            if isbn not in to_tag and book.get("ai_tags"):
-                existing_vocabulary.update(book["ai_tags"])
-
-        print(f"\nTagging {len(to_tag)} book(s)...")
-
-    if not args.normalize:
-        # Pass 1: tag each book concurrently
-        def tag_one(isbn: str, book: dict) -> tuple[str, list[str]]:
-            tags = tag_book(book, client)
-            if tags:
-                print(f"  [ok]   {book.get('title', isbn)}: {tags}")
-            else:
-                print(f"  [miss] {book.get('title', isbn)}: no tags generated")
-            return isbn, tags
-
-        new_tags_by_isbn = {}
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            futures = {
-                executor.submit(tag_one, isbn, book): isbn
-                for isbn, book in to_tag.items()
-            }
-            for f in as_completed(futures):
-                isbn, tags = f.result()
-                if tags:
-                    book_details[isbn]["ai_tags"] = tags
-                    new_tags_by_isbn[isbn] = tags
-
-        # Intermediate save — preserve Pass 1 results before Pass 2
-        save_json(BOOK_DETAILS_PATH, book_details)
-        print(f"\nPass 1 complete. Tagged {len(new_tags_by_isbn)}/{len(to_tag)} book(s).")
-
-        if not new_tags_by_isbn:
-            print("No tags generated — skipping normalization.")
-            return
-
-    # Pass 2: derive vocabulary and assign 1-3 final tags per book
-    print(
-        f"\nDeriving vocabulary and assigning final tags for "
-        f"{len(new_tags_by_isbn)} book(s) "
-        f"({len(existing_vocabulary)} existing tag(s) as context)..."
-    )
-
+    print(f"\nPass 2: assigning tags to {len(to_tag)} book(s)...")
     try:
         message = client.messages.create(
             model=MODEL,
             max_tokens=8192,
-            messages=[{
-                "role": "user",
-                "content": build_normalization_prompt(
-                    new_tags_by_isbn, sorted(existing_vocabulary)
-                ),
-            }],
+            messages=[{"role": "user", "content": build_assignment_prompt(to_tag, vocabulary)}],
         )
-        result = parse_normalization_response(message.content[0].text)
+        assignments = parse_assignments(message.content[0].text)
     except Exception as e:
-        print(f"  [warn] normalization API call failed: {e}")
-        result = {}
+        print(f"  [error] assignment API call failed: {e}")
+        sys.exit(1)
 
-    if not result:
-        print("  [warn] No normalization result returned — skipping.")
-        return
-
-    vocabulary = result.get("vocabulary", [])
-    assignments = result.get("assignments", {})
-    print(f"Vocabulary ({len(vocabulary)} tags): {vocabulary}")
-
-    updated = apply_tag_assignments(
-        book_details, assignments, set(new_tags_by_isbn.keys())
-    )
-
+    updated = apply_tag_assignments(book_details, assignments, set(to_tag.keys()))
     save_json(BOOK_DETAILS_PATH, book_details)
     print(f"\nDone. {updated} book(s) assigned final tags.")
     print_tag_summary(book_details)

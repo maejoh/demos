@@ -12,7 +12,8 @@
     "seed": "tsx scripts/book_pipeline/seed.ts",
     "seed:preview": "tsx scripts/book_pipeline/seed.ts --env preview",
     "seed:prod": "tsx scripts/book_pipeline/seed.ts --env production",
-    "extract": "python -m scripts.book_pipeline.extract_books"
+    "extract": "python -m scripts.book_pipeline.extract_books",
+    "tag": "python -m scripts.book_pipeline.tag_books"
   },
   "dependencies": {
     "@upstash/redis": "^1.37.0",
