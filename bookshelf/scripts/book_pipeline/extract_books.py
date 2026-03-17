@@ -285,7 +285,7 @@ def main():
         if not epub_isbn:
             isbn_discovered[epub_title] = isbn
 
-    with ThreadPoolExecutor(max_workers=5) as executor:
+    with ThreadPoolExecutor(max_workers=2) as executor:
         futures = [executor.submit(enrich_one, meta) for meta in to_enrich]
         for f in as_completed(futures):
             f.result()

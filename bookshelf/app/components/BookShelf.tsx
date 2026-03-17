@@ -5,18 +5,23 @@ import Image from "next/image"
 import type { Book } from "@/lib/books"
 
 export default function BookShelf({ books }: { books: Book[] }) {
-  const [activeFilter, setActiveFilter] = useState<{ tag: string; field: "tags" | "ai_tags" } | null>(null)
+  const [activeFilter, setActiveFilter] = useState<{ tag: string; field: "tags" | "ai_tags" | "humbleBundle" } | null>(null)
   const [votes, setVotes] = useState<Record<string, number>>(
     Object.fromEntries(books.map((b) => [b.id, b.votes]))
   )
 
   const allTags = Array.from(new Set(books.flatMap((b) => b.tags))).sort()
   const allAiTags = Array.from(new Set(books.flatMap((b) => b.ai_tags ?? []))).sort()
+  const allBundles = Array.from(new Set(books.map((b) => b.humbleBundle).filter(Boolean))).sort() as string[]
   const visible = activeFilter
-    ? books.filter((b) => (b[activeFilter.field] ?? []).includes(activeFilter.tag))
+    ? books.filter((b) =>
+        activeFilter.field === "humbleBundle"
+          ? b.humbleBundle === activeFilter.tag
+          : (b[activeFilter.field] ?? []).includes(activeFilter.tag)
+      )
     : books
 
-  function handleTagClick(tag: string, field: "tags" | "ai_tags") {
+  function handleTagClick(tag: string, field: "tags" | "ai_tags" | "humbleBundle") {
     setActiveFilter((prev) =>
       prev?.tag === tag && prev?.field === field ? null : { tag, field }
     )
@@ -49,7 +54,7 @@ export default function BookShelf({ books }: { books: Book[] }) {
       </header>
 
       <div className="space-y-3 mb-8">
-        <div className="flex flex-wrap gap-2 items-center">
+        <div className="hidden flex-wrap gap-2 items-center">
           <span className="text-xs text-gray-400 dark:text-gray-500 w-12 shrink-0">Topics</span>
           <TagButton active={activeFilter === null} onClick={() => setActiveFilter(null)}>
             All
@@ -65,7 +70,7 @@ export default function BookShelf({ books }: { books: Book[] }) {
           ))}
         </div>
         {allAiTags.length > 0 && (
-          <div className="flex flex-wrap gap-2 items-center">
+          <div className="hidden flex-wrap gap-2 items-center">
             <span className="text-xs text-gray-400 dark:text-gray-500 w-12 shrink-0">AI tags</span>
             {allAiTags.map((tag) => (
               <TagButton
@@ -74,6 +79,23 @@ export default function BookShelf({ books }: { books: Book[] }) {
                 onClick={() => handleTagClick(tag, "ai_tags")}
               >
                 {tag}
+              </TagButton>
+            ))}
+          </div>
+        )}
+        {allBundles.length > 0 && (
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-xs text-gray-400 dark:text-gray-500 w-12 shrink-0">Bundle</span>
+            <TagButton active={activeFilter === null} onClick={() => setActiveFilter(null)}>
+              All
+            </TagButton>
+            {allBundles.map((bundle) => (
+              <TagButton
+                key={bundle}
+                active={activeFilter?.tag === bundle && activeFilter?.field === "humbleBundle"}
+                onClick={() => handleTagClick(bundle, "humbleBundle")}
+              >
+                {bundle}
               </TagButton>
             ))}
           </div>

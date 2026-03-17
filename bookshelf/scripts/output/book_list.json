@@ -561,8 +561,8 @@
   },
   {
     "isbn": "9781803247632",
-    "title": "Architectural Patterns and Techniques for Developing  IoT Solutions",
-    "title_raw": "Architectural Patterns and Techniques for Developing  IoT Solutions"
+    "title": "Architectural Patterns and Techniques for Developing IoT Solutions",
+    "title_raw": "Architectural Patterns and Techniques for Developing IoT Solutions"
   },
   {
     "isbn": "9781800202740",
@@ -620,6 +620,11 @@
     "title_raw": "Platform Engineering for Architects"
   },
   {
+    "isbn": "9781836642015",
+    "title": "Practical Serverless and Microservices with C#",
+    "title_raw": "Practical Serverless and Microservices with C#"
+  },
+  {
     "isbn": "9781835088296",
     "title": "Pragmatic Microservices with C# and Azure",
     "title_raw": "Pragmatic Microservices with C# and Azure"
@@ -638,6 +643,11 @@
     "isbn": "9781805127659",
     "title": "Software Architecture with C# 12 and .NET 8",
     "title_raw": "Software Architecture with C# 12 and .NET 8"
+  },
+  {
+    "isbn": "9781803243016",
+    "title": "Software Architecture with C++",
+    "title_raw": "Software Architecture with C++"
   },
   {
     "isbn": "9781835461860",
@@ -761,8 +771,8 @@
   },
   {
     "isbn": "9781803244419",
-    "title": "Simplifying State Management in React Native",
-    "title_raw": "Simplifying State Management in React Native"
+    "title": "Simplifying State Managementin React Native",
+    "title_raw": "Simplifying State Managementin React Native"
   },
   {
     "isbn": "9781800565098",
