@@ -22,10 +22,10 @@ who visits can see the current vote counts, and what topics have the most intere
 - Browsable library with cover art, metadata, and per-book upvotes
 - Redis data store, namespaced by environment (prod / dev / preview)
 - Python epub pipeline: OPF extraction → Google Books API enrichment → Redis seed
+- AI tagging via Anthropic API: two-pass vocabulary discovery + bulk assignment across the full library
 
 ## What's coming
 
-- **AI tagging** — Anthropic API in the epub pipeline to generate and normalize topic tags from book descriptions
 - **LLM features** — title recommendations, job description matching, natural language queries
 - **MCP server** — TODO
 

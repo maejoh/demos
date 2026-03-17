@@ -13,37 +13,57 @@ UPSTASH_REDIS_REST_URL=...
 UPSTASH_REDIS_REST_TOKEN=...
 BOOKS_DIR="E:\path\to\epub bundles"   # local only — root folder containing bundle subfolders
 GOOGLE_BOOKS_API_KEY=...              # for metadata enrichment
+ANTHROPIC_API_KEY=...                 # for AI tagging
+BOOK_BUNDLES=Bundle One,Bundle Two    # comma-separated subfolder names for --all flag
 ```
 
 ## Data pipeline
 
 ### 1. Extract
 ```
-npm run extract:llm        # extract a specific aliased bundle (uses BOOKS_DIR + bundle name)
-npm run extract            # extract from a folder path directly
+npm run extract -- --bundle "Bundle Name"   # extract one subfolder from BOOKS_DIR
+npm run extract -- --all                    # extract all bundles listed in BOOK_BUNDLES
+npm run extract -- /path/to/folder          # extract from an explicit folder path
 ```
-`scripts/extract_books.py` walks a folder of epubs, extracts metadata from OPF, enriches title/author/year/description via Google Books API, and extracts cover images directly from the epub zip.
+`scripts/book_pipeline/extract_books.py` walks a folder of epubs, extracts metadata from OPF,
+enriches title/author/year/description/cover via the Google Books API, and extracts cover images
+from the epub zip.
 
 Outputs:
-- `scripts/output/book_list.json` — `{isbn, title, title_raw}[]` — used for tracking scanned books, informs skip logic to avoid re-processing books when --force isn't specified
-- `scripts/output/book_details.json` — `{[isbn]: Book}` — full enriched data, only missing books without ISBNs
-- `public/covers/{isbn}.{ext}` — cover images extracted from epubs. Not all are guaranteed to exist.
+- `scripts/output/book_list.json` — `{isbn, title, title_raw}[]` — tracks scanned books with ISBNs
+- `scripts/output/book_list_manual_isbn.json` — same shape — no-ISBN epubs; fill in ISBNs manually to promote to book_list on next run
+- `scripts/output/book_details.json` — `{[isbn]: Book}` — full enriched data, source of truth for seed
+- `public/covers/{isbn}.{ext}` — cover images extracted from epubs
 
 Flags:
 - `--bundle "Name"` — resolve subfolder from `BOOKS_DIR`
-- `--overwrite` — replace output files instead of merging
-- `--force` — re-process all epubs, even known ones
+- `--all` — iterate all bundles in `BOOK_BUNDLES`
+- `--mode fast` (default) — skip already-enriched books
+- `--mode overwrite` — re-enrich all books, preserve existing data
+- `--mode clean` — delete output files and run fresh
+- `--list-only` — extract epub metadata and update book lists only, skip all API calls
 
-Skip logic: skips epubs already in `book_list.json` by ISBN (or title if no ISBN), **only if the entry has a non-empty ISBN** (entries with no ISBN are always retried).
+Skip logic: fast mode skips books whose ISBN is already a key in `book_details.json`. No-ISBN epubs go to `book_list_manual_isbn.json`; fill in the isbn field and re-run to enrich.
 
-### 2. Seed
+### 2. Tag
+```
+npm run tag                    # discover vocabulary + tag untagged books
+npm run tag -- --clean         # rebuild vocabulary + retag all books
+npm run tag -- --normalize     # skip vocabulary pass, reassign tags from existing vocabulary
+npm run tag -- --isbn ISBN     # retag a single book
+```
+`scripts/book_pipeline/tag_books.py` uses the Anthropic API in two passes:
+- **Pass 1** — sends all book titles in one call to discover a canonical tag vocabulary (specific tools/languages + broad topic categories)
+- **Pass 2** — sends all books + vocabulary in one call to assign 1-3 tags per book
+
+### 3. Seed
 ```
 npm run seed               # → "development" namespace
 npm run seed -- --wipe     # wipe namespace first, then seed
 npm run seed:preview       # → "preview" namespace
 npm run seed:prod          # → "production" namespace
 ```
-`scripts/book_pipeline/seed.ts` reads `book_details.json` and writes to Redis. Re-seeding preserves existing vote counts. `--wipe` deletes all keys in the target namespace before seeding — use this to fix duplicate/stale entries.
+`scripts/book_pipeline/seed.ts` reads `book_details.json` and writes to Redis. Re-seeding preserves existing vote counts. `--wipe` deletes all keys in the target namespace before seeding.
 
 ## Redis key structure
 All keys are prefixed by environment namespace (e.g. `development:`, `production:`):
@@ -61,10 +81,16 @@ Extracted from epub files at extraction time and saved to `public/covers/`. The 
   - `components/BookShelf.tsx` — main UI component
 - `lib/` — shared utilities
   - `books.ts` — `Book` type definition and Redis fetch helpers
-- `scripts/` — data pipeline (not deployed)
-  - `extract_books.py` — epub extraction + Google Books enrichment
-  - `book_pipeline/seed.ts` — Redis seeding script
+- `scripts/book_pipeline/` — data pipeline (not deployed)
+  - `extract_books.py` — epub extraction + Google Books enrichment (entry point)
+  - `epub.py` — OPF parsing, cover extraction
+  - `google_books.py` — Google Books API client
+  - `utils.py` — shared path constants and helpers
+  - `tag_books.py` — Anthropic AI tagging
+  - `seed.ts` — Redis seeding script
   - `output/book_details.json` — source of truth for seed *(not committed)*
-  - `output/book_list.json` — scanned epub index, drives skip logic *(not committed)*
+  - `output/book_list.json` — scanned epub index *(not committed)*
+  - `output/book_list_manual_isbn.json` — no-ISBN epubs awaiting manual ISBN entry *(not committed)*
 - `public/covers/` — cover images extracted from epubs, served statically
+- `tests/scripts/` — pytest test suite mirroring book_pipeline module structure
 - `next.config.ts` — Next.js config
