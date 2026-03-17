@@ -63,5 +63,295 @@
     "isbn": "9781805123743",
     "title": "Transformers for Natural Language Processing and Computer Vision",
     "title_raw": "Transformers for Natural Language Processing and Computer Vision_Third Edition"
+  },
+  {
+    "isbn": "9781617297489",
+    "title": "The Art of Unit Testing 3e",
+    "title_raw": "The Art of Unit Testing 3e"
+  },
+  {
+    "isbn": "9781633438064",
+    "title": "Build a Frontend Web Framework (From Scratch)",
+    "title_raw": "Build a Frontend Web Framework (From Scratch)"
+  },
+  {
+    "isbn": "9781633436961",
+    "title": "Build a Website with ChatGPT",
+    "title_raw": "Build a Website with ChatGPT"
+  },
+  {
+    "isbn": "9781638351351",
+    "title": "D3.js in Action",
+    "title_raw": "D3.js in Action"
+  },
+  {
+    "isbn": "9781617296284",
+    "title": "Designing APIs with Swagger and OpenAPI",
+    "title_raw": "Designing APIs with Swagger and OpenAPI"
+  },
+  {
+    "isbn": "9781617295102",
+    "title": "The Design of Web APIs Version 1",
+    "title_raw": "The Design of Web APIs Version 1"
+  },
+  {
+    "isbn": "9781633437319",
+    "title": "Essential TypeScript 5",
+    "title_raw": "Essential TypeScript 5, Third Edition"
+  },
+  {
+    "isbn": "9781617297038",
+    "title": "Full Stack GraphQL Applications",
+    "title_raw": "Full Stack GraphQL Applications"
+  },
+  {
+    "isbn": "9781638353591",
+    "title": "Functional Programming in JavaScript",
+    "title_raw": "Functional Programming in JavaScript"
+  },
+  {
+    "isbn": "9781638353423",
+    "title": "Get Programming with JavaScript",
+    "title_raw": "Get Programming with JavaScript"
+  },
+  {
+    "isbn": "9781633438262",
+    "title": "Grokking Web Application Security",
+    "title_raw": "Grokking Web Application Security"
+  },
+  {
+    "isbn": "9781638356936",
+    "title": "The Jamstack Book",
+    "title_raw": "The Jamstack Book"
+  },
+  {
+    "isbn": "9781638355878",
+    "title": "JavaScript on Things: Hacking hardware for web developers",
+    "title_raw": "JavaScript on Things: Hacking hardware for web developers"
+  },
+  {
+    "isbn": "9781633437340",
+    "title": "React in Depth",
+    "title_raw": "React in Depth"
+  },
+  {
+    "isbn": "9781638352662",
+    "title": "React Quickly",
+    "title_raw": "React Quickly, Second Edition"
+  },
+  {
+    "isbn": "9781800560826",
+    "title": "Rust Web Development",
+    "title_raw": "Rust Web Development"
+  },
+  {
+    "isbn": "9781617292859",
+    "title": "Secrets of the JavaScript Ninja",
+    "title_raw": "Secrets of the JavaScript Ninja, Second Edition"
+  },
+  {
+    "isbn": "9781638351344",
+    "title": "Single Page Web Applications: JavaScript end-to-end",
+    "title_raw": "Single Page Web Applications: JavaScript end-to-end"
+  },
+  {
+    "isbn": "9781638356653",
+    "title": "Building User-Friendly DSLs",
+    "title_raw": "Building User-Friendly DSLs"
+  },
+  {
+    "isbn": "9781633438323",
+    "title": "Web Design Playground epub",
+    "title_raw": "Web Design Playground epub"
+  },
+  {
+    "isbn": "9781593274108",
+    "title": "Art of R Programming",
+    "title_raw": "Art of R Programming"
+  },
+  {
+    "isbn": "9781593273491",
+    "title": "Land of Lisp",
+    "title_raw": "Land of Lisp"
+  },
+  {
+    "isbn": "9781593272951",
+    "title": "Learn You a Haskell for Great Good!",
+    "title_raw": "Learn You a Haskell for Great Good!"
+  },
+  {
+    "isbn": "9780596008642",
+    "title": "Learning MySQL",
+    "title_raw": "Learning MySQL"
+  },
+  {
+    "isbn": "9781805129301",
+    "title": "Architecting ASP.NET Core\nApplications",
+    "title_raw": "Architecting ASP.NET Core\nApplications"
+  },
+  {
+    "isbn": "9781803247632",
+    "title": "Architectural Patterns and Techniques for Developing  IoT Solutions",
+    "title_raw": "Architectural Patterns and Techniques for Developing  IoT Solutions"
+  },
+  {
+    "isbn": "9781800202740",
+    "title": "The Art of Writing Efficient Programs",
+    "title_raw": "The Art of Writing Efficient Programs"
+  },
+  {
+    "isbn": "9781836642886",
+    "title": "Clean Architecture with Python",
+    "title_raw": "Clean Architecture with Python"
+  },
+  {
+    "isbn": "9781800562097",
+    "title": "Clean Code in Python",
+    "title_raw": "Clean Code in Python - Second Edition"
+  },
+  {
+    "isbn": "9781835888438",
+    "title": "The C++ Programmer's Mindset",
+    "title_raw": "The C++ Programmer's Mindset"
+  },
+  {
+    "isbn": "9781804619261",
+    "title": "Domain-Driven Design with Golang",
+    "title_raw": "Domain-Driven Design with Golang"
+  },
+  {
+    "isbn": "9781839212710",
+    "title": "Get Your Hands Dirty on Clean Architecture",
+    "title_raw": "Get Your Hands Dirty on Clean Architecture"
+  },
+  {
+    "isbn": "9781788621359",
+    "title": "Hands-On Software Engineering with Python",
+    "title_raw": "Hands-On Software Engineering with Python"
+  },
+  {
+    "isbn": "9781801812436",
+    "title": "Layered Design for Ruby on Rails Applications",
+    "title_raw": "Layered Design for Ruby on Rails Applications"
+  },
+  {
+    "isbn": "",
+    "title": "Practical Serverless and Microservices with C#",
+    "title_raw": "Practical Serverless and Microservices with C#"
+  },
+  {
+    "isbn": "9781836642596",
+    "title": "Python Object-Oriented Programming",
+    "title_raw": "Python Object-Oriented Programming - Fifth Edition"
+  },
+  {
+    "isbn": "9781803244433",
+    "title": "Software Architecture Patterns for Serverless Systems",
+    "title_raw": "Software Architecture Patterns for Serverless Systems"
+  },
+  {
+    "isbn": "9781805127659",
+    "title": "Software Architecture with C# 12 and .NET 8",
+    "title_raw": "Software Architecture with C# 12 and .NET 8"
+  },
+  {
+    "isbn": "",
+    "title": "Software Architecture with C++",
+    "title_raw": "Software Architecture with C++"
+  },
+  {
+    "isbn": "9781800207684",
+    "title": "ASP.NET Core 5 and React",
+    "title_raw": "ASP.NET Core 5 and React"
+  },
+  {
+    "isbn": "9781800202962",
+    "title": "Elevating React Web Development with Gatsby",
+    "title_raw": "Elevating React Web Development with Gatsby"
+  },
+  {
+    "isbn": "9781839214691",
+    "title": "Full-Stack React, TypeScript, and Node",
+    "title_raw": "Full-Stack React, TypeScript, and Node"
+  },
+  {
+    "isbn": "9781801079174",
+    "title": "Full-Stack Web Development with GraphQL and React",
+    "title_raw": "Full-Stack Web Development with GraphQL and React - Second Edition"
+  },
+  {
+    "isbn": "9781801818643",
+    "title": "Full Stack Development with Spring Boot and React",
+    "title_raw": "Full Stack Development with Spring Boot and React - Third Edition"
+  },
+  {
+    "isbn": "9781803249445",
+    "title": "Full Stack FastAPI, React, and MongoDB",
+    "title_raw": "Full Stack FastAPI, React, and MongoDB"
+  },
+  {
+    "isbn": "9781800565159",
+    "title": "Full Stack Quarkus and React",
+    "title_raw": "Full Stack Quarkus and React"
+  },
+  {
+    "isbn": "9781804611050",
+    "title": "Learn React with TypeScript",
+    "title_raw": "Learn React with TypeScript - Second Edition"
+  },
+  {
+    "isbn": "9781789138788",
+    "title": "Mastering React Test-Driven Development",
+    "title_raw": "Mastering React Test-Driven Development - Second Edition"
+  },
+  {
+    "isbn": "9781801810043",
+    "title": "Micro State Management with React Hooks",
+    "title_raw": "Micro State Management with React Hooks"
+  },
+  {
+    "isbn": "9781800561199",
+    "title": "Professional React Native",
+    "title_raw": "Professional React Native"
+  },
+  {
+    "isbn": "9781803249995",
+    "title": "React and React Native",
+    "title_raw": "React and React Native"
+  },
+  {
+    "isbn": "9781801077408",
+    "title": "React Application Architecture\nfor Production",
+    "title_raw": "React Application Architecture\nfor Production"
+  },
+  {
+    "isbn": "9781801814225",
+    "title": "Reactive Patterns with RxJS for Angular",
+    "title_raw": "Reactive Patterns with RxJS for Angular"
+  },
+  {
+    "isbn": "9781836202264",
+    "title": "React Key Concepts",
+    "title_raw": "React Key Concepts"
+  },
+  {
+    "isbn": "9781801078115",
+    "title": "React Projects",
+    "title_raw": "React Projects"
+  },
+  {
+    "isbn": "9781838821661",
+    "title": "The React Workshop",
+    "title_raw": "The React Workshop"
+  },
+  {
+    "isbn": "9781803244419",
+    "title": "Simplifying State Management in React Native",
+    "title_raw": "Simplifying State Management in React Native"
+  },
+  {
+    "isbn": "9781800565098",
+    "title": "Simplify Testing with React Testing Library",
+    "title_raw": "Simplify Testing with React Testing Library"
   }
 ]
