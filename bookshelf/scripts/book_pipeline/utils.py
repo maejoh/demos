@@ -8,7 +8,6 @@ OUTPUT_DIR = SCRIPTS_DIR / "output"
 BOOK_LIST_PATH = OUTPUT_DIR / "book_list.json"
 BOOK_LIST_MANUAL_ISBN_PATH = OUTPUT_DIR / "book_list_manual_isbn.json"
 BOOK_DETAILS_PATH = OUTPUT_DIR / "book_details.json"
-BOOK_DETAILS_NO_ISBN_PATH = OUTPUT_DIR / "book_details_missing_isbn.json"
 COVERS_DIR = SCRIPTS_DIR.parent / "public" / "covers"
 
 

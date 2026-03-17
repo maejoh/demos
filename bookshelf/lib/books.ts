@@ -10,6 +10,7 @@ export type Book = {
   ai_tags?: string[]
   description: string
   coverUrl?: string
+  humbleBundle?: string
   votes: number
 }
 

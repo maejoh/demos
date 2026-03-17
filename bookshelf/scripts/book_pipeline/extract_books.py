@@ -1,5 +1,4 @@
 import argparse
-import re
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -7,7 +6,6 @@ from pathlib import Path
 from .epub import extract_epub_cover, extract_epub_metadata
 from .google_books import _author_looks_mangled, fetch_google_book
 from .utils import (
-    BOOK_DETAILS_NO_ISBN_PATH,
     BOOK_DETAILS_PATH,
     BOOK_LIST_MANUAL_ISBN_PATH,
     BOOK_LIST_PATH,
@@ -23,6 +21,7 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("folder", nargs="?", help="Path to folder containing epub files")
     group.add_argument("--bundle", metavar="NAME", help="Bundle subfolder name — combined with BOOKS_DIR from .env.local")
+    group.add_argument("--all", action="store_true", help="Scan all bundles listed in BOOK_BUNDLES from .env.local")
     parser.add_argument("--mode", choices=["fast", "overwrite", "clean"], default="fast",
                         help="fast (default): skip already-processed books. overwrite: re-process all, update entries, keep old data. clean: delete all output files first, then run fresh.")
     parser.add_argument("--list-only", action="store_true", help="Extract epub metadata and update book_list.json only — skip enrichment and API calls")
@@ -33,27 +32,36 @@ def main():
     if not api_key:
         print("Warning: GOOGLE_BOOKS_API_KEY not set in .env.local — requests will be unauthenticated and heavily rate-limited\n")
 
-    if args.bundle:
+    if args.bundle or args.all:
         books_dir = env.get("BOOKS_DIR") or ""
         if not books_dir:
             print("Error: BOOKS_DIR not set in .env.local")
             return
-        folder = Path(books_dir) / args.bundle
+        if args.all:
+            bundle_names = [b.strip() for b in env.get("BOOK_BUNDLES", "").split(",") if b.strip()]
+            if not bundle_names:
+                print("Error: BOOK_BUNDLES not set in .env.local")
+                return
+            folders = [Path(books_dir) / name for name in bundle_names]
+        else:
+            folders = [Path(books_dir) / args.bundle]
     else:
-        folder = Path(args.folder)
+        folders = [Path(args.folder)]
 
-    if not folder.is_dir():
-        print(f"Error: {folder} is not a directory")
-        return
+    for folder in folders:
+        if not folder.is_dir():
+            print(f"Error: {folder} is not a directory")
+            return
 
     if args.mode == "clean":
-        for path in [BOOK_LIST_PATH, BOOK_DETAILS_PATH, BOOK_DETAILS_NO_ISBN_PATH]:
+        for path in [BOOK_LIST_PATH, BOOK_DETAILS_PATH]:
             if path.exists():
                 path.unlink()
                 print(f"Deleted {path.name}")
 
-    epub_files = list(folder.rglob("*.epub"))
-    print(f"Found {len(epub_files)} epub files in {folder}\n")
+    epub_files = [f for folder in folders for f in folder.rglob("*.epub")]
+    label = folders[0] if len(folders) == 1 else f"{len(folders)} bundles"
+    print(f"Found {len(epub_files)} epub files in {label}\n")
 
     # Step 1: extract metadata from all epubs locally
     extracted = []
@@ -62,6 +70,7 @@ def main():
         meta = extract_epub_metadata(epub_path)
         if not meta:
             continue
+        meta["humbleBundle"] = epub_path.parent.name
         extracted.append(meta)
         status = f"isbn: {meta['isbn']}" if meta.get("isbn") else "no isbn in epub"
         print(f"  -> {meta['title']} ({status})")
@@ -124,14 +133,18 @@ def main():
     # Step 3: enrich — Google Books for metadata, epub file for cover image
     book_details = load_json(BOOK_DETAILS_PATH, {})
 
-    # Step 3a: enrich entries from book_list_manual_isbn.json that aren't yet in book_list.json
+    # Step 3a: enrich entries from book_list_manual_isbn.json that appeared in the current epub scan
     if book_list_missing:
+        extracted_raw_titles = {m["title"] for m in extracted}
+        extracted_bundle_by_title = {m["title"]: m.get("humbleBundle", "") for m in extracted}
         book_list_isbns = {e["isbn"] for e in book_list if e.get("isbn")}
         manual_added = 0
         manual_isbn_updated = 0
-        print(f"\nChecking {len(book_list_missing)} manual ISBN entry(s)...")
+        in_scan = [e for e in book_list_missing if e.get("title_raw", e.get("title")) in extracted_raw_titles]
+        if in_scan:
+            print(f"\nChecking {len(in_scan)} manual ISBN entry(s) found in current scan...")
 
-        for entry in book_list_missing:
+        for entry in in_scan:
             title = entry.get("title", "")
             raw_isbn = entry.get("isbn", "").replace("-", "").strip()
 
@@ -167,6 +180,7 @@ def main():
                 "ai_tags": existing.get("ai_tags") or [],
                 "description": result.get("description") or existing.get("description") or "",
                 "coverUrl": existing.get("coverUrl"),
+                "humbleBundle": extracted_bundle_by_title.get(entry.get("title_raw", title)) or existing.get("humbleBundle", ""),
             }
 
             # Update isbn in the manual list entry if it was empty or different
@@ -208,16 +222,9 @@ def main():
             if effective_isbn and effective_isbn in enriched_isbns:
                 skipped += 1
                 continue
-            epub_title = sanitize_title(m["title"])
-            if effective_isbn:
-                print(f"  [debug] {epub_title}: isbn={effective_isbn}, in enriched_isbns={effective_isbn in enriched_isbns}")
-            else:
-                in_list = m["title"] in list_isbn_by_title_raw
-                print(f"  [debug] {epub_title}: no isbn in epub, title_raw lookup={'found' if in_list else 'miss'}")
             to_enrich.append({**m, "isbn": effective_isbn} if effective_isbn else m)
         if skipped:
             print(f"Skipping {skipped} already-enriched book(s) — use --mode overwrite to re-fetch.")
-    book_details_no_isbn: list = []
     isbn_discovered: dict[str, str] = {}  # epub_title → isbn for books with no epub isbn
     print(f"\nEnriching {len(to_enrich)} book(s)...")
 
@@ -235,9 +242,7 @@ def main():
         )
 
         isbn = epub_isbn or (result.get("isbn") if result else None)
-        # Use ISBN as cover filename if available, otherwise a sanitized title slug
-        cover_key = isbn or re.sub(r'[^\w]', '_', epub_title)[:60]
-        cover_url = extract_epub_cover(epub_path, cover_key)
+        cover_url = extract_epub_cover(epub_path, isbn) if isbn else None
 
         flags = ", ".join(f for f, v in [("cover", cover_url), ("desc", result and result.get("description"))] if v)
 
@@ -255,14 +260,12 @@ def main():
                     "ai_tags": existing.get("ai_tags") or [],
                     "description": existing.get("description") or "",
                     "coverUrl": cover_url or existing.get("coverUrl"),
+                    "humbleBundle": meta.get("humbleBundle") or existing.get("humbleBundle", ""),
                 }
-            else:
-                book_details_no_isbn.append({"isbn": "", "title": epub_title, "title_raw": meta["title"]})
             return
 
         if not isbn:
             print(f"  [miss] {epub_title}: Google Books returned no ISBN")
-            book_details_no_isbn.append({"isbn": "", "title": epub_title, "title_raw": meta["title"]})
             return
 
         print(f"  [ok]   {epub_title} ({isbn}){': ' + flags if flags else ''}")
@@ -277,6 +280,7 @@ def main():
             "ai_tags": existing.get("ai_tags") or [],
             "description": result.get("description") or existing.get("description") or "",
             "coverUrl": cover_url or existing.get("coverUrl"),
+            "humbleBundle": meta.get("humbleBundle") or existing.get("humbleBundle", ""),
         }
         if not epub_isbn:
             isbn_discovered[epub_title] = isbn
@@ -287,8 +291,6 @@ def main():
             f.result()
 
     save_json(BOOK_DETAILS_PATH, book_details)
-    if book_details_no_isbn:
-        save_json(BOOK_DETAILS_NO_ISBN_PATH, book_details_no_isbn)
 
     # Persist ISBNs discovered for no-epub-isbn books back to book_list and book_list_missing
     if isbn_discovered:
@@ -309,11 +311,6 @@ def main():
     covered = sum(1 for v in book_details.values() if v.get("coverUrl"))
     print(f"\nDone. {len(book_details)} entries in {BOOK_DETAILS_PATH.name}")
     print(f"  {covered}/{len(book_details)} have cover images")
-    if book_details_no_isbn:
-        print(f"\n{len(book_details_no_isbn)} book(s) written to {BOOK_DETAILS_NO_ISBN_PATH.name} (no ISBN found):")
-        for entry in book_details_no_isbn:
-            print(f"    - {entry['title']}")
-        print("  Fill in the 'isbn' fields, add entries to book_list.json, then re-run to enrich.")
     print("\nNext step: run tag_books.py, then seed.ts.")
 
 

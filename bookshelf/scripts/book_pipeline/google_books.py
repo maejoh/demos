@@ -22,7 +22,8 @@ def _google_request(params: dict) -> dict | None:
             response = requests.get(GOOGLE_BOOKS_URL, params=params, timeout=10)
             if response.status_code == 429:
                 wait = 2 ** attempt
-                print(f"  [429] rate limited, retrying in {wait}s...")
+                if attempt == 0:
+                    print(f"  [429] rate limited, retrying...")
                 time.sleep(wait)
                 continue
             response.raise_for_status()
