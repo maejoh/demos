@@ -14,23 +14,32 @@ export type Book = {
   votes: number
 }
 
-export async function fetchBooks(): Promise<Book[]> {
-  const isbns = await redis.smembers(key("books:all"))
-  if (isbns.length === 0) return []
+export type FetchBooksResult = { books: Book[]; fetchError: string | null }
 
-  const [bookData, voteData] = await Promise.all([
-    redis.mget<(Book | null)[]>(...isbns.map(isbn => key(`book:${isbn}`))),
-    redis.mget<(number | null)[]>(...isbns.map(isbn => key(`votes:${isbn}`))),
-  ])
+export async function fetchBooks(): Promise<FetchBooksResult> {
+  try {
+    const isbns = await redis.smembers(key("books:all"))
+    if (isbns.length === 0) return { books: [], fetchError: null }
 
-  return isbns
-    .map((_, i) => {
-      const book = bookData[i]
-      if (!book) return null
-      return { ...book, votes: voteData[i] ?? 0 }
-    })
-    .filter((b): b is Book => b !== null)
-    .sort((a, b) => a.title.localeCompare(b.title))
+    const [bookData, voteData] = await Promise.all([
+      redis.mget<(Book | null)[]>(...isbns.map(isbn => key(`book:${isbn}`))),
+      redis.mget<(number | null)[]>(...isbns.map(isbn => key(`votes:${isbn}`))),
+    ])
+
+    const books = isbns
+      .map((_, i) => {
+        const book = bookData[i]
+        if (!book) return null
+        return { ...book, votes: voteData[i] ?? 0 }
+      })
+      .filter((b): b is Book => b !== null)
+      .sort((a, b) => a.title.localeCompare(b.title))
+
+    return { books, fetchError: null }
+  } catch (err) {
+    const fetchError = err instanceof Error ? (err.stack ?? err.message) : String(err)
+    return { books: [], fetchError }
+  }
 }
 
 // Fallback mock data for local development without Redis

@@ -5,7 +5,7 @@
  * Rendering details for individual components (tiles, filter bars) live in
  * their own focused test files.
  */
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import BookShelf from "@/app/components/BookShelf"
@@ -30,6 +30,13 @@ const books: Book[] = [
 ]
 
 describe("BookShelf", () => {
+  beforeEach(() => {
+    vi.spyOn(console, "error").mockImplementation(() => {})
+  })
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it("renders all books on initial load", () => {
     render(<BookShelf books={books} />)
     expect(screen.getByText("Alpha")).toBeInTheDocument()
@@ -79,5 +86,25 @@ describe("BookShelf", () => {
     expect(screen.getByText("42")).toBeInTheDocument()
     await user.click(screen.getByRole("button", { name: /\+1/ }))
     expect(screen.getByText("43")).toBeInTheDocument()
+  })
+
+  it("shows an error notice and no book list when fetchError is set", () => {
+    render(<BookShelf books={[]} fetchError="connection refused" />)
+    expect(screen.getByText(/couldn't reach the book store/i)).toBeInTheDocument()
+    expect(screen.queryByRole("listitem")).not.toBeInTheDocument()
+  })
+
+  it("logs fetchError to console.error when set", () => {
+    render(<BookShelf books={[]} fetchError="connection refused" />)
+    expect(console.error).toHaveBeenCalledWith(
+      expect.stringContaining("BookShelf"),
+      expect.stringContaining("connection refused")
+    )
+  })
+
+  it("shows an empty shelf notice and no book list when books is empty and no error", () => {
+    render(<BookShelf books={[]} />)
+    expect(screen.getByText(/the shelf is empty/i)).toBeInTheDocument()
+    expect(screen.queryByRole("listitem")).not.toBeInTheDocument()
   })
 })

@@ -32,9 +32,11 @@ describe("fetchBooks", () => {
     vi.clearAllMocks()
   })
 
-  it("returns [] when there are no ISBNs in Redis", async () => {
+  it("returns empty books and null fetchError when ISBN set is empty", async () => {
     vi.mocked(redis.smembers).mockResolvedValue([])
-    expect(await fetchBooks()).toEqual([])
+    const { books, fetchError } = await fetchBooks()
+    expect(books).toEqual([])
+    expect(fetchError).toBeNull()
   })
 
   it("merges book data with vote counts from Redis", async () => {
@@ -45,8 +47,8 @@ describe("fetchBooks", () => {
       .mockResolvedValueOnce([book])
       .mockResolvedValueOnce([7])
 
-    const [result] = await fetchBooks()
-    expect(result.votes).toBe(7)
+    const { books } = await fetchBooks()
+    expect(books[0].votes).toBe(7)
   })
 
   it("defaults votes to 0 when vote data is null", async () => {
@@ -57,8 +59,8 @@ describe("fetchBooks", () => {
       .mockResolvedValueOnce([book])
       .mockResolvedValueOnce([null])
 
-    const [result] = await fetchBooks()
-    expect(result.votes).toBe(0)
+    const { books } = await fetchBooks()
+    expect(books[0].votes).toBe(0)
   })
 
   it("filters out null book entries from mget", async () => {
@@ -69,24 +71,32 @@ describe("fetchBooks", () => {
       .mockResolvedValueOnce([null, book])
       .mockResolvedValueOnce([3, 5])
 
-    const result = await fetchBooks()
-    expect(result).toHaveLength(1)
-    expect(result[0].isbn).toBe(book.isbn)
+    const { books } = await fetchBooks()
+    expect(books).toHaveLength(1)
+    expect(books[0].isbn).toBe(book.isbn)
   })
 
   it("sorts results alphabetically by title", async () => {
     // ISBNs are out of alpha order to confirm sort isn't an insertion-order coincidence
-    const books = [
+    const bookFixtures = [
       makeBook({ id: "1", title: "Zebra", isbn: "1111111111111" }),
       makeBook({ id: "2", title: "Apple", isbn: "2222222222222" }),
       makeBook({ id: "3", title: "Mango", isbn: "3333333333333" }),
     ]
-    vi.mocked(redis.smembers).mockResolvedValue(books.map((b) => b.isbn))
+    vi.mocked(redis.smembers).mockResolvedValue(bookFixtures.map((b) => b.isbn))
     vi.mocked(redis.mget)
-      .mockResolvedValueOnce(books)
+      .mockResolvedValueOnce(bookFixtures)
       .mockResolvedValueOnce([0, 0, 0])
 
-    const result = await fetchBooks()
-    expect(result.map((b) => b.title)).toEqual(["Apple", "Mango", "Zebra"])
+    const { books } = await fetchBooks()
+    expect(books.map((b) => b.title)).toEqual(["Apple", "Mango", "Zebra"])
+  })
+
+  it("returns fetchError and empty books when Redis throws", async () => {
+    vi.mocked(redis.smembers).mockRejectedValue(new Error("connection refused"))
+
+    const { books, fetchError } = await fetchBooks()
+    expect(books).toEqual([])
+    expect(fetchError).toContain("connection refused")
   })
 })

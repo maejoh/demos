@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type { Book } from "@/lib/books"
 import { FilterBarList, type FilterField, type ActiveFilter } from "./FilterBars"
 import { BookList } from "./BookList"
@@ -28,11 +28,15 @@ function IntroText() {
   )
 }
 
-export default function BookShelf({ books }: { books: Book[] }) {
+export default function BookShelf({ books, fetchError = null }: { books: Book[]; fetchError?: string | null }) {
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>(null)
   const [votes, setVotes] = useState<Record<string, number>>(
     Object.fromEntries(books.map((b) => [b.id, b.votes]))
   )
+
+  useEffect(() => {
+    if (fetchError) console.error("[BookShelf] Redis error:", fetchError)
+  }, [fetchError])
 
   const allTags = Array.from(new Set(books.flatMap((b) => b.tags))).sort()
   const aiTagCounts = books.flatMap((b) => b.ai_tags ?? []).reduce<Record<string, number>>((acc, t) => ({ ...acc, [t]: (acc[t] ?? 0) + 1 }), {})
@@ -55,6 +59,28 @@ export default function BookShelf({ books }: { books: Book[] }) {
   function handleVote(id: string) {
     // TODO: replace with server action that persists to Redis
     setVotes((prev) => ({ ...prev, [id]: prev[id] + 1 }))
+  }
+
+  if (fetchError) {
+    return (
+      <div className="max-w-2xl mx-auto px-6 py-16">
+        <IntroText />
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Couldn&apos;t reach the book store right now. Try refreshing the page.
+        </p>
+      </div>
+    )
+  }
+
+  if (books.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto px-6 py-16">
+        <IntroText />
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          The shelf is empty — no books have been added yet.
+        </p>
+      </div>
+    )
   }
 
   return (
