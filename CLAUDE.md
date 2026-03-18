@@ -27,7 +27,7 @@ Planned:
 
 ## Deployment
 - Host: Vercel
-- Prod: https://redis-roadmap-seven-inky.vercel.app/
+- Prod: https://demos.maejoh.io
 
 ## Workflow (gstack skills)
 

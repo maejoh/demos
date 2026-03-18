@@ -13,7 +13,7 @@ The app demonstrates full-stack Next.js, Redis-backed data, a Python and TypeScr
 pipeline, and AI engineering as features land. It's also a small piece of public art: anyone
 who visits can see the current vote counts, and what topics have the most interest so far.
 
-## [BookShelf](./bookshelf/) — [live demo](https://redis-roadmap-seven-inky.vercel.app/)
+## [BookShelf](./bookshelf/) — [live demo](https://demos.maejoh.io/)
 
 ![BookShelf screenshot](./bookshelf/public/demo-1-screenshot-1.png)
 

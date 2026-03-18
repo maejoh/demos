@@ -1,4 +1,4 @@
-# BookShelf — [live demo](https://redis-roadmap-seven-inky.vercel.app/)
+# BookShelf — [live demo](https://demos.maejoh.io/)
 
 A personal technical library built from epub files, with API-enriched details,
 cover art, and site-visitor vote counts of what books look interesting.
