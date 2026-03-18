@@ -69,11 +69,11 @@ describe("BookTile", () => {
     it("calls onVote with the book id when clicked", async () => {
       const user = userEvent.setup()
       const onVote = vi.fn()
-      render(<BookTile book={makeBook({ id: "abc" })} votes={0} onVote={onVote} />)
+      render(<BookTile book={makeBook({ isbn: "9780000000042" })} votes={0} onVote={onVote} />)
 
       await user.click(screen.getByRole("button", { name: /\+1/ }))
 
-      expect(onVote).toHaveBeenCalledWith("abc")
+      expect(onVote).toHaveBeenCalledWith("9780000000042")
     })
   })
 })

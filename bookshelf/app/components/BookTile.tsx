@@ -41,10 +41,10 @@ function BookDetails({ book }: { book: Book }) {
   return null
 }
 
-function VoteButton({ id, votes, onVote }: { id: string; votes: number; onVote: (id: string) => void }) {
+function VoteButton({ isbn, votes, onVote }: { isbn: string; votes: number; onVote: (isbn: string) => void }) {
   return (
     <button
-      onClick={() => onVote(id)}
+      onClick={() => onVote(isbn)}
       className="shrink-0 flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-colors text-sm font-medium"
     >
       <span>+1</span>
@@ -56,7 +56,7 @@ function VoteButton({ id, votes, onVote }: { id: string; votes: number; onVote: 
 type BookTileProps = {
   book: Book
   votes: number
-  onVote: (id: string) => void
+  onVote: (isbn: string) => void
 }
 
 export function BookTile({ book, votes, onVote }: BookTileProps) {
@@ -65,7 +65,7 @@ export function BookTile({ book, votes, onVote }: BookTileProps) {
       <BookCover coverUrl={book.coverUrl} title={book.title} />
       <BookHeader title={book.title} author={book.author} tags={book.tags} ai_tags={book.ai_tags} />
       <BookDetails book={book} />
-      <VoteButton id={book.id} votes={votes} onVote={onVote} />
+      <VoteButton isbn={book.isbn} votes={votes} onVote={onVote} />
     </li>
   )
 }

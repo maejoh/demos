@@ -6,10 +6,15 @@
  * their own focused test files.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
-import { render, screen } from "@testing-library/react"
+import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import BookShelf from "@/app/components/BookShelf"
+import { castVote } from "@/app/actions"
 import type { Book } from "@/lib/books"
+
+vi.mock("@/app/actions", () => ({
+  castVote: vi.fn(),
+}))
 
 const makeBook = (overrides: Partial<Book> = {}): Book => ({
   id: "1",
@@ -32,6 +37,7 @@ const books: Book[] = [
 describe("BookShelf", () => {
   beforeEach(() => {
     vi.spyOn(console, "error").mockImplementation(() => {})
+    vi.mocked(castVote).mockResolvedValue(undefined)
   })
   afterEach(() => {
     vi.restoreAllMocks()
@@ -86,6 +92,33 @@ describe("BookShelf", () => {
     expect(screen.getByText("42")).toBeInTheDocument()
     await user.click(screen.getByRole("button", { name: /\+1/ }))
     expect(screen.getByText("43")).toBeInTheDocument()
+  })
+
+  it("keeps the incremented count after castVote succeeds", async () => {
+    const user = userEvent.setup()
+    render(<BookShelf books={[makeBook({ votes: 5 })]} />)
+
+    await user.click(screen.getByRole("button", { name: /\+1/ }))
+    await waitFor(() => expect(castVote).toHaveBeenCalled())
+    expect(screen.getByText("6")).toBeInTheDocument()
+  })
+
+  it("rolls back the vote count when castVote fails", async () => {
+    vi.mocked(castVote).mockRejectedValue(new Error("network error"))
+    const user = userEvent.setup()
+    render(<BookShelf books={[makeBook({ votes: 5 })]} />)
+
+    await user.click(screen.getByRole("button", { name: /\+1/ }))
+    await waitFor(() => expect(screen.getByText("5")).toBeInTheDocument())
+  })
+
+  it("shows a vote error notice when castVote fails", async () => {
+    vi.mocked(castVote).mockRejectedValue(new Error("network error"))
+    const user = userEvent.setup()
+    render(<BookShelf books={[makeBook({ votes: 5 })]} />)
+
+    await user.click(screen.getByRole("button", { name: /\+1/ }))
+    await waitFor(() => expect(screen.getByText(/couldn't save that vote/i)).toBeInTheDocument())
   })
 
   it("shows an error notice and no book list when fetchError is set", () => {

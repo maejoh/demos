@@ -40,7 +40,7 @@ describe("BookList", () => {
 
   it("passes the correct vote count to each tile", () => {
     const book = makeBook({ id: "1", title: "Alpha" })
-    render(<BookList books={[book]} votes={{ "1": 99 }} onVote={vi.fn()} />)
+    render(<BookList books={[book]} votes={{ "9781234567890": 99 }} onVote={vi.fn()} />)
     expect(screen.getByText("99")).toBeInTheDocument()
   })
 })

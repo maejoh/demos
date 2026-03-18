@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import type { Book } from "@/lib/books"
+import { castVote } from "@/app/actions"
 import { FilterBarList, type FilterField, type ActiveFilter } from "./FilterBars"
 import { BookList } from "./BookList"
 
@@ -31,8 +32,9 @@ function IntroText() {
 export default function BookShelf({ books, fetchError = null }: { books: Book[]; fetchError?: string | null }) {
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>(null)
   const [votes, setVotes] = useState<Record<string, number>>(
-    Object.fromEntries(books.map((b) => [b.id, b.votes]))
+    Object.fromEntries(books.map((b) => [b.isbn, b.votes]))
   )
+  const [voteError, setVoteError] = useState(false)
 
   useEffect(() => {
     if (fetchError) console.error("[BookShelf] Redis error:", fetchError)
@@ -56,9 +58,15 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
     )
   }
 
-  function handleVote(id: string) {
-    // TODO: replace with server action that persists to Redis
-    setVotes((prev) => ({ ...prev, [id]: prev[id] + 1 }))
+  async function handleVote(isbn: string) {
+    setVotes((prev) => ({ ...prev, [isbn]: prev[isbn] + 1 }))
+    try {
+      await castVote(isbn)
+    } catch (err) {
+      console.error("[BookShelf] Vote failed:", err)
+      setVotes((prev) => ({ ...prev, [isbn]: prev[isbn] - 1 }))
+      setVoteError(true)
+    }
   }
 
   if (fetchError) {
@@ -94,6 +102,11 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
         onTagClick={handleTagClick}
         onClearFilter={() => setActiveFilter(null)}
       />
+      {voteError && (
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          Couldn&apos;t save that vote — your count has been rolled back.
+        </p>
+      )}
       <BookList books={visible} votes={votes} onVote={handleVote} />
     </div>
   )
