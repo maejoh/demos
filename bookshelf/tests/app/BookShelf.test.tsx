@@ -1,13 +1,15 @@
+/**
+ * Integration tests for BookShelf.
+ *
+ * These tests exercise state management: filter selection and vote counts.
+ * Rendering details for individual components (tiles, filter bars) live in
+ * their own focused test files.
+ */
 import { describe, it, expect, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import BookShelf from "@/app/components/BookShelf"
 import type { Book } from "@/lib/books"
-
-// next/image does server-side optimisation that doesn't work in jsdom
-vi.mock("next/image", () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
-}))
 
 const makeBook = (overrides: Partial<Book> = {}): Book => ({
   id: "1",
@@ -21,10 +23,9 @@ const makeBook = (overrides: Partial<Book> = {}): Book => ({
   ...overrides,
 })
 
-// three books across three tags — used by most tests
 const books: Book[] = [
   makeBook({ id: "1", title: "Alpha", tags: ["JavaScript"] }),
-  makeBook({ id: "2", title: "Beta", tags: ["TypeScript"] }),
+  makeBook({ id: "2", title: "Beta",  tags: ["TypeScript"] }),
   makeBook({ id: "3", title: "Gamma", tags: ["JavaScript", "React"] }),
 ]
 
@@ -34,14 +35,6 @@ describe("BookShelf", () => {
     expect(screen.getByText("Alpha")).toBeInTheDocument()
     expect(screen.getByText("Beta")).toBeInTheDocument()
     expect(screen.getByText("Gamma")).toBeInTheDocument()
-  })
-
-  it("renders one tag button per unique tag, plus All", () => {
-    render(<BookShelf books={books} />)
-    expect(screen.getByRole("button", { name: "All" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "JavaScript" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "TypeScript" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "React" })).toBeInTheDocument()
   })
 
   it("filters to matching books when a tag is clicked", async () => {
@@ -81,21 +74,10 @@ describe("BookShelf", () => {
 
   it("increments the vote count when +1 is clicked", async () => {
     const user = userEvent.setup()
-    // use a non-default vote count that doesn't appear elsewhere in the test fixture
     render(<BookShelf books={[makeBook({ votes: 42 })]} />)
 
     expect(screen.getByText("42")).toBeInTheDocument()
     await user.click(screen.getByRole("button", { name: /\+1/ }))
     expect(screen.getByText("43")).toBeInTheDocument()
-  })
-
-  it("renders a cover image when coverUrl is present", () => {
-    render(<BookShelf books={[makeBook({ title: "Covered", coverUrl: "/covers/test.jpg" })]} />)
-    expect(screen.getByAltText("Cover of Covered")).toBeInTheDocument()
-  })
-
-  it("renders a placeholder instead of an image when coverUrl is absent", () => {
-    render(<BookShelf books={[makeBook({ coverUrl: undefined })]} />)
-    expect(screen.queryByRole("img")).not.toBeInTheDocument()
   })
 })
