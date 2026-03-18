@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.book_pipeline.utils import load_env_local, load_json, sanitize_title, save_json
+from scripts.book_pipeline.utils import load_env_local, load_json, sanitize_title, save_json, to_title_case
 
 
 class TestSanitizeTitle:
@@ -19,6 +19,20 @@ class TestSanitizeTitle:
 
     def test_case_insensitive(self):
         assert sanitize_title("Pro Git, SECOND EDITION") == "Pro Git"
+
+
+class TestToTitleCase:
+    def test_capitalizes_each_word(self):
+        assert to_title_case("humble bundle software collection") == "Humble Bundle Software Collection"
+
+    def test_leaves_already_cased_string_unchanged(self):
+        assert to_title_case("No Starch Press Bundle") == "No Starch Press Bundle"
+
+    def test_handles_single_word(self):
+        assert to_title_case("python") == "Python"
+
+    def test_handles_empty_string(self):
+        assert to_title_case("") == ""
 
 
 class TestLoadEnvLocal:

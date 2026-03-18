@@ -13,6 +13,7 @@ from .utils import (
     load_json,
     sanitize_title,
     save_json,
+    to_title_case,
 )
 
 
@@ -70,7 +71,7 @@ def main():
         meta = extract_epub_metadata(epub_path)
         if not meta:
             continue
-        meta["humbleBundle"] = epub_path.parent.name
+        meta["humbleBundle"] = to_title_case(epub_path.parent.name)
         extracted.append(meta)
         status = f"isbn: {meta['isbn']}" if meta.get("isbn") else "no isbn in epub"
         print(f"  -> {meta['title']} ({status})")
