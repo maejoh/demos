@@ -5,18 +5,22 @@ import type { Book } from "@/lib/books"
 import { castVote } from "@/app/actions"
 import { FilterSidebar, type FilterField, type ActiveFilters } from "./FilterSidebar"
 import { BookList } from "./BookList"
+import { ThemeToggle } from "./ThemeToggle"
 
 const PAGE_SIZE = 24
 
 function IntroText() {
   return (
     <header className="mb-10">
-      <h1 className="text-3xl font-bold tracking-tight mb-2">My Technical Library</h1>
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="text-3xl font-bold tracking-tight">My Technical Library</h1>
+        <ThemeToggle />
+      </div>
       <p className="text-gray-500 dark:text-gray-400">
-        A browsable collection of publications related to programming — AI, web dev, and more. What should I read next?
+        A browsable collection of publications related to comp sci — AI, web dev, software archietcure, and more. What should I read next?
       </p>
       <p className="text-sm text-gray-400 dark:text-gray-500 mt-3">
-        There&apos;s a gremlin inside me that buys tech books whenever Humble Bundle drops a software book bundle. These are all real books I&apos;ve purchased over the last 2 years. Some of them I&apos;ve already started reading, but many are just waiting for a reason! Cast your votes to help me hone in on what topics are most relevant to the peers and recruiters viewing my portfolio!{" "}
+        There&apos;s a gremlin inside me that buys tech books whenever Humble Bundle drops a software book bundle. These are all real books I&apos;ve purchased over the last 2 years. Some of them I&apos;ve already started reading, but many are just waiting for a reason! Cast your votes to help me hone in even more on what topics are most relevant to the peers and recruiters viewing my portfolio.{" "}
       </p>
       <p className="text-sm text-gray-500 dark:text-gray-500 mt-3">
         Note: The primary purpose of this app is as a portfolio piece.{"  "}
@@ -119,7 +123,7 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
   return (
     <div className="max-w-5xl mx-auto px-6 py-16">
       <IntroText />
-      <div className="flex gap-10 items-start">
+      <div className="flex flex-col md:flex-row gap-10 items-start">
         <FilterSidebar
           allAiTags={allAiTags}
           allBundles={allBundles}
