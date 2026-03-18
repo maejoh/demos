@@ -6,12 +6,12 @@ import type { Book } from "@/lib/books"
 function BookCover({ coverUrl, title }: { coverUrl?: string; title: string }) {
   if (coverUrl) {
     return (
-      <div className="shrink-0 w-24 h-30 relative rounded overflow-hidden bg-gray-100 dark:bg-gray-800">
+      <div className="shrink-0 w-16 h-20 min-[375px]:w-24 min-[375px]:h-30 relative rounded overflow-hidden bg-gray-100 dark:bg-gray-800">
         <Image src={coverUrl} alt={`Cover of ${title}`} fill className="object-contain" unoptimized />
       </div>
     )
   }
-  return <div className="shrink-0 w-24 h-30 rounded bg-gray-100 dark:bg-gray-800" />
+  return <div className="shrink-0 w-16 h-20 min-[375px]:w-24 min-[375px]:h-30 rounded bg-gray-100 dark:bg-gray-800" />
 }
 
 function BookHeader({ title, author, tags, ai_tags }: { title: string; author: string; tags: string[]; ai_tags?: string[] }) {
@@ -45,7 +45,7 @@ function VoteButton({ isbn, votes, onVote }: { isbn: string; votes: number; onVo
   return (
     <button
       onClick={() => onVote(isbn)}
-      className="shrink-0 flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-colors text-sm font-medium"
+      className="w-16 min-[375px]:w-24 md:w-auto shrink-0 flex flex-row md:flex-col items-center gap-2 md:gap-0.5 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-colors text-sm font-medium"
     >
       <span>+1</span>
       <span className="text-gray-400 dark:text-gray-500">{votes}</span>
@@ -61,10 +61,12 @@ type BookTileProps = {
 
 export function BookTile({ book, votes, onVote }: BookTileProps) {
   return (
-    <li className="flex items-start justify-between gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-800">
-      <BookCover coverUrl={book.coverUrl} title={book.title} />
-      <BookHeader title={book.title} author={book.author} tags={book.tags} ai_tags={book.ai_tags} />
-      <BookDetails book={book} />
+    <li className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-800">
+      <div className="flex gap-4 flex-1 min-w-0">
+        <BookCover coverUrl={book.coverUrl} title={book.title} />
+        <BookHeader title={book.title} author={book.author} tags={book.tags} ai_tags={book.ai_tags} />
+        <BookDetails book={book} />
+      </div>
       <VoteButton isbn={book.isbn} votes={votes} onVote={onVote} />
     </li>
   )

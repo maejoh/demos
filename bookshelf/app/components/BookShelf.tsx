@@ -133,7 +133,7 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
           isOpen={sidebarOpen}
           onToggleSidebar={() => setSidebarOpen((p) => !p)}
         />
-        <div className="flex-1 min-w-0 border-2 border-gray-500 dark:border-gray-800 rounded-lg md:overflow-y-auto md:max-h-[calc(100vh-8rem)]">
+        <div className="flex-1 min-w-0 border-2 border-gray-500 dark:border-gray-800 rounded-lg">
           <div className="p-6">
             {voteError && (
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
