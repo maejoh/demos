@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react"
 import type { Book } from "@/lib/books"
 import { castVote } from "@/app/actions"
+import { toTitleCase } from "@/lib/utils"
 import { FilterSidebar, type FilterField, type ActiveFilters } from "./FilterSidebar"
 import { BookList } from "./BookList"
+import { SortBar, type SortField, type SortDir } from "./SortBar"
 import { ThemeToggle } from "./ThemeToggle"
 
 const PAGE_SIZE = 24
@@ -17,7 +19,7 @@ function IntroText() {
         <ThemeToggle />
       </div>
       <p className="text-gray-500 dark:text-gray-400">
-        A browsable collection of publications related to comp sci — AI, web dev, software archietcure, and more. What should I read next?
+        A browsable collection of publications related to comp sci — AI, web dev, software architecture, and more. What should I read next?
       </p>
       <p className="text-sm text-gray-400 dark:text-gray-500 mt-3">
         There&apos;s a gremlin inside me that buys tech books whenever Humble Bundle drops a software book bundle. These are all real books I&apos;ve purchased over the last 2 years. Some of them I&apos;ve already started reading, but many are just waiting for a reason! Cast your votes to help me hone in even more on what topics are most relevant to the peers and recruiters viewing my portfolio.{" "}
@@ -45,6 +47,8 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
     Object.fromEntries(books.map((b) => [b.isbn, b.votes]))
   )
   const [voteError, setVoteError] = useState(false)
+  const [sortField, setSortField] = useState<SortField>("title")
+  const [sortDir, setSortDir] = useState<SortDir>("asc")
 
   useEffect(() => {
     if (fetchError) console.error("[BookShelf] Redis error:", fetchError)
@@ -55,16 +59,40 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
     .reduce<Record<string, number>>((acc, t) => ({ ...acc, [t]: (acc[t] ?? 0) + 1 }), {})
   const allAiTags = Object.keys(aiTagCounts).filter((t) => aiTagCounts[t] >= 5).sort()
   const allBundles = Array.from(
-    new Set(books.map((b) => b.humbleBundle).filter(Boolean))
+    new Set(books.map((b) => b.humbleBundle ? toTitleCase(b.humbleBundle) : undefined).filter(Boolean))
   ).sort() as string[]
 
   const visible = books.filter((book) =>
     (Object.entries(activeFilters) as [FilterField, string[]][]).every(([field, tags]) => {
       if (tags.length === 0) return true
-      if (field === "humbleBundle") return tags.includes(book.humbleBundle ?? "")
+      if (field === "humbleBundle") return tags.includes(book.humbleBundle ? toTitleCase(book.humbleBundle) : "")
       return (book[field] ?? []).some((tag) => tags.includes(tag))
     })
   )
+
+  const sorted = [...visible].sort((a, b) => {
+    let cmp = 0
+    if (sortField === "votes") {
+      cmp = (votes[a.isbn] ?? 0) - (votes[b.isbn] ?? 0)
+    } else if (sortField === "humbleBundle") {
+      const aVal = a.humbleBundle ? toTitleCase(a.humbleBundle) : "\uffff"
+      const bVal = b.humbleBundle ? toTitleCase(b.humbleBundle) : "\uffff"
+      cmp = aVal.localeCompare(bVal)
+    } else {
+      cmp = (a[sortField] ?? "").localeCompare(b[sortField] ?? "")
+    }
+    return sortDir === "asc" ? cmp : -cmp
+  })
+
+  function handleSort(field: SortField) {
+    if (field === sortField) {
+      setSortDir((prev) => (prev === "asc" ? "desc" : "asc"))
+    } else {
+      setSortField(field)
+      setSortDir("asc")
+    }
+    setDisplayCount(PAGE_SIZE)
+  }
 
   function handleToggleFilter(tag: string, field: FilterField) {
     setActiveFilters((prev) => {
@@ -140,13 +168,14 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
                 Couldn&apos;t save that vote — your count has been rolled back.
               </p>
             )}
-            <BookList books={visible.slice(0, displayCount)} votes={votes} onVote={handleVote} />
-            {visible.length > displayCount && (
+            <SortBar sortField={sortField} sortDir={sortDir} onSort={handleSort} />
+            <BookList books={sorted.slice(0, displayCount)} votes={votes} onVote={handleVote} />
+            {sorted.length > displayCount && (
               <button
                 onClick={() => setDisplayCount((p) => p + PAGE_SIZE)}
                 className="mt-6 w-full py-2 text-sm text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-400 dark:hover:border-gray-600 transition-colors"
               >
-                Load more ({visible.length - displayCount} remaining)
+                Load more ({sorted.length - displayCount} remaining)
               </button>
             )}
           </div>
