@@ -116,6 +116,7 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
   }
 
   async function handleVote(isbn: string) {
+    setVoteError(false)
     setVotes((prev) => ({ ...prev, [isbn]: prev[isbn] + 1 }))
     try {
       await castVote(isbn)
