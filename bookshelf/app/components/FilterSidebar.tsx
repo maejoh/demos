@@ -60,7 +60,7 @@ export function FilterSidebar({
   onToggleSidebar,
 }: FilterSidebarProps) {
   const activeCount = Object.values(activeFilters).reduce(
-    (sum, tags) => sum + (tags?.length ?? 0),
+    (sum, tags) => sum + tags.length, // tags is guaranteed to be string[]
     0
   )
 

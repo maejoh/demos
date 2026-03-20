@@ -201,12 +201,53 @@ class TestCleanMode:
         saved_manual = json.loads(paths["manual"].read_text())
         assert any(e["title"] == "Manual Book" for e in saved_manual)
 
+    def test_no_isbn_book_written_to_manual_list_in_clean_mode(self, monkeypatch, epub_dir, paths):
+        """In clean mode, a book with no ISBN should land in book_list_manual_isbn."""
+        bundle, epub = epub_dir
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle), "--mode", "clean"])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p, isbn=None)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=None):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        assert paths["manual"].exists()
+        manual = json.loads(paths["manual"].read_text())
+        assert any(e["title"] == "Test Book" for e in manual)
+
 
 # ---------------------------------------------------------------------------
 # isbn_discovered — backfill to book lists
 # ---------------------------------------------------------------------------
 
 class TestIsbnDiscoveredBackfill:
+    def test_isbn_discovered_backfills_both_book_list_and_book_list_missing(self, monkeypatch, epub_dir, paths):
+        """Backfill updates both lists when step 3a misses but enrich_one discovers an isbn.
+
+        step 3a returns None → entries keep empty isbn.
+        enrich_one discovers isbn → isbn_discovered fires and fills both lists.
+        """
+        bundle, epub = epub_dir
+
+        # book_list has an empty-isbn entry for this title
+        paths["book_list"].write_text(json.dumps([
+            {"isbn": "", "title": "Test Book", "title_raw": "Test Book"}
+        ]))
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle), "--mode", "overwrite"])
+
+        # step 3a calls google first (miss), then enrich_one calls google (finds isbn)
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p, isbn=None)):
+            with patch(f"{PATCH}.fetch_google_book", side_effect=[None, _google_result(isbn="9780987654321")]):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        book_list = json.loads(paths["book_list"].read_text())
+        manual = json.loads(paths["manual"].read_text())
+        assert "9780987654321" in [e.get("isbn") for e in book_list]
+        assert "9780987654321" in [e.get("isbn") for e in manual]
+
     def test_updates_book_list_when_google_finds_isbn_for_no_isbn_epub(self, monkeypatch, epub_dir, paths):
         bundle, epub = epub_dir
 
@@ -257,6 +298,149 @@ class TestManualIsbnRecovery:
 # ---------------------------------------------------------------------------
 # humbleBundle field
 # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# enrich_one — miss and discovery paths
+# ---------------------------------------------------------------------------
+
+class TestEnrichOne:
+    def test_writes_partial_entry_when_google_misses_but_epub_has_isbn(self, monkeypatch, epub_dir, paths):
+        """result is None + epub has isbn → partial entry written from epub metadata."""
+        bundle, epub = epub_dir
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle)])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=None):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        saved = json.loads(paths["book_details"].read_text())
+        assert "9781234567890" in saved
+        assert saved["9781234567890"]["title"] == "Test Book"
+        assert saved["9781234567890"]["author"] == "Test Author"
+
+    def test_skips_book_when_google_returns_result_with_no_isbn_and_epub_has_no_isbn(self, monkeypatch, epub_dir, paths):
+        """result returned but isbn absent from both epub and Google response → nothing written."""
+        bundle, epub = epub_dir
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle)])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p, isbn=None)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result(isbn=None)):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        assert json.loads(paths["book_details"].read_text()) == {}
+
+    def test_isbn_discovered_by_google_backfilled_into_book_list_missing(self, monkeypatch, epub_dir, paths):
+        """epub has no isbn but Google finds one → isbn_discovered backfills book_list_missing.
+
+        Uses --mode overwrite so enrich_one always runs even after step 3a has already
+        processed the same book via the manual-isbn-recovery path.
+        """
+        bundle, epub = epub_dir
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle), "--mode", "overwrite"])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p, isbn=None)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result(isbn="9780987654321")):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        manual = json.loads(paths["manual"].read_text())
+        isbns = [e.get("isbn") for e in manual]
+        assert "9780987654321" in isbns
+
+
+# ---------------------------------------------------------------------------
+# Epub scan — extraction failures
+# ---------------------------------------------------------------------------
+
+class TestEpubScan:
+    def test_skips_epub_when_metadata_extraction_returns_none(self, monkeypatch, epub_dir, paths):
+        """An epub that yields no metadata should be silently skipped."""
+        bundle, epub = epub_dir
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle), "--list-only"])
+
+        with patch(f"{PATCH}.extract_epub_metadata", return_value=None):
+            with patch(f"{PATCH}.load_env_local", return_value={}):
+                main()
+
+        # Nothing extracted — book_list should be empty
+        book_list = json.loads(paths["book_list"].read_text())
+        assert book_list == []
+
+
+# ---------------------------------------------------------------------------
+# CLI arg handling — --bundle, --all, folder validation
+# ---------------------------------------------------------------------------
+
+class TestCLIArgs:
+    def test_bundle_flag_missing_books_dir_returns_early(self, monkeypatch, paths):
+        """--bundle with no BOOKS_DIR in env should print an error and return."""
+        monkeypatch.setattr(sys, "argv", ["prog", "--bundle", "My Bundle"])
+
+        with patch(f"{PATCH}.load_env_local", return_value={}):
+            main()
+
+        assert not paths["book_details"].exists()
+
+    def test_all_flag_missing_book_bundles_returns_early(self, monkeypatch, tmp_path, paths):
+        """--all with BOOKS_DIR set but no BOOK_BUNDLES should print an error and return."""
+        monkeypatch.setattr(sys, "argv", ["prog", "--all"])
+
+        with patch(f"{PATCH}.load_env_local", return_value={"BOOKS_DIR": str(tmp_path)}):
+            main()
+
+        assert not paths["book_details"].exists()
+
+    def test_bundle_flag_resolves_folder_from_books_dir(self, monkeypatch, tmp_path, paths):
+        """--bundle NAME resolves to BOOKS_DIR/NAME and processes epubs there."""
+        bundle = tmp_path / "My Bundle"
+        bundle.mkdir()
+        (bundle / "book.epub").write_bytes(b"")
+
+        monkeypatch.setattr(sys, "argv", ["prog", "--bundle", "My Bundle"])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result()):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={"BOOKS_DIR": str(tmp_path)}):
+                        main()
+
+        assert paths["book_details"].exists()
+
+    def test_all_flag_scans_each_bundle_listed_in_book_bundles(self, monkeypatch, tmp_path, paths):
+        """--all iterates all bundle names in BOOK_BUNDLES and processes epubs in each."""
+        for name in ("Bundle A", "Bundle B"):
+            d = tmp_path / name
+            d.mkdir()
+            (d / "book.epub").write_bytes(b"")
+
+        monkeypatch.setattr(sys, "argv", ["prog", "--all"])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result()):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={
+                        "BOOKS_DIR": str(tmp_path),
+                        "BOOK_BUNDLES": "Bundle A, Bundle B",
+                    }):
+                        main()
+
+        assert paths["book_details"].exists()
+
+    def test_nonexistent_folder_returns_early(self, monkeypatch, tmp_path, paths):
+        """A folder path that doesn't exist should print an error and return."""
+        missing = tmp_path / "does_not_exist"
+        monkeypatch.setattr(sys, "argv", ["prog", str(missing)])
+
+        with patch(f"{PATCH}.load_env_local", return_value={}):
+            main()
+
+        assert not paths["book_details"].exists()
+
 
 class TestHumbleBundleField:
     def test_humble_bundle_is_set_from_epub_parent_folder_name(self, monkeypatch, tmp_path, paths):

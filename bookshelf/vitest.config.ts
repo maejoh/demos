@@ -9,6 +9,22 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./vitest.setup.ts"],
+    coverage: {
+      provider: "v8",
+      include: ["app/**/*.{ts,tsx}", "lib/**/*.{ts,tsx}", "scripts/**/*.ts"],
+      exclude: [
+        "**/*.test.*",
+        "**/*.d.ts",
+        // Next.js boilerplate — no meaningful logic to unit test
+        "app/error.tsx",
+        "app/layout.tsx",
+        "app/page.tsx",
+        "app/providers.tsx",
+        // Real Redis client — throws at import without env vars
+        "lib/redis.ts",
+      ],
+      reporter: ["text", "html"],
+    },
   },
   resolve: {
     alias: {

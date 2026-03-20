@@ -6,7 +6,7 @@ cover art, and site-visitor vote counts of what books look interesting.
 For the motivation and context behind this project, see the [repo README](../README.md).
 This document covers the technical implementation.
 
-![BookShelf screenshot](public/demo-1-screenshot-1.png)
+![BookShelf screenshot](public/demo-screenshot.png)
 
 ## What it does
 

@@ -3,13 +3,18 @@ Tests for tag_books.py.
 
 Pure functions (_strip_fences, parse_json_list, parse_assignments,
 build_vocabulary_prompt, build_assignment_prompt, apply_tag_assignments,
-print_tag_summary) are tested directly. tag_single_book is tested with a
-mocked Anthropic client.
+print_tag_summary) are tested directly. tag_single_book and main() are
+tested with a mocked Anthropic client.
 """
 
+import json
+import sys
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from scripts.book_pipeline.tag_books import (
+    main,
     _strip_fences,
     apply_tag_assignments,
     build_assignment_prompt,
@@ -297,3 +302,189 @@ class TestTagSingleBook:
             result = tag_single_book({"title": "A Book"}, "9781234567890", ["Python"], client, retries=2, retry_delay=0)
         assert result == []
         assert client.messages.create.call_count == 3
+
+
+# ---------------------------------------------------------------------------
+# main() — CLI entry point
+# ---------------------------------------------------------------------------
+
+PATCH = "scripts.book_pipeline.tag_books"
+
+
+def _book(isbn="9781234567890", title="Test Book", ai_tags=None) -> dict:
+    return {"id": "1", "title": title, "author": "Author", "isbn": isbn,
+            "year": 2020, "tags": [], "ai_tags": ai_tags or [],
+            "description": "A test book.", "coverUrl": None, "humbleBundle": ""}
+
+
+def _client(*response_texts) -> MagicMock:
+    """Mock Anthropic client returning each response_text in sequence."""
+    client = MagicMock()
+    client.messages.create.side_effect = [
+        MagicMock(content=[MagicMock(text=t)]) for t in response_texts
+    ]
+    return client
+
+
+@pytest.fixture
+def paths(tmp_path, monkeypatch):
+    import scripts.book_pipeline.tag_books as tb_mod
+    book_details = tmp_path / "book_details.json"
+    monkeypatch.setattr(tb_mod, "BOOK_DETAILS_PATH", book_details)
+    return {"book_details": book_details}
+
+
+class TestMain:
+    # --- early exits ---
+
+    def test_exits_when_no_api_key(self, monkeypatch, paths):
+        monkeypatch.setattr(sys, "argv", ["prog"])
+        with patch(f"{PATCH}.load_env_local", return_value={}):
+            with pytest.raises(SystemExit):
+                main()
+
+    def test_exits_when_book_details_not_found(self, monkeypatch, paths):
+        monkeypatch.setattr(sys, "argv", ["prog"])
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with pytest.raises(SystemExit):
+                main()
+
+    def test_returns_early_when_book_details_empty(self, monkeypatch, paths, capsys):
+        monkeypatch.setattr(sys, "argv", ["prog"])
+        paths["book_details"].write_text(json.dumps({}))
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            main()
+        assert "No books found" in capsys.readouterr().out
+
+    # --- --isbn mode ---
+
+    def test_isbn_exits_when_no_existing_vocabulary(self, monkeypatch, paths):
+        monkeypatch.setattr(sys, "argv", ["prog", "--isbn", "9781234567890"])
+        paths["book_details"].write_text(json.dumps({"9781234567890": _book(ai_tags=[])}))
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic"):
+                with pytest.raises(SystemExit):
+                    main()
+
+    def test_isbn_exits_when_isbn_not_in_book_details(self, monkeypatch, paths):
+        monkeypatch.setattr(sys, "argv", ["prog", "--isbn", "0000000000000"])
+        paths["book_details"].write_text(json.dumps({"9781234567890": _book(ai_tags=["Python"])}))
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic"):
+                with pytest.raises(SystemExit):
+                    main()
+
+    def test_isbn_tags_single_book_and_saves(self, monkeypatch, paths):
+        isbn = "9781234567890"
+        monkeypatch.setattr(sys, "argv", ["prog", "--isbn", isbn])
+        paths["book_details"].write_text(json.dumps({isbn: _book(ai_tags=["Python"])}))
+        mock_client = _client(f'{{"{isbn}": ["Python", "AI"]}}')
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic", return_value=mock_client):
+                main()
+        assert json.loads(paths["book_details"].read_text())[isbn]["ai_tags"] == ["Python", "AI"]
+
+    def test_isbn_prints_miss_when_no_tags_returned(self, monkeypatch, paths, capsys):
+        isbn = "9781234567890"
+        monkeypatch.setattr(sys, "argv", ["prog", "--isbn", isbn])
+        paths["book_details"].write_text(json.dumps({isbn: _book(ai_tags=["Python"])}))
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic", return_value=_client("{}")):
+                main()
+        assert "miss" in capsys.readouterr().out
+
+    # --- normal mode: Pass 1 ---
+
+    def test_exits_when_pass1_api_call_fails(self, monkeypatch, paths):
+        monkeypatch.setattr(sys, "argv", ["prog"])
+        paths["book_details"].write_text(json.dumps({"9781234567890": _book()}))
+        mock_client = MagicMock()
+        mock_client.messages.create.side_effect = Exception("API error")
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic", return_value=mock_client):
+                with pytest.raises(SystemExit):
+                    main()
+
+    def test_exits_when_pass1_returns_empty_vocabulary(self, monkeypatch, paths):
+        monkeypatch.setattr(sys, "argv", ["prog"])
+        paths["book_details"].write_text(json.dumps({"9781234567890": _book()}))
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic", return_value=_client("[]")):
+                with pytest.raises(SystemExit):
+                    main()
+
+    # --- normal mode: Pass 2 ---
+
+    def test_skips_pass2_and_returns_when_all_books_already_tagged(self, monkeypatch, paths, capsys):
+        monkeypatch.setattr(sys, "argv", ["prog"])
+        paths["book_details"].write_text(json.dumps({"9781234567890": _book(ai_tags=["Python"])}))
+        mock_client = _client('["Python"]')  # only Pass 1
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic", return_value=mock_client):
+                main()
+        assert mock_client.messages.create.call_count == 1
+        assert "already tagged" in capsys.readouterr().out
+
+    def test_skips_already_tagged_books_and_prints_count(self, monkeypatch, paths, capsys):
+        isbn_tagged = "9781111111111"
+        isbn_untagged = "9782222222222"
+        monkeypatch.setattr(sys, "argv", ["prog"])
+        paths["book_details"].write_text(json.dumps({
+            isbn_tagged: _book(isbn=isbn_tagged, ai_tags=["Python"]),
+            isbn_untagged: _book(isbn=isbn_untagged),
+        }))
+        mock_client = _client('["Python"]', f'{{"{isbn_untagged}": ["Python"]}}')
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic", return_value=mock_client):
+                main()
+        saved = json.loads(paths["book_details"].read_text())
+        assert saved[isbn_untagged]["ai_tags"] == ["Python"]
+        assert "Skipping 1" in capsys.readouterr().out
+
+    def test_tags_all_untagged_books_and_saves(self, monkeypatch, paths):
+        isbn = "9781234567890"
+        monkeypatch.setattr(sys, "argv", ["prog"])
+        paths["book_details"].write_text(json.dumps({isbn: _book()}))
+        mock_client = _client('["Python"]', f'{{"{isbn}": ["Python"]}}')
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic", return_value=mock_client):
+                main()
+        assert json.loads(paths["book_details"].read_text())[isbn]["ai_tags"] == ["Python"]
+
+    def test_exits_when_pass2_api_call_fails(self, monkeypatch, paths):
+        monkeypatch.setattr(sys, "argv", ["prog"])
+        paths["book_details"].write_text(json.dumps({"9781234567890": _book()}))
+        mock_client = MagicMock()
+        mock_client.messages.create.side_effect = [
+            MagicMock(content=[MagicMock(text='["Python"]')]),  # Pass 1 succeeds
+            Exception("quota exceeded"),                         # Pass 2 fails
+        ]
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic", return_value=mock_client):
+                with pytest.raises(SystemExit):
+                    main()
+
+    # --- --clean mode ---
+
+    def test_clean_retags_already_tagged_books(self, monkeypatch, paths):
+        isbn = "9781234567890"
+        monkeypatch.setattr(sys, "argv", ["prog", "--clean"])
+        paths["book_details"].write_text(json.dumps({isbn: _book(ai_tags=["OldTag"])}))
+        mock_client = _client('["Python"]', f'{{"{isbn}": ["Python"]}}')
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic", return_value=mock_client):
+                main()
+        assert json.loads(paths["book_details"].read_text())[isbn]["ai_tags"] == ["Python"]
+
+    # --- --normalize mode ---
+
+    def test_normalize_uses_existing_vocabulary_and_skips_pass1(self, monkeypatch, paths):
+        isbn = "9781234567890"
+        monkeypatch.setattr(sys, "argv", ["prog", "--normalize"])
+        paths["book_details"].write_text(json.dumps({isbn: _book(ai_tags=["Python"])}))
+        mock_client = _client(f'{{"{isbn}": ["Python", "AI"]}}')  # no Pass 1 response needed
+        with patch(f"{PATCH}.load_env_local", return_value={"ANTHROPIC_API_KEY": "key"}):
+            with patch(f"{PATCH}.anthropic.Anthropic", return_value=mock_client):
+                main()
+        assert mock_client.messages.create.call_count == 1  # Pass 1 skipped
+        assert json.loads(paths["book_details"].read_text())[isbn]["ai_tags"] == ["Python", "AI"]
