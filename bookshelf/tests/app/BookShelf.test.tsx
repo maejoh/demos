@@ -9,11 +9,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import BookShelf from "@/app/components/BookShelf"
-import { castVote } from "@/app/actions"
+import { castVote, removeVote } from "@/app/actions"
 import type { Book } from "@/lib/books"
 
 vi.mock("@/app/actions", () => ({
   castVote: vi.fn(),
+  removeVote: vi.fn(),
 }))
 
 const makeBook = (overrides: Partial<Book> = {}): Book => ({
@@ -46,6 +47,7 @@ describe("BookShelf", () => {
   beforeEach(() => {
     vi.spyOn(console, "error").mockImplementation(() => {})
     vi.mocked(castVote).mockResolvedValue(undefined)
+    vi.mocked(removeVote).mockResolvedValue(undefined)
   })
   afterEach(() => {
     vi.restoreAllMocks()
@@ -197,6 +199,44 @@ describe("BookShelf", () => {
     await waitFor(() => expect(screen.getByText(/couldn't save that vote/i)).toBeInTheDocument())
   })
 
+  it("disables the vote button while an action is in-flight", async () => {
+    const user = userEvent.setup()
+    let resolve: () => void
+    vi.mocked(castVote).mockReturnValue(new Promise<void>((r) => { resolve = r }))
+    render(<BookShelf books={[makeBook({ votes: 5 })]} />)
+
+    const button = screen.getByRole("button", { name: /\+1/ })
+    expect(button).not.toBeDisabled()
+
+    user.click(button)
+    await waitFor(() => expect(button).toBeDisabled())
+
+    resolve!()
+    await waitFor(() => expect(button).not.toBeDisabled())
+  })
+
+  it("decrements the vote count when a voted book is clicked again", async () => {
+    const user = userEvent.setup()
+    render(<BookShelf books={[makeBook({ votes: 5 })]} />)
+
+    await user.click(screen.getByRole("button", { name: /\+1/ }))
+    await waitFor(() => expect(castVote).toHaveBeenCalled())
+    await user.click(screen.getByRole("button", { name: /\+1/ }))
+    await waitFor(() => expect(removeVote).toHaveBeenCalled())
+    expect(screen.getByText("5")).toBeInTheDocument()
+  })
+
+  it("rolls back the vote count when removeVote fails", async () => {
+    vi.mocked(removeVote).mockRejectedValue(new Error("network error"))
+    const user = userEvent.setup()
+    render(<BookShelf books={[makeBook({ votes: 5 })]} />)
+
+    await user.click(screen.getByRole("button", { name: /\+1/ }))
+    await waitFor(() => expect(castVote).toHaveBeenCalled())
+    await user.click(screen.getByRole("button", { name: /\+1/ }))
+    await waitFor(() => expect(screen.getByText("6")).toBeInTheDocument())
+  })
+
   it("shows an error notice and no book list when fetchError is set", () => {
     render(<BookShelf books={[]} fetchError="connection refused" />)
     expect(screen.getByText(/couldn't reach the book store/i)).toBeInTheDocument()
@@ -257,7 +297,7 @@ describe("BookShelf", () => {
       await user.click(screen.getByRole("button", { name: /^bundle$/i }))
 
       // scope to the book list only — the sidebar also renders bundle names as <li> items
-      const bookList = container.querySelector("ul.space-y-4")!
+      const bookList = container.querySelector("ul.space-y-4") as HTMLElement
       const items = within(bookList).getAllByRole("listitem")
       expect(items[0]).toHaveTextContent("Book from Alpha")
       expect(items[1]).toHaveTextContent("Book from Zeta")
@@ -276,7 +316,7 @@ describe("BookShelf", () => {
 
       // two no-bundle books force the comparator to run with both a.humbleBundle
       // and b.humbleBundle falsy, covering all branches of the ternary
-      const bookList = container.querySelector("ul.space-y-4")!
+      const bookList = container.querySelector("ul.space-y-4") as HTMLElement
       const items = within(bookList).getAllByRole("listitem")
       expect(items[0]).toHaveTextContent("Alpha Book")
       expect(items[1]).toHaveTextContent("Zeta Book")

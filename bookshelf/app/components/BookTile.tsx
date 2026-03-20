@@ -45,11 +45,19 @@ function BookDetails({ book }: { book: Book }) {
   return null
 }
 
-function VoteButton({ isbn, votes, onVote }: { isbn: string; votes: number; onVote: (isbn: string) => void }) {
+function VoteButton({ isbn, votes, voted, pending, onVote }: { isbn: string; votes: number; voted: boolean; pending: boolean; onVote: (isbn: string) => void }) {
   return (
     <button
       onClick={() => onVote(isbn)}
-      className="w-16 min-[375px]:w-24 md:w-auto shrink-0 flex flex-row md:flex-col items-center gap-2 md:gap-0.5 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-colors text-sm font-medium"
+      disabled={pending}
+      className={[
+        "w-16 min-[375px]:w-24 md:w-auto shrink-0 flex flex-row md:flex-col items-center gap-2 md:gap-0.5 px-3 py-2 rounded-lg border transition-colors text-sm font-medium",
+        pending
+          ? "opacity-50 cursor-not-allowed border-gray-200 dark:border-gray-800"
+          : voted
+          ? "border-gray-500 dark:border-gray-400 bg-gray-50 dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500"
+          : "border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600",
+      ].join(" ")}
     >
       <span>+1</span>
       <span className="text-gray-400 dark:text-gray-500">{votes}</span>
@@ -60,10 +68,12 @@ function VoteButton({ isbn, votes, onVote }: { isbn: string; votes: number; onVo
 type BookTileProps = {
   book: Book
   votes: number
+  voted: boolean
+  pending: boolean
   onVote: (isbn: string) => void
 }
 
-export function BookTile({ book, votes, onVote }: BookTileProps) {
+export function BookTile({ book, votes, voted, pending, onVote }: BookTileProps) {
   return (
     <li className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-800">
       <div className="flex gap-4 flex-1 min-w-0">
@@ -71,7 +81,7 @@ export function BookTile({ book, votes, onVote }: BookTileProps) {
         <BookHeader title={book.title} author={book.author} tags={book.tags} ai_tags={book.ai_tags} humbleBundle={book.humbleBundle} />
         <BookDetails book={book} />
       </div>
-      <VoteButton isbn={book.isbn} votes={votes} onVote={onVote} />
+      <VoteButton isbn={book.isbn} votes={votes} voted={voted} pending={pending} onVote={onVote} />
     </li>
   )
 }

@@ -6,14 +6,23 @@ import { BookTile } from "./BookTile"
 type BookListProps = {
   books: Book[]
   votes: Record<string, number>
+  votedIsbns: Set<string>
+  pendingIsbns: Set<string>
   onVote: (isbn: string) => void
 }
 
-export function BookList({ books, votes, onVote }: BookListProps) {
+export function BookList({ books, votes, votedIsbns, pendingIsbns, onVote }: BookListProps) {
   return (
     <ul className="space-y-4">
       {books.map((book) => (
-        <BookTile key={book.id} book={book} votes={votes[book.isbn]} onVote={onVote} />
+        <BookTile
+          key={book.id}
+          book={book}
+          votes={votes[book.isbn]}
+          voted={votedIsbns.has(book.isbn)}
+          pending={pendingIsbns.has(book.isbn)}
+          onVote={onVote}
+        />
       ))}
     </ul>
   )
