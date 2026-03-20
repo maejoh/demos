@@ -67,9 +67,9 @@ export async function seedBooks(
   return { seeded, skipped }
 }
 
-async function main() {
+export async function main(opts?: { detailsPath?: string; envPath?: string }) {
   // Load .env.local when running locally (Vercel sets env vars automatically)
-  const envPath = resolve(process.cwd(), ".env.local")
+  const envPath = opts?.envPath ?? resolve(process.cwd(), ".env.local")
   if (existsSync(envPath)) {
     for (const rawLine of readFileSync(envPath, "utf-8").split("\n")) {
       const line = rawLine.trim()
@@ -90,7 +90,7 @@ async function main() {
     process.exit(1)
   }
 
-  const detailsPath = resolve(__dirname, "../output/book_details.json")
+  const detailsPath = opts?.detailsPath ?? resolve(__dirname, "../output/book_details.json")
   if (!existsSync(detailsPath)) {
     console.error("output/book_details.json not found. Run extract_books.py first.")
     process.exit(1)

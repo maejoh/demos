@@ -1,7 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from "vitest"
-import { seedBooks } from "@/scripts/book_pipeline/seed"
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
+import { join } from "path"
+import { tmpdir } from "os"
+import { writeFileSync, unlinkSync } from "fs"
+import { seedBooks, main } from "@/scripts/book_pipeline/seed"
 import type { Book } from "@/lib/books"
-import type { Redis } from "@upstash/redis"
+import { Redis } from "@upstash/redis"
+
+vi.mock("@upstash/redis", () => ({
+  Redis: { fromEnv: vi.fn() },
+}))
 
 // minimal redis mock — only the methods seedBooks actually calls
 const makeRedisMock = () => ({
@@ -74,6 +81,15 @@ describe("seedBooks", () => {
     expect(redis.del).toHaveBeenCalledWith("test:book:111", "test:votes:111", "test:books:all")
   })
 
+  it("skips del when clean is true but namespace has no keys", async () => {
+    redis.keys.mockResolvedValue([]) // empty namespace
+
+    await seedBooks(redis as unknown as Redis, {}, "test", true)
+
+    expect(redis.keys).toHaveBeenCalledWith("test:*")
+    expect(redis.del).not.toHaveBeenCalled()
+  })
+
   it("does not call keys or del when clean is false", async () => {
     await seedBooks(redis as unknown as Redis, {}, "test", false)
 
@@ -92,5 +108,75 @@ describe("seedBooks", () => {
 
     expect(seeded).toBe(2)
     expect(skipped).toBe(1)
+  })
+})
+
+describe("main", () => {
+  const savedArgv = process.argv
+  const NO_ENV = join(tmpdir(), "nonexistent-seed-test.env")
+  const NO_DETAILS = join(tmpdir(), "nonexistent-seed-details.json")
+
+  beforeEach(() => {
+    vi.spyOn(process, "exit").mockImplementation((() => {
+      throw new Error("process.exit called")
+    }) as any)
+    vi.spyOn(console, "log").mockImplementation(() => {})
+    vi.spyOn(console, "error").mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    process.argv = savedArgv
+    vi.restoreAllMocks()
+  })
+
+  it("exits when --env value is not one of the allowed environments", async () => {
+    process.argv = ["node", "seed.ts", "--env", "staging"]
+
+    await expect(main({ envPath: NO_ENV, detailsPath: NO_DETAILS })).rejects.toThrow("process.exit called")
+    expect(process.exit).toHaveBeenCalledWith(1)
+  })
+
+  it("exits when book_details.json does not exist", async () => {
+    process.argv = ["node", "seed.ts"]
+
+    await expect(main({ envPath: NO_ENV, detailsPath: NO_DETAILS })).rejects.toThrow("process.exit called")
+    expect(process.exit).toHaveBeenCalledWith(1)
+  })
+
+  it("parses env vars from the env file when it exists", async () => {
+    process.argv = ["node", "seed.ts"]
+    const envPath = join(tmpdir(), `seed-test-${Date.now()}.env`)
+    writeFileSync(envPath, "SEED_TEST_VAR=hello\n# comment\nSEED_OTHER=world\n")
+
+    try {
+      await expect(main({ envPath, detailsPath: NO_DETAILS })).rejects.toThrow("process.exit called")
+      expect(process.env.SEED_TEST_VAR).toBe("hello")
+      expect(process.env.SEED_OTHER).toBe("world")
+    } finally {
+      unlinkSync(envPath)
+      delete process.env.SEED_TEST_VAR
+      delete process.env.SEED_OTHER
+    }
+  })
+
+  it("reads book_details.json and seeds books when all inputs are valid", async () => {
+    process.argv = ["node", "seed.ts"]
+    const bookData = { a: makeBook() }
+    const detailsPath = join(tmpdir(), `seed-test-${Date.now()}.json`)
+    writeFileSync(detailsPath, JSON.stringify(bookData))
+
+    const redisMock = makeRedisMock()
+    vi.mocked(Redis.fromEnv).mockReturnValue(redisMock as any)
+
+    try {
+      await main({ envPath: NO_ENV, detailsPath })
+    } finally {
+      unlinkSync(detailsPath)
+    }
+
+    expect(redisMock.set).toHaveBeenCalledWith(
+      "development:book:9781234567890",
+      expect.any(String)
+    )
   })
 })

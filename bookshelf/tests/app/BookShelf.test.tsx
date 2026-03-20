@@ -6,7 +6,7 @@
  * their own focused test files.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
-import { render, screen, waitFor } from "@testing-library/react"
+import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import BookShelf from "@/app/components/BookShelf"
 import { castVote } from "@/app/actions"
@@ -81,6 +81,18 @@ describe("BookShelf", () => {
     expect(screen.getByText("Alpha")).toBeInTheDocument()
     expect(screen.getByText("Beta")).toBeInTheDocument()
     expect(screen.getByText("Gamma")).toBeInTheDocument()
+  })
+
+  it("hides books with no ai_tags field when an ai tag filter is active", async () => {
+    const user = userEvent.setup()
+    render(<BookShelf books={[
+      ...makeTaggedBooks(),
+      makeBook({ id: "99", isbn: "9999999999999", title: "Untagged Book" }),
+    ]} />)
+
+    await user.click(screen.getByRole("checkbox", { name: "Python" }))
+
+    expect(screen.queryByText("Untagged Book")).not.toBeInTheDocument()
   })
 
   it("applies OR logic within a category — shows books matching either tag", async () => {
@@ -203,5 +215,101 @@ describe("BookShelf", () => {
     render(<BookShelf books={[]} />)
     expect(screen.getByText(/the shelf is empty/i)).toBeInTheDocument()
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument()
+  })
+
+  describe("sorting", () => {
+    it("sorts by votes ascending when Votes is clicked", async () => {
+      const user = userEvent.setup()
+      render(<BookShelf books={[
+        makeBook({ isbn: "0000000000001", title: "High Votes Book", votes: 10 }),
+        makeBook({ isbn: "0000000000002", title: "Low Votes Book", votes: 1 }),
+      ]} />)
+
+      await user.click(screen.getByRole("button", { name: /^votes$/i }))
+
+      const items = screen.getAllByRole("listitem")
+      expect(items[0]).toHaveTextContent("Low Votes Book")
+      expect(items[1]).toHaveTextContent("High Votes Book")
+    })
+
+    it("reverses sort order when the active field is clicked again", async () => {
+      const user = userEvent.setup()
+      render(<BookShelf books={[
+        makeBook({ isbn: "0000000000001", title: "Low Votes Book", votes: 1 }),
+        makeBook({ isbn: "0000000000002", title: "High Votes Book", votes: 10 }),
+      ]} />)
+
+      await user.click(screen.getByRole("button", { name: /^votes$/i }))
+      await user.click(screen.getByRole("button", { name: /votes.*↑/i }))
+
+      const items = screen.getAllByRole("listitem")
+      expect(items[0]).toHaveTextContent("High Votes Book")
+      expect(items[1]).toHaveTextContent("Low Votes Book")
+    })
+
+    it("sorts by humbleBundle alphabetically", async () => {
+      const user = userEvent.setup()
+      const { container } = render(<BookShelf books={[
+        makeBook({ isbn: "0000000000001", title: "Book from Zeta", humbleBundle: "Zeta Pack" }),
+        makeBook({ isbn: "0000000000002", title: "Book from Alpha", humbleBundle: "Alpha Pack" }),
+      ]} />)
+
+      await user.click(screen.getByRole("button", { name: /^bundle$/i }))
+
+      // scope to the book list only — the sidebar also renders bundle names as <li> items
+      const bookList = container.querySelector("ul.space-y-4")!
+      const items = within(bookList).getAllByRole("listitem")
+      expect(items[0]).toHaveTextContent("Book from Alpha")
+      expect(items[1]).toHaveTextContent("Book from Zeta")
+    })
+
+    it("sorts books without a humbleBundle to the end when sorting by bundle", async () => {
+      const user = userEvent.setup()
+      const { container } = render(<BookShelf books={[
+        makeBook({ isbn: "0000000000001", title: "No Bundle A" }),
+        makeBook({ isbn: "0000000000002", title: "No Bundle B" }),
+        makeBook({ isbn: "0000000000003", title: "Zeta Book", humbleBundle: "Zeta Pack" }),
+        makeBook({ isbn: "0000000000004", title: "Alpha Book", humbleBundle: "Alpha Pack" }),
+      ]} />)
+
+      await user.click(screen.getByRole("button", { name: /^bundle$/i }))
+
+      // two no-bundle books force the comparator to run with both a.humbleBundle
+      // and b.humbleBundle falsy, covering all branches of the ternary
+      const bookList = container.querySelector("ul.space-y-4")!
+      const items = within(bookList).getAllByRole("listitem")
+      expect(items[0]).toHaveTextContent("Alpha Book")
+      expect(items[1]).toHaveTextContent("Zeta Book")
+      expect(items[2]).toHaveTextContent("No Bundle")
+      expect(items[3]).toHaveTextContent("No Bundle")
+    })
+
+    it("toggles sort direction back to ascending when the active field is clicked a third time", async () => {
+      const user = userEvent.setup()
+      render(<BookShelf books={[
+        makeBook({ isbn: "0000000000001", title: "Low Votes Book", votes: 1 }),
+        makeBook({ isbn: "0000000000002", title: "High Votes Book", votes: 10 }),
+      ]} />)
+
+      await user.click(screen.getByRole("button", { name: /^votes$/i }))   // asc
+      await user.click(screen.getByRole("button", { name: /votes.*↑/i }))  // desc
+      await user.click(screen.getByRole("button", { name: /votes.*↓/i }))  // back to asc
+
+      const items = screen.getAllByRole("listitem")
+      expect(items[0]).toHaveTextContent("Low Votes Book")
+      expect(items[1]).toHaveTextContent("High Votes Book")
+    })
+  })
+
+  it("opens the sidebar when the mobile filters toggle is clicked", async () => {
+    const user = userEvent.setup()
+    const { container } = render(<BookShelf books={[makeBook()]} />)
+
+    const content = container.querySelector(".md\\:block")
+    expect(content).toHaveClass("hidden")
+
+    await user.click(screen.getByRole("button", { name: /filters/i }))
+
+    expect(content).not.toHaveClass("hidden")
   })
 })

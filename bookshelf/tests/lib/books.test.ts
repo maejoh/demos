@@ -97,6 +97,6 @@ describe("fetchBooks", () => {
 
     const { books, fetchError } = await fetchBooks()
     expect(books).toEqual([])
-    expect(fetchError).toContain("connection refused")
+    expect(fetchError).toBe("Failed to load books.")
   })
 })

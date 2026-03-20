@@ -64,7 +64,6 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
 
   const visible = books.filter((book) =>
     (Object.entries(activeFilters) as [FilterField, string[]][]).every(([field, tags]) => {
-      if (tags.length === 0) return true
       if (field === "humbleBundle") return tags.includes(book.humbleBundle ? toTitleCase(book.humbleBundle) : "")
       return (book[field] ?? []).some((tag) => tags.includes(tag))
     })
@@ -73,13 +72,13 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
   const sorted = [...visible].sort((a, b) => {
     let cmp = 0
     if (sortField === "votes") {
-      cmp = (votes[a.isbn] ?? 0) - (votes[b.isbn] ?? 0)
+      cmp = votes[a.isbn] - votes[b.isbn]
     } else if (sortField === "humbleBundle") {
       const aVal = a.humbleBundle ? toTitleCase(a.humbleBundle) : "\uffff"
       const bVal = b.humbleBundle ? toTitleCase(b.humbleBundle) : "\uffff"
       cmp = aVal.localeCompare(bVal)
     } else {
-      cmp = (a[sortField] ?? "").localeCompare(b[sortField] ?? "")
+      cmp = (a[sortField] as string).localeCompare(b[sortField] as string)
     }
     return sortDir === "asc" ? cmp : -cmp
   })

@@ -181,3 +181,19 @@ class TestFetchGoogleBook:
             result = fetch_google_book(None, "Test Book", "Author", 2019, None)
 
         assert result["year"] == 2019
+
+    def test_includes_first_author_only_query_when_author_has_comma(self):
+        # author="Smith, Jones" → first_author="Smith" → an extra query with just "Smith"
+        with patch("scripts.book_pipeline.google_books._google_request", return_value={"items": []}) as mock_req:
+            fetch_google_book(None, "Test Book", "Smith, Jones", None, None)
+
+        queries = [call[0][0]["q"] for call in mock_req.call_args_list]
+        assert any('inauthor:"Smith"' in q and 'inauthor:"Smith, Jones"' not in q for q in queries)
+
+    def test_includes_sanitized_title_query_when_title_has_edition_suffix(self):
+        # "Test Book, 2nd Edition" sanitizes to "Test Book" → extra query with clean title
+        with patch("scripts.book_pipeline.google_books._google_request", return_value={"items": []}) as mock_req:
+            fetch_google_book(None, "Test Book, 2nd Edition", "Author", None, None)
+
+        queries = [call[0][0]["q"] for call in mock_req.call_args_list]
+        assert any('intitle:"Test Book"' in q and "Edition" not in q for q in queries)
