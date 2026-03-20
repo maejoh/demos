@@ -15,7 +15,7 @@ who visits can see the current vote counts, and what topics have the most intere
 
 ## [BookShelf](./bookshelf/) — [live demo](https://demos.maejoh.io/)
 
-![BookShelf screenshot](./bookshelf/public/demo-1-screenshot-1.png)
+![BookShelf screenshot](./bookshelf/public/demo-screenshot.png)
 
 ## What's built
 
