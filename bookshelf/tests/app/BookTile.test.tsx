@@ -62,6 +62,81 @@ describe("BookTile", () => {
     })
   })
 
+  describe("BookDetails", () => {
+    it("is hidden by default", () => {
+      render(<BookTile book={makeBook()} votes={0} {...defaultProps} />)
+      expect(screen.queryByText("Description from Google Books:")).not.toBeInTheDocument()
+    })
+
+    it("opens when the Details button is clicked", async () => {
+      const user = userEvent.setup()
+      render(<BookTile book={makeBook()} votes={0} {...defaultProps} />)
+
+      await user.click(screen.getByRole("button", { name: /details/i }))
+
+      expect(screen.getByText("Description from Google Books:")).toBeInTheDocument()
+    })
+
+    it("closes when the Details button is clicked again", async () => {
+      const user = userEvent.setup()
+      render(<BookTile book={makeBook()} votes={0} {...defaultProps} />)
+
+      await user.click(screen.getByRole("button", { name: /details/i }))
+      await user.click(screen.getByRole("button", { name: /details/i }))
+
+      expect(screen.queryByText("Description from Google Books:")).not.toBeInTheDocument()
+    })
+
+    it("shows the description when present", async () => {
+      const user = userEvent.setup()
+      render(<BookTile book={makeBook({ description: "A great book." })} votes={0} {...defaultProps} />)
+
+      await user.click(screen.getByRole("button", { name: /details/i }))
+
+      expect(screen.getByText("A great book.")).toBeInTheDocument()
+    })
+
+    it("shows the no-description message when description is empty", async () => {
+      const user = userEvent.setup()
+      render(<BookTile book={makeBook({ description: "" })} votes={0} {...defaultProps} />)
+
+      await user.click(screen.getByRole("button", { name: /details/i }))
+
+      expect(screen.getByText("No description available from Google Books.")).toBeInTheDocument()
+    })
+
+    it("shows year and isbn", async () => {
+      const user = userEvent.setup()
+      render(<BookTile book={makeBook({ year: 2021, isbn: "9781234567890" })} votes={0} {...defaultProps} />)
+
+      await user.click(screen.getByRole("button", { name: /details/i }))
+
+      expect(screen.getByText("Published: 2021")).toBeInTheDocument()
+      expect(screen.getByText("ISBN: 9781234567890")).toBeInTheDocument()
+    })
+
+    it("omits year when null", async () => {
+      const user = userEvent.setup()
+      render(<BookTile book={makeBook({ year: null })} votes={0} {...defaultProps} />)
+
+      await user.click(screen.getByRole("button", { name: /details/i }))
+
+      expect(screen.queryByText(/Published/)).not.toBeInTheDocument()
+    })
+
+    it("shows Show more for long descriptions and toggles to Show less", async () => {
+      const user = userEvent.setup()
+      const longDescription = "A ".repeat(150)
+      render(<BookTile book={makeBook({ description: longDescription })} votes={0} {...defaultProps} />)
+
+      await user.click(screen.getByRole("button", { name: /details/i }))
+      expect(screen.getByRole("button", { name: /show more/i })).toBeInTheDocument()
+
+      await user.click(screen.getByRole("button", { name: /show more/i }))
+      expect(screen.getByRole("button", { name: /show less/i })).toBeInTheDocument()
+    })
+  })
+
   describe("VoteButton", () => {
     it("displays the current vote count", () => {
       render(<BookTile book={makeBook()} votes={17} {...defaultProps} />)

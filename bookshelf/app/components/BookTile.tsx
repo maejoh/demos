@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import type { Book } from "@/lib/books"
 import { toTitleCase } from "@/lib/utils"
@@ -15,7 +16,7 @@ function BookCover({ coverUrl, title }: { coverUrl?: string; title: string }) {
   return <div className="shrink-0 w-16 h-20 min-[375px]:w-24 min-[375px]:h-30 rounded bg-gray-100 dark:bg-gray-800" />
 }
 
-function BookHeader({ title, author, tags, ai_tags, humbleBundle }: { title: string; author: string; tags: string[]; ai_tags?: string[]; humbleBundle?: string }) {
+function BookHeader({ title, author, tags, ai_tags, humbleBundle, open, onToggle }: { title: string; author: string; tags: string[]; ai_tags?: string[]; humbleBundle?: string; open: boolean; onToggle: () => void }) {
   return (
     <div className="min-w-0 flex-1">
       <p className="font-semibold leading-snug">{title}</p>
@@ -35,14 +36,56 @@ function BookHeader({ title, author, tags, ai_tags, humbleBundle }: { title: str
           </span>
         ))}
       </div>
+      <button
+        onClick={onToggle}
+        className="flex items-center gap-1 mt-2 text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+      >
+        <span className="italic">Details</span>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
+          <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
     </div>
   )
 }
 
-// Placeholder for expandable book details
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const DESCRIPTION_TRUNCATION_THRESHOLD = 280
+
 function BookDetails({ book }: { book: Book }) {
-  return null
+  const [expanded, setExpanded] = useState(false)
+  const description = book.description || null
+  const truncates = (description?.length ?? 0) > DESCRIPTION_TRUNCATION_THRESHOLD
+
+  return (
+    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+      <div className="flex gap-4 mb-3 text-xs text-gray-400 dark:text-gray-600">
+        {book.year !== null && <span>Published: {book.year}</span>}
+        <span>ISBN: {book.isbn}</span>
+      </div>
+      <div className="px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800">
+        {description ? (
+          <>
+            <p className="text-xs text-gray-400 dark:text-gray-600 mb-1 italic">Description from Google Books:</p>
+            <p className={`text-sm text-gray-600 dark:text-gray-400 leading-relaxed ${truncates && !expanded ? "line-clamp-4" : ""}`}>
+              <span className="text-2xl text-gray-300 dark:text-gray-700 leading-none select-none align-top mr-0.5">&ldquo;</span>
+              {description}
+              <span className="text-2xl text-gray-300 dark:text-gray-700 leading-none select-none align-bottom ml-0.5">&rdquo;</span>
+            </p>
+          </>
+        ) : (
+          <p className="text-xs text-gray-400 dark:text-gray-600 italic">No description available from Google Books.</p>
+        )}
+        {truncates && (
+          <button
+            onClick={() => setExpanded((p) => !p)}
+            className="mt-1 text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+          >
+            {expanded ? "Show less" : "Show more"}
+          </button>
+        )}
+      </div>
+    </div>
+  )
 }
 
 function VoteButton({ isbn, votes, voted, pending, onVote }: { isbn: string; votes: number; voted: boolean; pending: boolean; onVote: (isbn: string) => void }) {
@@ -74,14 +117,26 @@ type BookTileProps = {
 }
 
 export function BookTile({ book, votes, voted, pending, onVote }: BookTileProps) {
+  const [detailsOpen, setDetailsOpen] = useState(false)
+
   return (
-    <li className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-800">
-      <div className="flex gap-4 flex-1 min-w-0">
-        <BookCover coverUrl={book.coverUrl} title={book.title} />
-        <BookHeader title={book.title} author={book.author} tags={book.tags} ai_tags={book.ai_tags} humbleBundle={book.humbleBundle} />
-        <BookDetails book={book} />
+    <li className="p-4 rounded-lg border border-gray-200 dark:border-gray-800">
+      <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4">
+        <div className="flex gap-4 flex-1 min-w-0">
+          <BookCover coverUrl={book.coverUrl} title={book.title} />
+          <BookHeader
+            title={book.title}
+            author={book.author}
+            tags={book.tags}
+            ai_tags={book.ai_tags}
+            humbleBundle={book.humbleBundle}
+            open={detailsOpen}
+            onToggle={() => setDetailsOpen((p) => !p)}
+          />
+        </div>
+        <VoteButton isbn={book.isbn} votes={votes} voted={voted} pending={pending} onVote={onVote} />
       </div>
-      <VoteButton isbn={book.isbn} votes={votes} voted={voted} pending={pending} onVote={onVote} />
+      {detailsOpen && <BookDetails book={book} />}
     </li>
   )
 }
