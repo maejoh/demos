@@ -47,11 +47,11 @@ For more technical details and diagrams, please see the README in the [./bookshe
 
 ## Development workflow
 
-I spent my first 5 years post-graduation coding without AI. I believe that has made an
-enormous difference in my ability to effectively code with AI, and this project was vastly
+I spent my first 5 years in the industry coding without AI. I believe that has made an
+enormous difference in my ability to effectively code **with** AI, and this project was vastly
 expedited by use of Claude Code, generally from the CLI. I work in small steps so that all 
 changes can be reviewed personally, and I frequently correct or redirect the AI when needed, or 
-even just asking for more details and resources so I can properly evaluate what has been written. 
+even just ask for more details and resources so I can properly evaluate what has been written. 
 I still lean heavily on my past experience in similar (if larger) code bases, and have included
 unit tests with coverage tools and sensible splitting of components and standalone logic. I keep 
 the dev server running as I work, and run the unit tests and try out the UI manually as I go, making sure
