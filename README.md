@@ -4,7 +4,7 @@ A portfolio project where I organize and display a bunch of technical books, and
 where site visitors can provide feedback on which ones tackle skills they're actually
 interested in, adding to an aggregate vote count that reflects general interest.
 
-[Humble Bundle](https://www.humblebundle.com/) is a website that often offer "bundles"
+[Humble Bundle](https://www.humblebundle.com/) is a website that often offers "bundles"
 of games, software, and books, on a myriad of topics. Bundles are often heavily 
 discounted, and a portion of the proceeds go to a particular charity for each bundle.
 As a lover of all books nonfiction, I've gotten most of their tech-related book bundles
