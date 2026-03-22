@@ -6,15 +6,17 @@ from pathlib import Path
 from titlecase import titlecase
 
 from .epub import extract_epub_cover, extract_epub_metadata
-from .google_books import _author_looks_mangled, _title_looks_mangled, fetch_google_book
+from .google_books import fetch_google_book
 from .utils import (
     BOOK_DETAILS_PATH,
     BOOK_LIST_MANUAL_ISBN_PATH,
     BOOK_LIST_PATH,
+    author_looks_mangled,
     load_env_local,
     load_json,
     sanitize_title,
     save_json,
+    title_looks_mangled,
 )
 
 
@@ -285,8 +287,8 @@ def main():
     book_details = {
         isbn: {
             **entry,
-            "title": titlecase(entry["title"].lower()) if _title_looks_mangled(entry.get("title", "")) else entry["title"],
-            "author": titlecase(entry["author"].lower()) if _author_looks_mangled(entry.get("author", "")) else entry["author"],
+            "title": titlecase(entry["title"].lower()) if title_looks_mangled(entry.get("title", "")) else entry["title"],
+            "author": titlecase(entry["author"].lower()) if author_looks_mangled(entry.get("author", "")) else entry["author"],
         }
         for isbn, entry in book_details.items()
     }

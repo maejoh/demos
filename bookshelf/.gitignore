@@ -46,3 +46,6 @@ next-env.d.ts
 # python and pytest
 __pycache__/
 .pytest_cache/
+
+# test coverage
+*/.coverage
