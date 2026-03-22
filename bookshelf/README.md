@@ -53,3 +53,40 @@ npm run dev
 ```
 
 The data pipeline runs locally as well - see the /scripts README for more details.
+
+Current test coverage:
+vitest
+```
+-----------------------|---------|----------|---------|---------|-------------------
+File                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-----------------------|---------|----------|---------|---------|-------------------
+All files              |   99.53 |     97.7 |     100 |   99.47 |                  
+ app                   |     100 |      100 |     100 |     100 |                  
+  actions.ts           |     100 |      100 |     100 |     100 |                  
+ app/components        |     100 |      100 |     100 |     100 |                  
+  BookList.tsx         |     100 |      100 |     100 |     100 |                  
+  BookShelf.tsx        |     100 |      100 |     100 |     100 |                  
+  BookTile.tsx         |     100 |      100 |     100 |     100 |                  
+  FilterSidebar.tsx    |     100 |      100 |     100 |     100 |                  
+  SortBar.tsx          |     100 |      100 |     100 |     100 |                  
+  ThemeToggle.tsx      |     100 |      100 |     100 |     100 |                  
+ lib                   |     100 |      100 |     100 |     100 |                  
+  books.ts             |     100 |      100 |     100 |     100 |                  
+  utils.ts             |     100 |      100 |     100 |     100 |                  
+ scripts/book_pipeline |   98.18 |     87.5 |     100 |   98.14 |                  
+  seed.ts              |   98.18 |     87.5 |     100 |   98.14 | 115              
+-----------------------|---------|----------|---------|---------|-------------------
+```
+pytest
+```
+Name                                     Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------
+scripts\book_pipeline\__init__.py            0      0   100%
+scripts\book_pipeline\epub.py               69      0   100%
+scripts\book_pipeline\extract_books.py     181      1    99%   319
+scripts\book_pipeline\google_books.py       60      0   100%
+scripts\book_pipeline\tag_books.py         158      2    99%   192, 349
+scripts\book_pipeline\utils.py              35      0   100%
+----------------------------------------------------------------------
+TOTAL                                      503      3    99%
+```

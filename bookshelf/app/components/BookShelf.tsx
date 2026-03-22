@@ -22,7 +22,7 @@ function IntroText() {
         A browsable collection of publications related to comp sci — AI, web dev, software architecture, and more. What should I read next?
       </p>
       <p className="text-sm text-gray-400 dark:text-gray-500 mt-3">
-        There&apos;s a gremlin inside me that buys tech books whenever Humble Bundle drops a software book bundle. These are all real books I&apos;ve purchased over the last 2 years. Some of them I&apos;ve already started reading, but many are just waiting for a reason! Cast your votes to help me hone in even more on what topics are most relevant to the peers and recruiters viewing my portfolio.{" "}
+        I can&apos;t resist a good Humble Bundle, and that especially includes tech books. Below you will find an interface for browsing all the ones I&apos;ve bought so far, between the various bundles they&apos;ve put out the past few years. Some of these titles I&apos;ve already started reading, but many are just waiting for a reason! Cast your votes to help me hone in even more on what topics are most relevant to the peers and recruiters viewing my portfolio.{" "}
       </p>
       <p className="text-sm text-gray-500 dark:text-gray-500 mt-3">
         Note: The primary purpose of this app is as a portfolio piece.{"  "}
