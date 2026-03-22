@@ -9,11 +9,6 @@ GOOGLE_BOOKS_URL = "https://www.googleapis.com/books/v1/volumes"
 GOOGLE_FIELDS = "items(volumeInfo(title,authors,publishedDate,description,industryIdentifiers))"
 
 
-def _author_looks_mangled(author: str) -> bool:
-    """Return True if Google Books returned an ALL-CAPS or otherwise garbled author string."""
-    alpha_words = [w for w in author.split() if w.isalpha()]
-    return len(alpha_words) > 0 and sum(1 for w in alpha_words if w.isupper()) > len(alpha_words) / 2
-
 
 def _google_request(params: dict) -> dict | None:
     """Make a Google Books API request with retry on 429."""

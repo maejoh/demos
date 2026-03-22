@@ -373,7 +373,7 @@ class TestEpubScan:
 
 
 # ---------------------------------------------------------------------------
-# CLI arg handling — --bundle, --all, folder validation
+# CLI arg handling — --bundle, folder validation
 # ---------------------------------------------------------------------------
 
 class TestCLIArgs:
@@ -382,15 +382,6 @@ class TestCLIArgs:
         monkeypatch.setattr(sys, "argv", ["prog", "--bundle", "My Bundle"])
 
         with patch(f"{PATCH}.load_env_local", return_value={}):
-            main()
-
-        assert not paths["book_details"].exists()
-
-    def test_all_flag_missing_book_bundles_returns_early(self, monkeypatch, tmp_path, paths):
-        """--all with BOOKS_DIR set but no BOOK_BUNDLES should print an error and return."""
-        monkeypatch.setattr(sys, "argv", ["prog", "--all"])
-
-        with patch(f"{PATCH}.load_env_local", return_value={"BOOKS_DIR": str(tmp_path)}):
             main()
 
         assert not paths["book_details"].exists()
@@ -407,26 +398,6 @@ class TestCLIArgs:
             with patch(f"{PATCH}.fetch_google_book", return_value=_google_result()):
                 with patch(f"{PATCH}.extract_epub_cover", return_value=None):
                     with patch(f"{PATCH}.load_env_local", return_value={"BOOKS_DIR": str(tmp_path)}):
-                        main()
-
-        assert paths["book_details"].exists()
-
-    def test_all_flag_scans_each_bundle_listed_in_book_bundles(self, monkeypatch, tmp_path, paths):
-        """--all iterates all bundle names in BOOK_BUNDLES and processes epubs in each."""
-        for name in ("Bundle A", "Bundle B"):
-            d = tmp_path / name
-            d.mkdir()
-            (d / "book.epub").write_bytes(b"")
-
-        monkeypatch.setattr(sys, "argv", ["prog", "--all"])
-
-        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
-            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result()):
-                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
-                    with patch(f"{PATCH}.load_env_local", return_value={
-                        "BOOKS_DIR": str(tmp_path),
-                        "BOOK_BUNDLES": "Bundle A, Bundle B",
-                    }):
                         main()
 
         assert paths["book_details"].exists()

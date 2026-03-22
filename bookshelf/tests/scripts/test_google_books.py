@@ -3,26 +3,10 @@
 from unittest.mock import MagicMock, patch
 
 from scripts.book_pipeline.google_books import (
-    _author_looks_mangled,
     _google_request,
     _parse_volume,
     fetch_google_book,
 )
-
-
-class TestAuthorLooksMangled:
-    def test_normal_name_is_not_mangled(self):
-        assert _author_looks_mangled("Martin Kleppmann") is False
-
-    def test_all_caps_name_is_mangled(self):
-        assert _author_looks_mangled("MARTIN KLEPPMANN") is True
-
-    def test_majority_caps_name_is_mangled(self):
-        # requires strictly more than half — "KYLE JAMES Simpson" is 2/3
-        assert _author_looks_mangled("KYLE JAMES Simpson") is True
-
-    def test_ampersand_joined_normal_names_are_not_mangled(self):
-        assert _author_looks_mangled("David Thomas & Andrew Hunt") is False
 
 
 class TestParseVolume:

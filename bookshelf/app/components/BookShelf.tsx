@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import type { Book } from "@/lib/books"
-import { castVote } from "@/app/actions"
+import { castVote, removeVote } from "@/app/actions"
 import { toTitleCase } from "@/lib/utils"
 import { FilterSidebar, type FilterField, type ActiveFilters } from "./FilterSidebar"
 import { BookList } from "./BookList"
@@ -22,7 +22,7 @@ function IntroText() {
         A browsable collection of publications related to comp sci — AI, web dev, software architecture, and more. What should I read next?
       </p>
       <p className="text-sm text-gray-400 dark:text-gray-500 mt-3">
-        There&apos;s a gremlin inside me that buys tech books whenever Humble Bundle drops a software book bundle. These are all real books I&apos;ve purchased over the last 2 years. Some of them I&apos;ve already started reading, but many are just waiting for a reason! Cast your votes to help me hone in even more on what topics are most relevant to the peers and recruiters viewing my portfolio.{" "}
+        I can&apos;t resist a good Humble Bundle, and that especially includes tech books. Below you will find an interface for browsing all the ones I&apos;ve bought so far, between the various bundles they&apos;ve put out the past few years. Some of these titles I&apos;ve already started reading, but many are just waiting for a reason! Cast your votes to help me hone in even more on what topics are most relevant to the peers and recruiters viewing my portfolio.{" "}
       </p>
       <p className="text-sm text-gray-500 dark:text-gray-500 mt-3">
         Note: The primary purpose of this app is as a portfolio piece.{"  "}
@@ -47,6 +47,8 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
     Object.fromEntries(books.map((b) => [b.isbn, b.votes]))
   )
   const [voteError, setVoteError] = useState(false)
+  const [votedIsbns, setVotedIsbns] = useState<Set<string>>(new Set())
+  const [pendingIsbns, setPendingIsbns] = useState<Set<string>>(new Set())
   const [sortField, setSortField] = useState<SortField>("title")
   const [sortDir, setSortDir] = useState<SortDir>("asc")
 
@@ -116,13 +118,24 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
 
   async function handleVote(isbn: string) {
     setVoteError(false)
-    setVotes((prev) => ({ ...prev, [isbn]: prev[isbn] + 1 }))
+    const isVoted = votedIsbns.has(isbn)
+    const delta = isVoted ? -1 : 1
+    setPendingIsbns((prev) => new Set(prev).add(isbn))
+    setVotes((prev) => ({ ...prev, [isbn]: prev[isbn] + delta }))
     try {
-      await castVote(isbn)
+      if (isVoted) {
+        await removeVote(isbn)
+        setVotedIsbns((prev) => { const next = new Set(prev); next.delete(isbn); return next })
+      } else {
+        await castVote(isbn)
+        setVotedIsbns((prev) => new Set(prev).add(isbn))
+      }
     } catch (err) {
       console.error("[BookShelf] Vote failed:", err)
-      setVotes((prev) => ({ ...prev, [isbn]: prev[isbn] - 1 }))
+      setVotes((prev) => ({ ...prev, [isbn]: prev[isbn] - delta }))
       setVoteError(true)
+    } finally {
+      setPendingIsbns((prev) => { const next = new Set(prev); next.delete(isbn); return next })
     }
   }
 
@@ -169,7 +182,7 @@ export default function BookShelf({ books, fetchError = null }: { books: Book[];
               </p>
             )}
             <SortBar sortField={sortField} sortDir={sortDir} onSort={handleSort} />
-            <BookList books={sorted.slice(0, displayCount)} votes={votes} onVote={handleVote} />
+            <BookList books={sorted.slice(0, displayCount)} votes={votes} votedIsbns={votedIsbns} pendingIsbns={pendingIsbns} onVote={handleVote} />
             {sorted.length > displayCount && (
               <button
                 onClick={() => setDisplayCount((p) => p + PAGE_SIZE)}

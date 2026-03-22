@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.book_pipeline.utils import load_env_local, load_json, sanitize_title, save_json, to_title_case
+from scripts.book_pipeline.utils import author_looks_mangled, load_env_local, load_json, sanitize_title, save_json, title_looks_mangled
 
 
 class TestSanitizeTitle:
@@ -21,18 +21,39 @@ class TestSanitizeTitle:
         assert sanitize_title("Pro Git, SECOND EDITION") == "Pro Git"
 
 
-class TestToTitleCase:
-    def test_capitalizes_each_word(self):
-        assert to_title_case("humble bundle software collection") == "Humble Bundle Software Collection"
+class TestAuthorLooksMangled:
+    def test_normal_name_is_not_mangled(self):
+        assert author_looks_mangled("Martin Kleppmann") is False
 
-    def test_leaves_already_cased_string_unchanged(self):
-        assert to_title_case("No Starch Press Bundle") == "No Starch Press Bundle"
+    def test_all_caps_name_is_mangled(self):
+        assert author_looks_mangled("MARTIN KLEPPMANN") is True
 
-    def test_handles_single_word(self):
-        assert to_title_case("python") == "Python"
+    def test_majority_caps_name_is_mangled(self):
+        assert author_looks_mangled("KYLE JAMES Simpson") is True
 
-    def test_handles_empty_string(self):
-        assert to_title_case("") == ""
+    def test_caps_with_punctuation_is_mangled(self):
+        # punctuation in tokens (e.g. "ANJANAVA." or "(WRICK.)") must not exclude them from the count
+        assert author_looks_mangled("ANJANAVA. TALUKDAR BISWAS (WRICK.) & Wrick Talukdar") is True
+
+    def test_ampersand_joined_normal_names_are_not_mangled(self):
+        assert author_looks_mangled("David Thomas & Andrew Hunt") is False
+
+
+class TestTitleLooksMangled:
+    def test_all_caps_is_mangled(self):
+        assert title_looks_mangled("LEARNING SQL") is True
+
+    def test_normal_title_is_not_mangled(self):
+        assert title_looks_mangled("Learning SQL") is False
+
+    def test_mixed_case_with_numbers_not_mangled(self):
+        assert title_looks_mangled("Python 3") is False
+
+    def test_all_caps_with_numbers_is_mangled(self):
+        assert title_looks_mangled("PYTHON 3") is True
+
+    def test_empty_string_is_not_mangled(self):
+        assert title_looks_mangled("") is False
 
 
 class TestLoadEnvLocal:

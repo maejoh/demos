@@ -21,6 +21,8 @@ const makeBook = (overrides: Partial<Book> = {}): Book => ({
   ...overrides,
 })
 
+const emptyVoteSets = { votedIsbns: new Set<string>(), pendingIsbns: new Set<string>() }
+
 describe("BookList", () => {
   it("renders one list item per book", () => {
     const books = [
@@ -28,19 +30,19 @@ describe("BookList", () => {
       makeBook({ id: "2", title: "Beta" }),
       makeBook({ id: "3", title: "Gamma" }),
     ]
-    render(<BookList books={books} votes={{ "1": 0, "2": 0, "3": 0 }} onVote={vi.fn()} />)
+    render(<BookList books={books} votes={{ "1": 0, "2": 0, "3": 0 }} {...emptyVoteSets} onVote={vi.fn()} />)
     expect(screen.getAllByRole("listitem")).toHaveLength(3)
   })
 
   it("renders an empty list when books is empty", () => {
-    const { container } = render(<BookList books={[]} votes={{}} onVote={vi.fn()} />)
+    const { container } = render(<BookList books={[]} votes={{}} {...emptyVoteSets} onVote={vi.fn()} />)
     expect(container.querySelector("ul")).toBeInTheDocument()
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument()
   })
 
   it("passes the correct vote count to each tile", () => {
     const book = makeBook({ id: "1", title: "Alpha" })
-    render(<BookList books={[book]} votes={{ "9781234567890": 99 }} onVote={vi.fn()} />)
+    render(<BookList books={[book]} votes={{ "9781234567890": 99 }} {...emptyVoteSets} onVote={vi.fn()} />)
     expect(screen.getByText("99")).toBeInTheDocument()
   })
 })

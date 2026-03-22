@@ -29,14 +29,22 @@ def load_env_local() -> dict[str, str]:
     return result
 
 
-def to_title_case(s: str) -> str:
-    """Capitalize the first letter of each word."""
-    return re.sub(r'\b\w', lambda m: m.group().upper(), s)
-
-
 def sanitize_title(title: str) -> str:
     """Strip edition suffixes and separators from a title."""
     return re.sub(r'[,\s–_-]+\s*(second|third|fourth|fifth|sixth|\d+(st|nd|rd|th))\s+edition.*', '', title, flags=re.IGNORECASE).strip()
+
+
+def author_looks_mangled(author: str) -> bool:
+    """Return True if an author string appears to be ALL-CAPS or otherwise garbled."""
+    alpha_words = [re.sub(r'[^A-Za-z]', '', w) for w in author.split()]
+    alpha_words = [w for w in alpha_words if w]
+    return len(alpha_words) > 0 and sum(1 for w in alpha_words if w.isupper()) > len(alpha_words) / 2
+
+
+def title_looks_mangled(title: str) -> bool:
+    """Return True if the title is entirely uppercase."""
+    alpha = [c for c in title if c.isalpha()]
+    return len(alpha) > 0 and all(c.isupper() for c in alpha)
 
 
 def load_json(path: Path, default):
