@@ -19,7 +19,7 @@ persistent storage, local state, responsive UI, sorting and filtering logic. All
 in the app are actual books that I own, and all votes reflect real site visitors 
 clicking on buttons over time.
 
-The app demonstrates full-stack Next.js, Redis-backed data (Upstash), a Python and 
+The app demonstrates full-stack Next.js, Redis-backed data (Upstash), and a Python and 
 TypeScript processing pipeline. Part of the pipeline also makes calls to the Google 
 Books API, to get book descriptions and fill in missing metadata from the epubs, as 
 well as the Anthropic API, to request an LLM to choose and assign topic tags for the 
