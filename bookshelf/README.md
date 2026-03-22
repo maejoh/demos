@@ -52,4 +52,4 @@ npm install
 npm run dev
 ```
 
-The data pipeline runs locally. See `CLAUDE.md` for pipeline commands and Redis seeding options.
+The data pipeline runs locally as well - see the /scripts README for more details.

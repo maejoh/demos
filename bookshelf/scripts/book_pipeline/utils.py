@@ -29,11 +29,6 @@ def load_env_local() -> dict[str, str]:
     return result
 
 
-def to_title_case(s: str) -> str:
-    """Capitalize the first letter of each word."""
-    return re.sub(r'\b\w', lambda m: m.group().upper(), s)
-
-
 def sanitize_title(title: str) -> str:
     """Strip edition suffixes and separators from a title."""
     return re.sub(r'[,\s–_-]+\s*(second|third|fourth|fifth|sixth|\d+(st|nd|rd|th))\s+edition.*', '', title, flags=re.IGNORECASE).strip()

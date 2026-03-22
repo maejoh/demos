@@ -3,8 +3,10 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+from titlecase import titlecase
+
 from .epub import extract_epub_cover, extract_epub_metadata
-from .google_books import _author_looks_mangled, fetch_google_book
+from .google_books import _author_looks_mangled, _title_looks_mangled, fetch_google_book
 from .utils import (
     BOOK_DETAILS_PATH,
     BOOK_LIST_MANUAL_ISBN_PATH,
@@ -13,7 +15,6 @@ from .utils import (
     load_json,
     sanitize_title,
     save_json,
-    to_title_case,
 )
 
 
@@ -22,7 +23,6 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("folder", nargs="?", help="Path to folder containing epub files")
     group.add_argument("--bundle", metavar="NAME", help="Bundle subfolder name — combined with BOOKS_DIR from .env.local")
-    group.add_argument("--all", action="store_true", help="Scan all bundles listed in BOOK_BUNDLES from .env.local")
     parser.add_argument("--mode", choices=["fast", "overwrite", "clean"], default="fast",
                         help="fast (default): skip already-processed books. overwrite: re-process all, update entries, keep old data. clean: delete all output files first, then run fresh.")
     parser.add_argument("--list-only", action="store_true", help="Extract epub metadata and update book_list.json only — skip enrichment and API calls")
@@ -33,26 +33,18 @@ def main():
     if not api_key:
         print("Warning: GOOGLE_BOOKS_API_KEY not set in .env.local — requests will be unauthenticated and heavily rate-limited\n")
 
-    if args.bundle or args.all:
+    if args.bundle:
         books_dir = env.get("BOOKS_DIR") or ""
         if not books_dir:
             print("Error: BOOKS_DIR not set in .env.local")
             return
-        if args.all:
-            bundle_names = [b.strip() for b in env.get("BOOK_BUNDLES", "").split(",") if b.strip()]
-            if not bundle_names:
-                print("Error: BOOK_BUNDLES not set in .env.local")
-                return
-            folders = [Path(books_dir) / name for name in bundle_names]
-        else:
-            folders = [Path(books_dir) / args.bundle]
+        folder = Path(books_dir) / args.bundle
     else:
-        folders = [Path(args.folder)]
+        folder = Path(args.folder)
 
-    for folder in folders:
-        if not folder.is_dir():
-            print(f"Error: {folder} is not a directory")
-            return
+    if not folder.is_dir():
+        print(f"Error: {folder} is not a directory")
+        return
 
     if args.mode == "clean":
         for path in [BOOK_LIST_PATH, BOOK_DETAILS_PATH]:
@@ -60,9 +52,8 @@ def main():
                 path.unlink()
                 print(f"Deleted {path.name}")
 
-    epub_files = [f for folder in folders for f in folder.rglob("*.epub")]
-    label = folders[0] if len(folders) == 1 else f"{len(folders)} bundles"
-    print(f"Found {len(epub_files)} epub files in {label}\n")
+    epub_files = list(folder.rglob("*.epub"))
+    print(f"Found {len(epub_files)} epub files in {folder}\n")
 
     # Step 1: extract metadata from all epubs locally
     extracted = []
@@ -71,7 +62,7 @@ def main():
         meta = extract_epub_metadata(epub_path)
         if not meta:
             continue
-        meta["humbleBundle"] = to_title_case(epub_path.parent.name)
+        meta["humbleBundle"] = titlecase(epub_path.parent.name)
         extracted.append(meta)
         status = f"isbn: {meta['isbn']}" if meta.get("isbn") else "no isbn in epub"
         print(f"  -> {meta['title']} ({status})")
@@ -174,7 +165,7 @@ def main():
             book_details[found_isbn] = {
                 "id": existing.get("id") or str(uuid.uuid4()),
                 "title": result.get("title") or title,
-                "author": (result["author"] if result.get("author") and not _author_looks_mangled(result["author"]) else None) or "Unknown",
+                "author": result.get("author") or "Unknown",
                 "isbn": found_isbn,
                 "year": result.get("year") or existing.get("year"),
                 "tags": existing.get("tags") or [],
@@ -274,7 +265,7 @@ def main():
         book_details[isbn] = {
             "id": existing.get("id") or str(uuid.uuid4()),
             "title": result.get("title") or epub_title,
-            "author": (result["author"] if result.get("author") and not _author_looks_mangled(result["author"]) else None) or meta.get("author", "Unknown"),
+            "author": result.get("author") or meta.get("author", "Unknown"),
             "isbn": isbn,
             "year": result.get("year") or existing.get("year"),
             "tags": existing.get("tags") or [],
@@ -290,6 +281,15 @@ def main():
         futures = [executor.submit(enrich_one, meta) for meta in to_enrich]
         for f in as_completed(futures):
             f.result()
+
+    book_details = {
+        isbn: {
+            **entry,
+            "title": titlecase(entry["title"].lower()) if _title_looks_mangled(entry.get("title", "")) else entry["title"],
+            "author": titlecase(entry["author"].lower()) if _author_looks_mangled(entry.get("author", "")) else entry["author"],
+        }
+        for isbn, entry in book_details.items()
+    }
 
     save_json(BOOK_DETAILS_PATH, book_details)
 

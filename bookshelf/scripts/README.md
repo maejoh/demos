@@ -1,19 +1,13 @@
-# demo-1 — BookShelf
 
-A personal bookshelf built from epub bundles. Users can browse and upvote books.
-
-## Stack
-- **Framework**: Next.js (App Router), TypeScript, Tailwind v4
-- **Data store**: Upstash Redis (namespaced by environment)
-- **Data pipeline**: Python scripts → `book_details.json` → Redis
 
 ## Environment variables (`.env.local`)
 ```
-UPSTASH_REDIS_REST_URL=...
-UPSTASH_REDIS_REST_TOKEN=...
+UPSTASH_REDIS_REST_URL=...            # for updating the database from the output files
+UPSTASH_REDIS_REST_TOKEN=...          # for updating the database from the output files
 BOOKS_DIR="E:\path\to\epub bundles"   # local only — root folder containing bundle subfolders
-GOOGLE_BOOKS_API_KEY=...              # for metadata enrichment
+GOOGLE_BOOKS_API_KEY=...              # for ISBN lookup and metadata enrichment
 ANTHROPIC_API_KEY=...                 # for AI tagging
+BOOK_BUNDLES=Bundle One,Bundle Two    # comma-separated subfolder names for --all flag
 ```
 
 ## Data pipeline
@@ -21,6 +15,7 @@ ANTHROPIC_API_KEY=...                 # for AI tagging
 ### 1. Extract
 ```
 npm run extract -- --bundle "Bundle Name"   # extract one subfolder from BOOKS_DIR
+npm run extract -- --all                    # extract all bundles listed in BOOK_BUNDLES
 npm run extract -- /path/to/folder          # extract from an explicit folder path
 ```
 `scripts/book_pipeline/extract_books.py` walks a folder of epubs, extracts metadata from OPF,
@@ -35,6 +30,7 @@ Outputs:
 
 Flags:
 - `--bundle "Name"` — resolve subfolder from `BOOKS_DIR`
+- `--all` — iterate all bundles in `BOOK_BUNDLES`
 - `--mode fast` (default) — skip already-enriched books
 - `--mode overwrite` — re-enrich all books, preserve existing data
 - `--mode clean` — delete output files and run fresh
@@ -72,22 +68,3 @@ All keys are prefixed by environment namespace (e.g. `development:`, `production
 
 ## Cover images
 Extracted from epub files at extraction time and saved to `public/covers/`. The `coverUrl` field stored in Redis is a relative path like `/covers/{isbn}.jpg`. These are served statically by Next.js/Vercel — no external CDN or API needed at runtime.
-
-## Key folders and files
-- `app/` — Next.js app router
-  - `components/BookShelf.tsx` — main UI component
-- `lib/` — shared utilities
-  - `books.ts` — `Book` type definition and Redis fetch helpers
-- `scripts/book_pipeline/` — data pipeline (not deployed)
-  - `extract_books.py` — epub extraction + Google Books enrichment (entry point)
-  - `epub.py` — OPF parsing, cover extraction
-  - `google_books.py` — Google Books API client
-  - `utils.py` — shared path constants and helpers
-  - `tag_books.py` — Anthropic AI tagging
-  - `seed.ts` — Redis seeding script
-  - `output/book_details.json` — source of truth for seed *(not committed)*
-  - `output/book_list.json` — scanned epub index *(not committed)*
-  - `output/book_list_manual_isbn.json` — no-ISBN epubs awaiting manual ISBN entry *(not committed)*
-- `public/covers/` — cover images extracted from epubs, served statically
-- `tests/scripts/` — pytest test suite mirroring book_pipeline module structure
-- `next.config.ts` — Next.js config
