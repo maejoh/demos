@@ -1,8 +1,15 @@
 # demos
 
-A portfolio project where I organize and display a bunch of technical books, and 
-where site visitors can provide feedback on which ones tackle skills they're actually
-interested in, adding to an aggregate vote count that reflects general interest.
+Welcome to my demos repo! At the moment, there is one main portfolio project where I 
+organize and display a bunch of technical books, and where site visitors can provide 
+feedback on which ones tackle skills they're actually interested in, adding to an 
+aggregate vote count that reflects general interest.
+
+## BookShelf ([live demo](https://demos.maejoh.io/))
+
+![BookShelf screenshot](./bookshelf/public/demo-screenshot.png)
+
+### The Project
 
 [Humble Bundle](https://www.humblebundle.com/) is a website that often offers "bundles"
 of games, software, and books, on a myriad of topics. Bundles are often heavily 
@@ -25,11 +32,7 @@ Books API, to get book descriptions and fill in missing metadata from the epubs,
 well as the Anthropic API, to request an LLM to choose and assign topic tags for the 
 library (referred to as AI tags).
 
-## BookShelf — [live demo](https://demos.maejoh.io/)
-
-![BookShelf screenshot](./bookshelf/public/demo-screenshot.png)
-
-For more technical details and diagrams, please see the README in the [./bookshelf](./bookshelf) directory. 
+For more technical details, please see the READMEs in the [./bookshelf](./bookshelf) directory. 
 
 ## What's built
 
@@ -54,13 +57,13 @@ changes can be reviewed personally, and I frequently correct or redirect the AI 
 even just ask for more details and resources so I can properly evaluate what has been written. 
 I still lean heavily on my past experience in similar (if larger) code bases, and have included
 unit tests with coverage tools and sensible splitting of components and standalone logic. I keep 
-the dev server running as I work, and run the unit tests and try out the UI manually as I go, making sure
-to follow the same good principles and practices I would if coding by hand.
+the dev server running as I work, and run the unit tests and try out the UI manually as I go, 
+making sure to follow the same good principles and practices I would if coding by hand.
 
 In addition to Claude Code's built-in abilities, this repo also uses a customized subset of 
-[garrytan/gstack](https://github.com/garrytan/gstack) skills for Claude Code. These modified skills are 
-included in the repo for viewing, and the customizations summarized below. I have found /plan-ceo-review 
-and /plan-eng-review to be particularly helpful. 
+[garrytan/gstack](https://github.com/garrytan/gstack) skills for Claude Code. These modified skills 
+are included in the repo for your viewing, if you like, and the customizations summarized below. 
+I have personally found /plan-ceo-review and /plan-eng-review particularly helpful. 
 
 | Skill | Source | Customized? |
 |---|---|---|
