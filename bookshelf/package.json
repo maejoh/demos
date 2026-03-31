@@ -13,6 +13,7 @@
     "seed:preview": "tsx scripts/book_pipeline/seed.ts --env preview",
     "seed:prod": "tsx scripts/book_pipeline/seed.ts --env production",
     "extract": "python -m scripts.book_pipeline.extract_books",
+    "extract:toc": "python -m scripts.book_pipeline.extract_toc",
     "tag": "python -m scripts.book_pipeline.tag_books"
   },
   "dependencies": {

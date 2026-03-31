@@ -5,7 +5,7 @@ import zipfile
 
 import pytest
 
-from scripts.book_pipeline.epub import extract_epub_cover, extract_epub_metadata
+from scripts.book_pipeline.epub import extract_epub_cover, extract_epub_metadata, extract_epub_toc
 
 
 CONTAINER_XML = b"""\
@@ -285,3 +285,308 @@ class TestExtractEpubCover:
         extract_epub_cover(epub_path, "9781234567890")
 
         assert covers_dir.exists()
+
+
+# ---------------------------------------------------------------------------
+# TOC builder helpers
+# ---------------------------------------------------------------------------
+
+def make_epub_epub3_toc(nested: bool = False, toc_nav_type: str = "toc") -> io.BytesIO:
+    """Build an epub with an EPUB3 nav.xhtml TOC."""
+    if nested:
+        items = """\
+        <li><a href="ch1.xhtml">Chapter 1</a></li>
+        <li><a href="ch2.xhtml">Chapter 2</a>
+          <ol>
+            <li><a href="ch2.xhtml#s1">Section 2.1</a></li>
+          </ol>
+        </li>"""
+    else:
+        items = """\
+        <li><a href="ch1.xhtml">Chapter 1</a></li>
+        <li><a href="ch2.xhtml">Chapter 2</a></li>"""
+
+    nav = f"""\
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <body>
+    <nav epub:type="{toc_nav_type}">
+      <ol>
+{items}
+      </ol>
+    </nav>
+  </body>
+</html>""".encode()
+
+    opf = b"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title>TOC Book</dc:title>
+  </metadata>
+  <manifest>
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+  </manifest>
+</package>
+"""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        zf.writestr("META-INF/container.xml", CONTAINER_XML)
+        zf.writestr("content.opf", opf)
+        zf.writestr("nav.xhtml", nav)
+    buf.seek(0)
+    return buf
+
+
+def make_epub_epub2_toc(nested: bool = False) -> io.BytesIO:
+    """Build an epub with an EPUB2 toc.ncx TOC."""
+    if nested:
+        points = """\
+    <navPoint id="ch1">
+      <navLabel><text>Chapter 1</text></navLabel>
+      <content src="ch1.xhtml"/>
+    </navPoint>
+    <navPoint id="ch2">
+      <navLabel><text>Chapter 2</text></navLabel>
+      <content src="ch2.xhtml"/>
+      <navPoint id="ch2s1">
+        <navLabel><text>Section 2.1</text></navLabel>
+        <content src="ch2.xhtml#s1"/>
+      </navPoint>
+    </navPoint>"""
+    else:
+        points = """\
+    <navPoint id="ch1">
+      <navLabel><text>Chapter 1</text></navLabel>
+      <content src="ch1.xhtml"/>
+    </navPoint>
+    <navPoint id="ch2">
+      <navLabel><text>Chapter 2</text></navLabel>
+      <content src="ch2.xhtml"/>
+    </navPoint>"""
+
+    ncx = f"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+  <navMap>
+{points}
+  </navMap>
+</ncx>""".encode()
+
+    opf = b"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="2.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title>NCX Book</dc:title>
+  </metadata>
+  <manifest>
+    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+  </manifest>
+</package>
+"""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        zf.writestr("META-INF/container.xml", CONTAINER_XML)
+        zf.writestr("content.opf", opf)
+        zf.writestr("toc.ncx", ncx)
+    buf.seek(0)
+    return buf
+
+
+def make_epub_both_toc(nav_title: str = "Nav Chapter", ncx_title: str = "NCX Chapter") -> io.BytesIO:
+    """Build an epub with both EPUB3 nav.xhtml and EPUB2 toc.ncx."""
+    nav = f"""\
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <body>
+    <nav epub:type="toc">
+      <ol><li><a href="ch1.xhtml">{nav_title}</a></li></ol>
+    </nav>
+  </body>
+</html>""".encode()
+
+    ncx = f"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/">
+  <navMap>
+    <navPoint id="ch1">
+      <navLabel><text>{ncx_title}</text></navLabel>
+      <content src="ch1.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>""".encode()
+
+    opf = b"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title>Both Book</dc:title>
+  </metadata>
+  <manifest>
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+  </manifest>
+</package>
+"""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        zf.writestr("META-INF/container.xml", CONTAINER_XML)
+        zf.writestr("content.opf", opf)
+        zf.writestr("nav.xhtml", nav)
+        zf.writestr("toc.ncx", ncx)
+    buf.seek(0)
+    return buf
+
+
+# ---------------------------------------------------------------------------
+# extract_epub_toc
+# ---------------------------------------------------------------------------
+
+class TestExtractEpubToc:
+    def test_extracts_flat_epub3_toc(self, tmp_path):
+        epub_path = tmp_path / "test.epub"
+        epub_path.write_bytes(make_epub_epub3_toc().read())
+
+        result = extract_epub_toc(epub_path)
+
+        assert result is not None
+        assert len(result) == 2
+        assert result[0] == {"title": "Chapter 1", "children": []}
+        assert result[1] == {"title": "Chapter 2", "children": []}
+
+    def test_extracts_nested_epub3_toc(self, tmp_path):
+        epub_path = tmp_path / "test.epub"
+        epub_path.write_bytes(make_epub_epub3_toc(nested=True).read())
+
+        result = extract_epub_toc(epub_path)
+
+        assert result is not None
+        assert result[1]["title"] == "Chapter 2"
+        assert len(result[1]["children"]) == 1
+        assert result[1]["children"][0]["title"] == "Section 2.1"
+
+    def test_extracts_flat_epub2_ncx_toc(self, tmp_path):
+        epub_path = tmp_path / "test.epub"
+        epub_path.write_bytes(make_epub_epub2_toc().read())
+
+        result = extract_epub_toc(epub_path)
+
+        assert result is not None
+        assert len(result) == 2
+        assert result[0]["title"] == "Chapter 1"
+        assert result[1]["title"] == "Chapter 2"
+
+    def test_extracts_nested_epub2_ncx_toc(self, tmp_path):
+        epub_path = tmp_path / "test.epub"
+        epub_path.write_bytes(make_epub_epub2_toc(nested=True).read())
+
+        result = extract_epub_toc(epub_path)
+
+        assert result is not None
+        assert result[1]["children"][0] == {"title": "Section 2.1", "children": []}
+
+    def test_prefers_epub3_nav_over_ncx(self, tmp_path):
+        epub_path = tmp_path / "test.epub"
+        epub_path.write_bytes(make_epub_both_toc(nav_title="Nav Chapter", ncx_title="NCX Chapter").read())
+
+        result = extract_epub_toc(epub_path)
+
+        assert result is not None
+        assert result[0]["title"] == "Nav Chapter"
+
+    def test_falls_back_to_ncx_when_nav_has_no_toc_type(self, tmp_path):
+        """nav.xhtml exists but epub:type is 'landmarks', not 'toc' — should fall back to NCX."""
+        epub_path = tmp_path / "test.epub"
+        # make_epub_epub3_toc with toc_nav_type="landmarks" produces a nav with no toc entries
+        buf = io.BytesIO()
+        nav = b"""\
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <body>
+    <nav epub:type="landmarks">
+      <ol><li><a href="ch1.xhtml">Start</a></li></ol>
+    </nav>
+  </body>
+</html>"""
+        ncx = b"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/">
+  <navMap>
+    <navPoint id="ch1">
+      <navLabel><text>NCX Fallback</text></navLabel>
+      <content src="ch1.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>"""
+        opf = b"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>Fallback</dc:title></metadata>
+  <manifest>
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+  </manifest>
+</package>"""
+        with zipfile.ZipFile(buf, "w") as zf:
+            zf.writestr("META-INF/container.xml", CONTAINER_XML)
+            zf.writestr("content.opf", opf)
+            zf.writestr("nav.xhtml", nav)
+            zf.writestr("toc.ncx", ncx)
+        epub_path.write_bytes(buf.getvalue())
+
+        result = extract_epub_toc(epub_path)
+
+        assert result is not None
+        assert result[0]["title"] == "NCX Fallback"
+
+    def test_returns_none_when_no_toc_source(self, tmp_path):
+        """epub with no nav.xhtml or toc.ncx in manifest returns None."""
+        epub_path = tmp_path / "notoc.epub"
+        epub_path.write_bytes(make_epub().read())
+
+        assert extract_epub_toc(epub_path) is None
+
+    def test_returns_none_for_corrupt_epub(self, tmp_path):
+        epub_path = tmp_path / "corrupt.epub"
+        epub_path.write_bytes(b"not a zip")
+
+        assert extract_epub_toc(epub_path) is None
+
+    def test_nav_item_with_span_instead_of_anchor(self, tmp_path):
+        """<span> is used for section headers that aren't links — title should still be captured."""
+        nav = b"""\
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <body>
+    <nav epub:type="toc">
+      <ol>
+        <li><span>Part One</span>
+          <ol>
+            <li><a href="ch1.xhtml">Chapter 1</a></li>
+          </ol>
+        </li>
+      </ol>
+    </nav>
+  </body>
+</html>"""
+        opf = b"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>Span Book</dc:title></metadata>
+  <manifest>
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+  </manifest>
+</package>"""
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as zf:
+            zf.writestr("META-INF/container.xml", CONTAINER_XML)
+            zf.writestr("content.opf", opf)
+            zf.writestr("nav.xhtml", nav)
+        epub_path = tmp_path / "span.epub"
+        epub_path.write_bytes(buf.getvalue())
+
+        result = extract_epub_toc(epub_path)
+
+        assert result is not None
+        assert result[0]["title"] == "Part One"
+        assert result[0]["children"][0]["title"] == "Chapter 1"

@@ -41,8 +41,19 @@ def main():
             print("Error: BOOKS_DIR not set in .env.local")
             return
         folder = Path(books_dir) / args.bundle
+        base_dir: Path | None = Path(books_dir)
     else:
         folder = Path(args.folder)
+        base_dir = None
+
+    def epub_rel(path: Path) -> str:
+        """Return path relative to base_dir (BOOKS_DIR) as a posix string, or absolute posix if base_dir is unknown."""
+        if base_dir is not None:
+            try:
+                return path.relative_to(base_dir).as_posix()
+            except ValueError:
+                pass
+        return path.as_posix()
 
     if not folder.is_dir():
         print(f"Error: {folder} is not a directory")
@@ -128,6 +139,8 @@ def main():
     book_details = load_json(BOOK_DETAILS_PATH, {})
 
     # Step 3a: enrich entries from book_list_manual_isbn.json that appeared in the current epub scan
+    epub_path_by_raw_title = {m["title"]: m["epub_path"] for m in extracted}
+
     if book_list_missing:
         extracted_raw_titles = {m["title"] for m in extracted}
         extracted_bundle_by_title = {m["title"]: m.get("humbleBundle", "") for m in extracted}
@@ -164,6 +177,7 @@ def main():
 
             print(f"  [ok]   {title} ({found_isbn})")
             existing = book_details.get(found_isbn, {})
+            entry_epub = epub_path_by_raw_title.get(entry.get("title_raw", title))
             book_details[found_isbn] = {
                 "id": existing.get("id") or str(uuid.uuid4()),
                 "title": result.get("title") or title,
@@ -175,6 +189,7 @@ def main():
                 "description": result.get("description") or existing.get("description") or "",
                 "coverUrl": existing.get("coverUrl"),
                 "humbleBundle": extracted_bundle_by_title.get(entry.get("title_raw", title)) or existing.get("humbleBundle", ""),
+                "epub_path": epub_rel(entry_epub) if entry_epub else existing.get("epub_path"),
             }
 
             # Update isbn in the manual list entry if it was empty or different
@@ -255,6 +270,7 @@ def main():
                     "description": existing.get("description") or "",
                     "coverUrl": cover_url or existing.get("coverUrl"),
                     "humbleBundle": meta.get("humbleBundle") or existing.get("humbleBundle", ""),
+                    "epub_path": epub_rel(epub_path),
                 }
             return
 
@@ -275,6 +291,7 @@ def main():
             "description": result.get("description") or existing.get("description") or "",
             "coverUrl": cover_url or existing.get("coverUrl"),
             "humbleBundle": meta.get("humbleBundle") or existing.get("humbleBundle", ""),
+            "epub_path": epub_rel(epub_path),
         }
         if not epub_isbn:
             isbn_discovered[epub_title] = isbn

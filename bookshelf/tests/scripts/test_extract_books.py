@@ -430,3 +430,56 @@ class TestHumbleBundleField:
 
         saved = json.loads(paths["book_details"].read_text())
         assert saved["9781234567890"]["humbleBundle"] == "Humble Dev Bundle"
+
+
+# ---------------------------------------------------------------------------
+# epub_path field
+# ---------------------------------------------------------------------------
+
+class TestEpubPathField:
+    def test_epub_path_stored_in_book_details_after_enrichment(self, monkeypatch, epub_dir, paths):
+        """epub_path is written to the book_details entry for every enriched book."""
+        bundle, epub = epub_dir
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle)])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result()):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        saved = json.loads(paths["book_details"].read_text())
+        assert "epub_path" in saved["9781234567890"]
+        assert saved["9781234567890"]["epub_path"] is not None
+
+    def test_epub_path_is_relative_when_bundle_flag_used(self, monkeypatch, tmp_path, paths):
+        """--bundle sets base_dir to BOOKS_DIR, so epub_path is stored relative to it."""
+        bundle = tmp_path / "My Bundle"
+        bundle.mkdir()
+        epub = bundle / "book.epub"
+        epub.write_bytes(b"")
+
+        monkeypatch.setattr(sys, "argv", ["prog", "--bundle", "My Bundle"])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=_google_result()):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={"BOOKS_DIR": str(tmp_path)}):
+                        main()
+
+        saved = json.loads(paths["book_details"].read_text())
+        assert saved["9781234567890"]["epub_path"] == "My Bundle/book.epub"
+
+    def test_epub_path_stored_for_google_miss_with_isbn(self, monkeypatch, epub_dir, paths):
+        """epub_path is stored even when Google Books returns no result."""
+        bundle, epub = epub_dir
+        monkeypatch.setattr(sys, "argv", ["prog", str(bundle)])
+
+        with patch(f"{PATCH}.extract_epub_metadata", side_effect=lambda p: _meta(p)):
+            with patch(f"{PATCH}.fetch_google_book", return_value=None):
+                with patch(f"{PATCH}.extract_epub_cover", return_value=None):
+                    with patch(f"{PATCH}.load_env_local", return_value={}):
+                        main()
+
+        saved = json.loads(paths["book_details"].read_text())
+        assert "epub_path" in saved["9781234567890"]

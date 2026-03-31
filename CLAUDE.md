@@ -40,8 +40,7 @@ Claude Code auto-discovers them — no install step needed.
 | Concept | `/plan-ceo-review`  | Before committing to new work — challenge scope, find the 10x version |
 | Plan    | `/plan-eng-review`  | Before building — lock architecture, data flow, edge cases            |
 | Review  | `/review`           | Before any push — checks diff against portfolio checklist             |
-| Test    | `/qa`               | After building — systematic test pass scoped to git diff              |
-| Ship    | `/ship`             | When ready — builds, lints, merges, pushes, opens PR                  |
+| Test    | `npm test`          | After building — runs vitest + pytest                                 |
 
 ## Preferences
 I usually use Claude in 'edit automatically' mode, but I prefer that edits only
