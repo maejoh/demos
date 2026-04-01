@@ -5,6 +5,8 @@ organize and display a bunch of technical books, and where site visitors can pro
 feedback on which ones tackle skills they're actually interested in, adding to an 
 aggregate vote count that reflects general interest.
 
+See also: ([My portfolio website](https://maejoh.io/))
+
 ## BookShelf ([live demo](https://demos.maejoh.io/))
 
 ![BookShelf screenshot](./bookshelf/public/demo-screenshot.png)
